@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OnFrontiers Federal Capture Resources</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+        
+        .header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        .content {
+            padding: 60px 40px;
+        }
+        
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .resource-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            display: block;
+            color: inherit;
+        }
+        
+        .resource-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+        
+        .resource-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+        
+        .resource-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            color: white;
+        }
+        
+        .resource-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+        
+        .resource-description {
+            color: #6c757d;
+            font-size: 0.95em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .resource-meta {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .meta-tag {
+            background: #f8f9fa;
+            color: #667eea;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .coming-soon {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .coming-soon .resource-icon {
+            background: #6c757d;
+        }
+        
+        .coming-soon:hover {
+            transform: none;
+            box-shadow: none;
+            border-color: #e9ecef;
+        }
+        
+        .coming-soon .meta-tag {
+            background: #ffc107;
+            color: #856404;
+        }
+        
+        .stats-section {
+            background: #f8f9fa;
+            padding: 40px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 5px;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 30px;
+            background: #f8f9fa;
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+        
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .resources-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>OnFrontiers Resources Hub</h1>
+            <div class="subtitle">Sales & Capture Tools for Federal Contractors</div>
+        </div>
+        
+        <div class="content">
+            <div class="stats-section">
+                <div class="stats-grid">
+                    <div class="stat">
+                        <div class="stat-value">1,200</div>
+                        <div class="stat-label">Federal Agencies</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">$800M+</div>
+                        <div class="stat-label">Contract Wins</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">90%</div>
+                        <div class="stat-label">ROI < 6 Months</div>
+                    </div>
+                </div>
+            </div>
+            
+            <h2 style="color: #2c3e50; margin-bottom: 10px;">Available Resources</h2>
+            <p style="color: #6c757d; margin-bottom: 30px;">Click any resource below to access interactive tools and guides</p>
+            
+            <div class="resources-grid">
+                <a href="capture-product-guilde.html" class="resource-card">
+                    <div class="resource-icon">📊</div>
+                    <h3>Capture Manager's Product Guide</h3>
+                    <div class="resource-description">
+                        Interactive guide showing when and how to leverage OnFrontiers SMEs across all capture phases. Includes service portfolio, budget calculator, and ROI analysis.
+                    </div>
+                    <div class="resource-meta">
+                        <span class="meta-tag">Interactive</span>
+                        <span class="meta-tag">Phase-based</span>
+                    </div>
+                </a>
+                
+                <div class="resource-card coming-soon">
+                    <div class="resource-icon">💰</div>
+                    <h3>Capture Budget Calculator</h3>
+                    <div class="resource-description">
+                        Dynamic calculator to estimate OnFrontiers credit requirements based on your pipeline size, win rate targets, and capture maturity.
+                    </div>
+                    <div class="resource-meta">
+                        <span class="meta-tag">Coming Soon</span>
+                    </div>
+                </div>
+                
+                <div class="resource-card coming-soon">
+                    <div class="resource-icon">🎯</div>
+                    <h3>SME Selection Matrix</h3>
+                    <div class="resource-description">
+                        Decision matrix to identify which type of SME expertise you need based on opportunity characteristics and competitive landscape.
+                    </div>
+                    <div class="resource-meta">
+                        <span class="meta-tag">Coming Soon</span>
+                    </div>
+                </div>
+                
+                <div class="resource-card coming-soon">
+                    <div class="resource-icon">📈</div>
+                    <h3>Win Rate Improvement Analyzer</h3>
+                    <div class="resource-description">
+                        Calculate the impact of OnFrontiers services on your win rate and pipeline value based on historical performance data.
+                    </div>
+                    <div class="resource-meta">
+                        <span class="meta-tag">Coming Soon</span>
+                    </div>
+                </div>
+                
+                <div class="resource-card coming-soon">
+                    <div class="resource-icon">📝</div>
+                    <h3>Capture Readiness Checklist</h3>
+                    <div class="resource-description">
+                        Phase-by-phase checklist to assess capture readiness and identify where OnFrontiers SMEs can fill critical gaps.
+                    </div>
+                    <div class="resource-meta">
+                        <span class="meta-tag">Coming Soon</span>
+                    </div>
+                </div>
+                
+                <div class="resource-card coming-soon">
+                    <div class="resource-icon">🔍</div>
+                    <h3>Competitor Intelligence Planner</h3>
+                    <div class="resource-description">
+                        Template for structuring competitive intelligence gathering using OnFrontiers' network of industry insiders.
+                    </div>
+                    <div class="resource-meta">
+                        <span class="meta-tag">Coming Soon</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            Questions? Contact us at <a href="mailto:sales@onfrontiers.com">sales@onfrontiers.com</a><br>
+            © 2025 OnFrontiers. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>
