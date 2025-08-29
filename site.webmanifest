@@ -1,0 +1,21 @@
+{
+    "name": "OnFrontiers Resources Hub",
+    "short_name": "OnFrontiers",
+    "description": "Federal contracting resources, capture tools, and expert insights",
+    "icons": [
+        {
+            "src": "assets/favicon.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "assets/favicon.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#28465A",
+    "background_color": "#f8f9fa",
+    "display": "minimal-ui",
+    "start_url": "/"
+}
