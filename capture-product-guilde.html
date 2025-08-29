@@ -495,7 +495,68 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
         
+        /* Mobile Responsive Design */
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                border-radius: 10px;
+                max-width: 100%;
+                margin: 0;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            }
+            
+            /* Header and Navigation */
+            .header {
+                padding: 30px 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.6em;
+                margin-bottom: 10px;
+            }
+            
+            .header .subtitle {
+                font-size: 0.95em;
+            }
+            
+            .header img {
+                max-height: 30px !important;
+                margin-bottom: 15px !important;
+            }
+            
+            /* Back Navigation */
+            div[style*="padding: 15px 30px"] {
+                padding: 15px 20px !important;
+            }
+            
+            /* Content Areas */
+            .content {
+                padding: 30px 20px;
+            }
+            
+            /* ROI Banner */
+            .roi-banner {
+                padding: 20px;
+            }
+            
+            .roi-metrics {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .metric-value {
+                font-size: 2em;
+            }
+            
+            /* Phase Timeline */
+            .phase-timeline {
+                padding: 20px;
+                margin: 30px 0;
+            }
+            
             .phases {
                 flex-direction: column;
                 gap: 20px;
@@ -505,12 +566,168 @@
                 display: none;
             }
             
-            .comparison-grid {
-                grid-template-columns: 1fr;
+            .phase-marker {
+                display: flex;
+                align-items: center;
+                text-align: left;
+                padding: 15px;
+                background: #f8f9fa;
+                border-radius: 8px;
+                border: 2px solid #e9ecef;
             }
             
-            .roi-metrics {
+            .phase-circle {
+                margin: 0 15px 0 0;
+            }
+            
+            .phase-name, .phase-timing {
+                text-align: left;
+            }
+            
+            /* Services Grid */
+            .services-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .service-card {
+                padding: 20px;
+            }
+            
+            .service-card h3 {
+                font-size: 1.1em;
+            }
+            
+            /* Phase Headers */
+            .phase-header {
                 flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                padding: 15px;
+            }
+            
+            .phase-header h3 {
+                font-size: 1.3em;
+            }
+            
+            /* Budget Calculator */
+            .budget-calculator {
+                padding: 20px;
+                margin: 30px 0;
+            }
+            
+            .calculator-table {
+                overflow-x: auto;
+            }
+            
+            table {
+                min-width: 600px;
+                font-size: 0.9em;
+            }
+            
+            th, td {
+                padding: 10px 8px;
+            }
+            
+            /* Comparison Section */
+            .comparison-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .comparison-card {
+                padding: 20px;
+            }
+            
+            .comparison-card h3 {
+                font-size: 1.2em;
+                margin-bottom: 15px;
+            }
+            
+            /* CTA Section */
+            .cta-section {
+                padding: 30px 20px;
+                margin: 30px 0;
+            }
+            
+            .cta-section h2 {
+                font-size: 1.5em;
+            }
+            
+            .cta-section p {
+                font-size: 1em;
+            }
+            
+            .cta-button {
+                padding: 12px 25px;
+                font-size: 1em;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .content {
+                padding: 20px 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.4em;
+            }
+            
+            .header .subtitle {
+                font-size: 0.9em;
+            }
+            
+            .phase-timeline h2 {
+                font-size: 1.4em;
+            }
+            
+            .services-section h2 {
+                font-size: 1.4em;
+            }
+            
+            .budget-calculator h2 {
+                font-size: 1.4em;
+            }
+            
+            .comparison-section h2 {
+                font-size: 1.4em;
+            }
+            
+            .phase-marker {
+                padding: 12px;
+            }
+            
+            .service-card {
+                padding: 15px;
+            }
+            
+            .service-card h3 {
+                font-size: 1em;
+            }
+            
+            .service-description {
+                font-size: 0.85em;
+            }
+            
+            table {
+                font-size: 0.8em;
+            }
+            
+            th, td {
+                padding: 8px 6px;
+            }
+            
+            .cta-section {
+                padding: 25px 15px;
+            }
+            
+            .cta-section h2 {
+                font-size: 1.3em;
+            }
+            
+            .cta-button {
+                padding: 10px 20px;
+                font-size: 0.9em;
             }
         }
     </style>
