@@ -568,7 +568,7 @@
             
             .phase-marker {
                 display: flex;
-                align-items: center;
+                align-items: flex-start;
                 text-align: left;
                 padding: 15px;
                 background: #f8f9fa;
@@ -578,10 +578,23 @@
             
             .phase-circle {
                 margin: 0 15px 0 0;
+                flex-shrink: 0;
+            }
+            
+            .phase-text {
+                display: flex;
+                flex-direction: column;
+                min-width: 0;
+                flex: 1;
             }
             
             .phase-name, .phase-timing {
                 text-align: left;
+                margin: 0;
+            }
+            
+            .phase-name {
+                margin-bottom: 5px;
             }
             
             /* Services Grid */
@@ -768,28 +781,38 @@
                 <div class="phases">
                     <div class="phase-marker" onclick="showPhase('phase1')">
                         <div class="phase-circle">1</div>
-                        <div class="phase-name">IDENTIFY</div>
-                        <div class="phase-timing">18+ months before RFP</div>
+                        <div class="phase-text">
+                            <div class="phase-name">IDENTIFY</div>
+                            <div class="phase-timing">18+ months before RFP</div>
+                        </div>
                     </div>
                     <div class="phase-marker" onclick="showPhase('phase2')">
                         <div class="phase-circle">2</div>
-                        <div class="phase-name">QUALIFY</div>
-                        <div class="phase-timing">12 months before RFP</div>
+                        <div class="phase-text">
+                            <div class="phase-name">QUALIFY</div>
+                            <div class="phase-timing">12 months before RFP</div>
+                        </div>
                     </div>
                     <div class="phase-marker" onclick="showPhase('phase3')">
                         <div class="phase-circle">3</div>
-                        <div class="phase-name">PURSUE</div>
-                        <div class="phase-timing">3-9 months before RFP</div>
+                        <div class="phase-text">
+                            <div class="phase-name">PURSUE</div>
+                            <div class="phase-timing">3-9 months before RFP</div>
+                        </div>
                     </div>
                     <div class="phase-marker" onclick="showPhase('phase4')">
                         <div class="phase-circle">4</div>
-                        <div class="phase-name">BID</div>
-                        <div class="phase-timing">At RFP release</div>
+                        <div class="phase-text">
+                            <div class="phase-name">BID</div>
+                            <div class="phase-timing">At RFP release</div>
+                        </div>
                     </div>
                     <div class="phase-marker" onclick="showPhase('phase5')">
                         <div class="phase-circle">5</div>
-                        <div class="phase-name">PROPOSE</div>
-                        <div class="phase-timing">Before submission</div>
+                        <div class="phase-text">
+                            <div class="phase-name">PROPOSE</div>
+                            <div class="phase-timing">Before submission</div>
+                        </div>
                     </div>
                 </div>
             </div>
