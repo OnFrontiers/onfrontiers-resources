@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OnFrontiers Federal Capture Support Guide</title>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Campton:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -13,7 +13,7 @@
         }
         
         body {
-            font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Campton', 'Open Sans', -apple-system, BlinkMacSystemFont, sans-serif;
             line-height: 1.6;
             color: #2c3e50;
             background: #f8f9fa;
@@ -31,7 +31,7 @@
         }
         
         .header {
-            background: #4d65ff;
+            background: #28465A;
             color: white;
             padding: 40px;
             text-align: center;
@@ -53,7 +53,7 @@
             background: #f8f9fa;
             padding: 30px;
             text-align: center;
-            border-bottom: 3px solid #667eea;
+            border-bottom: 3px solid #28BEAF;
         }
         
         .roi-metrics {
@@ -71,7 +71,7 @@
         .metric-value {
             font-size: 2.5em;
             font-weight: 700;
-            color: #4d65ff;
+            color: #28465A;
         }
         
         .metric-label {
@@ -113,7 +113,7 @@
             left: 10%;
             right: 10%;
             height: 4px;
-            background: #4d65ff;
+            background: #28BEAF;
             z-index: 0;
         }
         
@@ -131,7 +131,7 @@
         }
         
         .phase-marker.active .phase-circle {
-            background: #4d65ff;
+            background: #28BEAF;
             color: white;
             transform: scale(1.2);
         }
@@ -140,14 +140,14 @@
             width: 50px;
             height: 50px;
             background: white;
-            border: 4px solid #4d65ff;
+            border: 4px solid #28BEAF;
             border-radius: 50%;
             margin: 0 auto 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            color: #4d65ff;
+            color: #28465A;
             transition: all 0.3s ease;
         }
         
@@ -201,10 +201,10 @@
         }
         
         .phase-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #28465A;
             color: white;
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 8px;
             margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
@@ -217,7 +217,7 @@
         
         .phase-header .phase-badge {
             background: white;
-            color: #4d65ff;
+            color: #28465A;
             padding: 5px 15px;
             border-radius: 6px;
             font-weight: 600;
@@ -247,13 +247,13 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: #4d65ff;
+            background: #28BEAF;
         }
         
         .service-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            border-color: #667eea;
+            border-color: #28BEAF;
         }
         
         .service-card h3 {
@@ -280,12 +280,12 @@
         
         .credits-tag {
             background: #f8f9fa;
-            color: #4d65ff;
+            color: #28465A;
             padding: 5px 12px;
             border-radius: 6px;
             font-size: 0.8em;
             font-weight: 600;
-            border: 1px solid #4d65ff;
+            border: 1px solid #28465A;
         }
         
         .budget-calculator {
@@ -314,7 +314,7 @@
         }
         
         th {
-            background: #667eea;
+            background: #28465A;
             color: white;
             padding: 15px;
             text-align: left;
@@ -339,7 +339,7 @@
         }
         
         .total-row td {
-            color: #4d65ff;
+            color: #28465A;
             font-size: 1.1em;
         }
         
@@ -366,13 +366,13 @@
         }
         
         .traditional {
-            background: #fff5f5;
-            border: 2px solid #dc3545;
+            background: #f8f9fa;
+            border: 2px solid #787878;
         }
         
         .onfrontiers {
-            background: #f0f8ff;
-            border: 2px solid #667eea;
+            background: #E6E6D7;
+            border: 2px solid #28465A;
         }
         
         .comparison-card h3 {
@@ -381,11 +381,11 @@
         }
         
         .traditional h3 {
-            color: #dc3545;
+            color: #2D2D2D;
         }
         
         .onfrontiers h3 {
-            color: #4d65ff;
+            color: #28465A;
         }
         
         .comparison-list {
@@ -410,17 +410,17 @@
         }
         
         .traditional .comparison-list li::before {
-            content: "✗";
-            color: #dc3545;
+            content: "•";
+            color: #787878;
         }
         
         .onfrontiers .comparison-list li::before {
             content: "✓";
-            color: #4d65ff;
+            color: #28BEAF;
         }
         
         .cta-section {
-            background: #4d65ff;
+            background: #28465A;
             color: white;
             padding: 50px;
             text-align: center;
@@ -442,7 +442,7 @@
         .cta-button {
             display: inline-block;
             background: white;
-            color: #4d65ff;
+            color: #28465A;
             padding: 15px 40px;
             border-radius: 8px;
             text-decoration: none;
@@ -479,12 +479,13 @@
 <body>
     <div class="container">
         <div style="background: #f8f9fa; padding: 15px 30px; border-bottom: 1px solid #e9ecef;">
-            <a href="index.html" style="color: #4d65ff; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s ease;">
+            <a href="index.html" style="color: #28465A; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s ease;">
                 <span style="font-size: 1.2em;">←</span> Back to Resources Hub
             </a>
         </div>
         <div class="header">
-            <h1>OnFrontiers Federal Capture Support</h1>
+            <img src="assets/OnFrontiers-Logo-White.png" alt="OnFrontiers" style="max-height: 40px; margin-bottom: 20px;">
+            <h1>Federal Capture Support</h1>
             <div class="subtitle">Smart, Flexible Expert Support for Mid-Tier Federal Contractors</div>
         </div>
         
