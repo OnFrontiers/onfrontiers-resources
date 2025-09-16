@@ -185,9 +185,9 @@
 
         .role-groups {
             display: flex;
-            gap: 12px;
-            margin-bottom: 25px;
-            border-bottom: 2px solid #e5e7eb;
+            gap: 8px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #e5e7eb;
         }
 
         .role-group {
@@ -196,12 +196,12 @@
         }
 
         .role-group-header {
-            padding: 12px 20px;
-            font-size: 15px;
+            padding: 8px 16px;
+            font-size: 14px;
             font-weight: 600;
             color: #1a202c;
             background: #f8fafc;
-            border-radius: 8px 8px 0 0;
+            border-radius: 6px 6px 0 0;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
@@ -229,8 +229,8 @@
             right: 0;
             background: white;
             border: 1px solid #e5e7eb;
-            border-radius: 0 0 8px 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-radius: 0 0 6px 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             display: none;
             z-index: 10;
         }
@@ -240,11 +240,11 @@
         }
 
         .role-tab {
-            padding: 10px 20px;
+            padding: 8px 16px;
             background: none;
             border: none;
             color: #64748b;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             cursor: pointer;
             text-align: left;
@@ -535,6 +535,95 @@
             font-style: normal;
         }
 
+        /* Loading Skeleton States */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+        }
+
+        @keyframes skeleton-loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        .skeleton-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            height: 320px;
+        }
+
+        .skeleton-header {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .skeleton-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #f0f0f0;
+        }
+
+        .skeleton-name {
+            height: 20px;
+            width: 120px;
+            border-radius: 4px;
+            background: #f0f0f0;
+            margin-bottom: 8px;
+        }
+
+        .skeleton-badge {
+            height: 16px;
+            width: 80px;
+            border-radius: 12px;
+            background: #f0f0f0;
+        }
+
+        .skeleton-headline {
+            height: 16px;
+            width: 100%;
+            border-radius: 4px;
+            background: #f0f0f0;
+            margin-bottom: 12px;
+        }
+
+        .skeleton-highlight {
+            height: 14px;
+            border-radius: 4px;
+            background: #f0f0f0;
+            margin-bottom: 8px;
+        }
+
+        .skeleton-highlight:nth-child(1) { width: 90%; }
+        .skeleton-highlight:nth-child(2) { width: 85%; }
+        .skeleton-highlight:nth-child(3) { width: 80%; }
+
+        .skeleton-button {
+            height: 40px;
+            width: 100%;
+            border-radius: 6px;
+            background: #f0f0f0;
+            margin-top: auto;
+        }
+
+        .loading-message {
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+            margin: 20px 0;
+            font-style: italic;
+        }
+
         /* Mobile Responsive */
         @media (max-width: 768px) {
             .container {
@@ -626,7 +715,9 @@
                 </h2>
                 <div class="onfrontiers-logo">
                     <span class="powered-by">Powered by</span>
-                    <img src="assets/OnFrontiers-Logo-Black.png" alt="OnFrontiers" style="height: 24px; width: auto;">
+                    <a href="https://onfrontiers.com" target="_blank" rel="noopener noreferrer">
+                        <img src="assets/OnFrontiers-Logo-Black.png" alt="OnFrontiers" style="height: 24px; width: auto;">
+                    </a>
                 </div>
             </div>
 
@@ -755,6 +846,7 @@
                     </div>
                     <div class="expert-actions">
                         <a href="#" class="btn btn-primary">
+                            <img src="assets/OnFrontiers-Logo-White.png" alt="OnFrontiers" style="height: 16px; width: auto; margin-right: 8px;">
                             Connect →
                         </a>
                     </div>
@@ -790,6 +882,7 @@
                     </div>
                     <div class="expert-actions">
                         <a href="#" class="btn btn-primary">
+                            <img src="assets/OnFrontiers-Logo-White.png" alt="OnFrontiers" style="height: 16px; width: auto; margin-right: 8px;">
                             Connect →
                         </a>
                     </div>
@@ -825,6 +918,7 @@
                     </div>
                     <div class="expert-actions">
                         <a href="#" class="btn btn-primary">
+                            <img src="assets/OnFrontiers-Logo-White.png" alt="OnFrontiers" style="height: 16px; width: auto; margin-right: 8px;">
                             Connect →
                         </a>
                     </div>
@@ -860,6 +954,7 @@
                     </div>
                     <div class="expert-actions">
                         <a href="#" class="btn btn-primary">
+                            <img src="assets/OnFrontiers-Logo-White.png" alt="OnFrontiers" style="height: 16px; width: auto; margin-right: 8px;">
                             Connect →
                         </a>
                     </div>
@@ -895,6 +990,7 @@
                     </div>
                     <div class="expert-actions">
                         <a href="#" class="btn btn-primary">
+                            <img src="assets/OnFrontiers-Logo-White.png" alt="OnFrontiers" style="height: 16px; width: auto; margin-right: 8px;">
                             Connect →
                         </a>
                     </div>
@@ -930,6 +1026,7 @@
                     </div>
                     <div class="expert-actions">
                         <a href="#" class="btn btn-primary">
+                            <img src="assets/OnFrontiers-Logo-White.png" alt="OnFrontiers" style="height: 16px; width: auto; margin-right: 8px;">
                             Connect →
                         </a>
                     </div>
@@ -1005,8 +1102,14 @@
                 // Add active to clicked tab
                 this.classList.add('active');
 
-                // In a real implementation, this would fetch and display experts for the selected role
+                // Show loading state and simulate API call
+                showLoadingSkeletons();
                 console.log('Loading experts for role:', this.textContent.trim());
+
+                // Simulate API call delay
+                setTimeout(() => {
+                    hideLoadingSkeletons();
+                }, 1000);
             });
         });
 
@@ -1097,6 +1200,71 @@
                 roleGroups.forEach(g => g.classList.remove('active'));
             }
         });
+
+        // Loading skeleton functions
+        function showLoadingSkeletons() {
+            const expertsGrid = document.querySelector('.experts-grid');
+            const loadMoreBtn = document.querySelector('.load-more');
+
+            // Hide existing content
+            expertsGrid.style.display = 'none';
+            loadMoreBtn.style.display = 'none';
+
+            // Create skeleton grid
+            const skeletonGrid = document.createElement('div');
+            skeletonGrid.className = 'experts-grid skeleton-grid';
+            skeletonGrid.innerHTML = generateSkeletonCards(3);
+
+            // Add loading message
+            const loadingMessage = document.createElement('div');
+            loadingMessage.className = 'loading-message';
+            loadingMessage.textContent = 'Finding expert advisors...';
+
+            // Insert after stats bar
+            const statsBar = document.querySelector('.stats-bar');
+            statsBar.parentNode.insertBefore(loadingMessage, statsBar.nextSibling);
+            statsBar.parentNode.insertBefore(skeletonGrid, loadingMessage.nextSibling);
+        }
+
+        function hideLoadingSkeletons() {
+            const expertsGrid = document.querySelector('.experts-grid');
+            const loadMoreBtn = document.querySelector('.load-more');
+            const skeletonGrid = document.querySelector('.skeleton-grid');
+            const loadingMessage = document.querySelector('.loading-message');
+
+            // Remove skeleton elements
+            if (skeletonGrid) skeletonGrid.remove();
+            if (loadingMessage) loadingMessage.remove();
+
+            // Show real content
+            expertsGrid.style.display = 'grid';
+            loadMoreBtn.style.display = 'block';
+        }
+
+        function generateSkeletonCards(count) {
+            let html = '';
+            for (let i = 0; i < count; i++) {
+                html += `
+                    <div class="skeleton-card">
+                        <div class="skeleton-header">
+                            <div class="skeleton-avatar skeleton"></div>
+                            <div class="skeleton-info">
+                                <div class="skeleton-name skeleton"></div>
+                                <div class="skeleton-badge skeleton"></div>
+                            </div>
+                        </div>
+                        <div class="skeleton-headline skeleton"></div>
+                        <div class="skeleton-highlights">
+                            <div class="skeleton-highlight skeleton"></div>
+                            <div class="skeleton-highlight skeleton"></div>
+                            <div class="skeleton-highlight skeleton"></div>
+                        </div>
+                        <div class="skeleton-button skeleton"></div>
+                    </div>
+                `;
+            }
+            return html;
+        }
     </script>
 </body>
 </html>
