@@ -1,2 +1,2 @@
 # onfrontiers-resources
-Resources for customers and experts
+Resources for customers, experts, and partners
