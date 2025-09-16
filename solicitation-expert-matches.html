@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Primary Meta Tags -->
+    <title>Solicitation Expert Matches | OnFrontiers Federal Capture Resources</title>
+    <meta name="title" content="Solicitation Expert Matches | OnFrontiers Federal Capture Resources">
+    <meta name="description" content="Discover expert matches for your federal solicitation opportunities. Connect with subject matter experts who have direct experience with your target agencies and programs.">
+    <meta name="keywords" content="federal contracting experts, solicitation experts, government contract SMEs, OnFrontiers expert matching, capture support">
+    <meta name="author" content="OnFrontiers">
+    <meta name="robots" content="index, follow">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon.png">
+    <link rel="manifest" href="site.webmanifest">
+    <meta name="theme-color" content="#28465A">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Campton:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Campton', 'Open Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f5f7fa;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: #28465A;
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header .logo img {
+            height: 32px;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .back-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .back-link:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .opportunity-header {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .opportunity-title {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #1a202c;
+        }
+
+        .opportunity-meta {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #64748b;
+        }
+
+        .meta-item strong {
+            color: #475569;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .badge-green {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-blue {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .experts-section {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 22px;
+            font-weight: 600;
+            color: #1a202c;
+        }
+
+        .onfrontiers-logo {
+            height: 28px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .onfrontiers-logo img {
+            height: 100%;
+            width: auto;
+        }
+
+        .powered-by {
+            font-size: 13px;
+            color: #94a3b8;
+            font-weight: 400;
+        }
+
+        .role-groups {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .role-group {
+            position: relative;
+            flex: 1;
+        }
+
+        .role-group-header {
+            padding: 12px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #1a202c;
+            background: #f8fafc;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .role-group.active .role-group-header {
+            background: #28465A;
+            color: white;
+        }
+
+        .role-group-count {
+            display: inline-block;
+            padding: 2px 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            font-size: 12px;
+        }
+
+        .role-tabs {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: none;
+            z-index: 10;
+        }
+
+        .role-group.active .role-tabs {
+            display: block;
+        }
+
+        .role-tab {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-align: left;
+            width: 100%;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .role-tab:hover {
+            background: #f8fafc;
+            color: #475569;
+        }
+
+        .role-tab.active {
+            background: #f0f4ff;
+            color: #28465A;
+            font-weight: 600;
+        }
+
+        .role-tab-count {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #e5e7eb;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #475569;
+        }
+
+        .role-tab.active .role-tab-count {
+            background: #28465A;
+            color: white;
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 20px;
+            padding: 15px 20px;
+            background: #f8fafc;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: #1a202c;
+            font-size: 16px;
+        }
+
+        .experts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .expert-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s;
+            position: relative;
+            background: white;
+        }
+
+        .expert-card:hover {
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .expert-header {
+            display: flex;
+            align-items: start;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .expert-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #f3f4f6;
+        }
+
+        .expert-info {
+            flex: 1;
+        }
+
+        .expert-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .match-score {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .score-high {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .score-good {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .score-partial {
+            background: #f3f4f6;
+            color: #4b5563;
+        }
+
+        .expert-headline {
+            color: #475569;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .expert-highlights {
+            margin-bottom: 15px;
+        }
+
+        .highlight-item {
+            display: flex;
+            align-items: start;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: #64748b;
+            line-height: 1.4;
+        }
+
+        .highlight-icon {
+            color: #28BEAF;
+            margin-top: 2px;
+            font-size: 12px;
+        }
+
+        .expert-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: #28465A;
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: #1a2f3d;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #475569;
+            border: 1px solid #e5e7eb;
+        }
+
+        .btn-secondary:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+
+        .load-more {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .other-role-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .other-role-modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 8px;
+        }
+
+        .modal-description {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 15px;
+            margin-bottom: 20px;
+            transition: all 0.2s;
+        }
+
+        .modal-input:focus {
+            outline: none;
+            border-color: #28465A;
+            box-shadow: 0 0 0 3px rgba(40, 70, 90, 0.1);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .role-tab.other-role {
+            font-style: italic;
+            color: #28465A;
+        }
+
+        .role-tab.other-role .role-tab-count {
+            background: #28465A;
+            color: white;
+            font-style: normal;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 15px;
+            }
+
+            .opportunity-header, .experts-section {
+                padding: 20px;
+                margin: 15px 0;
+            }
+
+            .opportunity-title {
+                font-size: 22px;
+            }
+
+            .opportunity-meta {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .role-groups {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .role-group {
+                margin-bottom: 10px;
+            }
+
+            .experts-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .stats-bar {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .header .container {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="container">
+            <div class="logo">
+                <img src="assets/OnFrontiers-Logo-White.png" alt="OnFrontiers" loading="lazy">
+                <h1>Solicitation Expert Matches</h1>
+            </div>
+            <a href="index.html" class="back-link">← Back to Resources</a>
+        </div>
+    </div>
+
+    <!-- Opportunity Details -->
+    <div class="container">
+        <div class="opportunity-header">
+            <h1 class="opportunity-title">NAVSUP WEXMAC 2.1 - Worldwide Expeditionary Multiple Award Contract</h1>
+            <div class="opportunity-meta">
+                <div class="meta-item">
+                    <strong>Agency:</strong> Naval Supply Systems Command
+                </div>
+                <div class="meta-item">
+                    <strong>Solicitation:</strong> W91CRB-24-R-0038
+                </div>
+                <div class="meta-item">
+                    <strong>Value:</strong> $20B IDIQ
+                </div>
+                <div class="meta-item">
+                    <span class="badge badge-green">Full & Open</span>
+                </div>
+                <div class="meta-item">
+                    <span class="badge badge-blue">Response Due: 15 Days</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Expert Matches Section -->
+        <div class="experts-section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <span>🎯</span>
+                    Expert Network Matches
+                </h2>
+                <div class="onfrontiers-logo">
+                    <span class="powered-by">Powered by</span>
+                    <img src="assets/OnFrontiers-Logo-Black.png" alt="OnFrontiers" style="height: 24px; width: auto;">
+                </div>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <span class="stat-label">Total Matches:</span>
+                    <span class="stat-value">48</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Strong Alignment:</span>
+                    <span class="stat-value">12</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Avg. Match Score:</span>
+                    <span class="stat-value">0.82</span>
+                </div>
+            </div>
+
+            <!-- Role Category Groups -->
+            <div class="role-groups">
+                <div class="role-group active" id="intel-group">
+                    <div class="role-group-header">
+                        <span>Competitive Intelligence SMEs</span>
+                        <span class="role-group-count">28</span>
+                    </div>
+                    <div class="role-tabs">
+                        <button class="role-tab active">
+                            Agency SME
+                            <span class="role-tab-count">8</span>
+                        </button>
+                        <button class="role-tab">
+                            Program SME
+                            <span class="role-tab-count">7</span>
+                        </button>
+                        <button class="role-tab">
+                            Technical SME
+                            <span class="role-tab-count">6</span>
+                        </button>
+                        <button class="role-tab">
+                            Contractor SME
+                            <span class="role-tab-count">5</span>
+                        </button>
+                        <button class="role-tab">
+                            Acquisition SME
+                            <span class="role-tab-count">2</span>
+                        </button>
+                        <button class="role-tab other-role">
+                            Other Role...
+                            <span class="role-tab-count">+</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="role-group" id="capture-group">
+                    <div class="role-group-header">
+                        <span>Capture & Proposal Pros</span>
+                        <span class="role-group-count">20</span>
+                    </div>
+                    <div class="role-tabs">
+                        <button class="role-tab">
+                            Capture Manager
+                            <span class="role-tab-count">4</span>
+                        </button>
+                        <button class="role-tab">
+                            Solution Architect
+                            <span class="role-tab-count">5</span>
+                        </button>
+                        <button class="role-tab">
+                            BD Recruiter
+                            <span class="role-tab-count">2</span>
+                        </button>
+                        <button class="role-tab">
+                            Pricing Expert
+                            <span class="role-tab-count">3</span>
+                        </button>
+                        <button class="role-tab">
+                            Proposal Manager
+                            <span class="role-tab-count">3</span>
+                        </button>
+                        <button class="role-tab">
+                            Proposal Writer
+                            <span class="role-tab-count">2</span>
+                        </button>
+                        <button class="role-tab">
+                            Domain SME
+                            <span class="role-tab-count">1</span>
+                        </button>
+                        <button class="role-tab other-role">
+                            Other Role...
+                            <span class="role-tab-count">+</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Expert Cards Grid -->
+            <div class="experts-grid">
+                <!-- Expert Card 1 - Strong Match -->
+                <div class="expert-card">
+                    <div class="expert-header">
+                        <img src="https://via.placeholder.com/60" alt="Mike V." class="expert-avatar">
+                        <div class="expert-info">
+                            <div class="expert-name">
+                                Mike V.
+                                <span class="match-score score-high">95% Match</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="expert-headline">
+                        Former COMFRC Chief of Staff and multiple Fleet Readiness Center CO with deep, firsthand knowledge of Navy depot-level maintenance
+                    </p>
+                    <div class="expert-highlights">
+                        <div class="highlight-item">
+                            <span class="highlight-icon">✓</span>
+                            <span>Direct senior leadership at COMFRC managing $3B budgets</span>
+                        </div>
+                        <div class="highlight-item">
+                            <span class="highlight-icon">✓</span>
+                            <span>Commanded multiple Fleet Readiness Centers</span>
+                        </div>
+                        <div class="highlight-item">
+                            <span class="highlight-icon">✓</span>
+                            <span>Deep expertise in expeditionary logistics operations</span>
+                        </div>
+                    </div>
+                    <div class="expert-actions">
+                        <a href="#" class="btn btn-primary">
+                            Connect →
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Expert Card 2 - Strong Match -->
+                <div class="expert-card">
+                    <div class="expert-header">
+                        <img src="https://via.placeholder.com/60" alt="Sarah M." class="expert-avatar">
+                        <div class="expert-info">
+                            <div class="expert-name">
+                                Sarah M.
+                                <span class="match-score score-high">92% Match</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="expert-headline">
+                        Former NAVSUP Deputy Commander with extensive worldwide logistics and base operations experience
+                    </p>
+                    <div class="expert-highlights">
+                        <div class="highlight-item">
+                            <span class="highlight-icon">✓</span>
+                            <span>NAVSUP Deputy Commander overseeing global operations</span>
+                        </div>
+                        <div class="highlight-item">
+                            <span class="highlight-icon">✓</span>
+                            <span>Led $15B+ logistics and supply chain initiatives</span>
+                        </div>
+                        <div class="highlight-item">
+                            <span class="highlight-icon">✓</span>
+                            <span>Expert in expeditionary contracting mechanisms</span>
+                        </div>
+                    </div>
+                    <div class="expert-actions">
+                        <a href="#" class="btn btn-primary">
+                            Connect →
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Expert Card 3 - Good Match -->
+                <div class="expert-card">
+                    <div class="expert-header">
+                        <img src="https://via.placeholder.com/60" alt="James R." class="expert-avatar">
+                        <div class="expert-info">
+                            <div class="expert-name">
+                                James R.
+                                <span class="match-score score-good">84% Match</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="expert-headline">
+                        Retired Navy Captain, former Logistics Group Commander with Pacific Fleet operations expertise
+                    </p>
+                    <div class="expert-highlights">
+                        <div class="highlight-item">
+                            <span class="highlight-icon">✓</span>
+                            <span>Commanded Logistics Group WESTPAC</span>
+                        </div>
+                        <div class="highlight-item">
+                            <span class="highlight-icon">✓</span>
+                            <span>72-hour rapid deployment experience</span>
+                        </div>
+                        <div class="highlight-item">
+                            <span class="highlight-icon">✓</span>
+                            <span>Region 27 operational knowledge</span>
+                        </div>
+                    </div>
+                    <div class="expert-actions">
+                        <a href="#" class="btn btn-primary">
+                            Connect →
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Expert Card 4 - Good Match -->
+                <div class="expert-card">
+                    <div class="expert-header">
+                        <img src="https://via.placeholder.com/60" alt="Patricia L." class="expert-avatar">
+                        <div class="expert-info">
+                            <div class="expert-name">
+                                Patricia L.
+                                <span class="match-score score-good">81% Match</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="expert-headline">
+                        SES-level acquisition executive, led Navy's expeditionary contracting transformation
+                    </p>
+                    <div class="expert-highlights">
+                        <div class="highlight-item">
+                            <span class="highlight-icon">✓</span>
+                            <span>SES acquisition executive at NAVSEA</span>
+                        </div>
+                        <div class="highlight-item">
+                            <span class="highlight-icon">✓</span>
+                            <span>Architected multiple IDIQ vehicles >$10B</span>
+                        </div>
+                        <div class="highlight-item">
+                            <span class="highlight-icon">✓</span>
+                            <span>Expert in worldwide contracting mechanisms</span>
+                        </div>
+                    </div>
+                    <div class="expert-actions">
+                        <a href="#" class="btn btn-primary">
+                            Connect →
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Expert Card 5 - Partial Match -->
+                <div class="expert-card">
+                    <div class="expert-header">
+                        <img src="https://via.placeholder.com/60" alt="Robert K." class="expert-avatar">
+                        <div class="expert-info">
+                            <div class="expert-name">
+                                Robert K.
+                                <span class="match-score score-partial">72% Match</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="expert-headline">
+                        Former Naval Facilities Engineering Command director with base operations expertise
+                    </p>
+                    <div class="expert-highlights">
+                        <div class="highlight-item">
+                            <span class="highlight-icon">✓</span>
+                            <span>NAVFAC regional director experience</span>
+                        </div>
+                        <div class="highlight-item">
+                            <span class="highlight-icon">✓</span>
+                            <span>Base operations and life support services</span>
+                        </div>
+                        <div class="highlight-item">
+                            <span class="highlight-icon">✓</span>
+                            <span>Construction and facilities management</span>
+                        </div>
+                    </div>
+                    <div class="expert-actions">
+                        <a href="#" class="btn btn-primary">
+                            Connect →
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Expert Card 6 - Partial Match -->
+                <div class="expert-card">
+                    <div class="expert-header">
+                        <img src="https://via.placeholder.com/60" alt="Jennifer W." class="expert-avatar">
+                        <div class="expert-info">
+                            <div class="expert-name">
+                                Jennifer W.
+                                <span class="match-score score-partial">70% Match</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="expert-headline">
+                        Navy Medical Service Corps Captain with expeditionary medical services leadership
+                    </p>
+                    <div class="expert-highlights">
+                        <div class="highlight-item">
+                            <span class="highlight-icon">✓</span>
+                            <span>Led expeditionary medical battalions</span>
+                        </div>
+                        <div class="highlight-item">
+                            <span class="highlight-icon">✓</span>
+                            <span>Rapid deployment medical operations</span>
+                        </div>
+                        <div class="highlight-item">
+                            <span class="highlight-icon">✓</span>
+                            <span>Force health protection expertise</span>
+                        </div>
+                    </div>
+                    <div class="expert-actions">
+                        <a href="#" class="btn btn-primary">
+                            Connect →
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Load More Button -->
+            <div class="load-more">
+                <button class="btn btn-secondary" style="padding: 12px 32px;">
+                    Load More Experts (2 remaining)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Other Role Modal -->
+    <div class="other-role-modal" id="otherRoleModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Specify Custom Role</h3>
+                <p class="modal-description">Enter a specific role or expertise you're looking for that isn't listed in our standard categories.</p>
+            </div>
+            <input
+                type="text"
+                class="modal-input"
+                id="customRoleInput"
+                placeholder="e.g., Supply Chain Risk Management SME, DISA Compliance Expert, etc."
+                maxlength="100"
+            >
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeOtherRoleModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="searchCustomRole()">Search Experts</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Role group toggling
+        const roleGroups = document.querySelectorAll('.role-group');
+
+        roleGroups.forEach(group => {
+            const header = group.querySelector('.role-group-header');
+
+            header.addEventListener('click', function(e) {
+                // Close other groups
+                roleGroups.forEach(g => {
+                    if (g !== group) {
+                        g.classList.remove('active');
+                    }
+                });
+
+                // Toggle current group
+                group.classList.toggle('active');
+            });
+        });
+
+        // Tab switching within groups
+        const tabs = document.querySelectorAll('.role-tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.stopPropagation();
+
+                // Check if this is the "Other Role" option
+                if (this.classList.contains('other-role')) {
+                    openOtherRoleModal();
+                    return;
+                }
+
+                // Remove active from all tabs in this group
+                const groupTabs = tab.parentElement.querySelectorAll('.role-tab');
+                groupTabs.forEach(t => t.classList.remove('active'));
+
+                // Add active to clicked tab
+                this.classList.add('active');
+
+                // In a real implementation, this would fetch and display experts for the selected role
+                console.log('Loading experts for role:', this.textContent.trim());
+            });
+        });
+
+        // Other Role Modal Functions
+        function openOtherRoleModal() {
+            document.getElementById('otherRoleModal').classList.add('active');
+            document.getElementById('customRoleInput').focus();
+        }
+
+        function closeOtherRoleModal() {
+            document.getElementById('otherRoleModal').classList.remove('active');
+            document.getElementById('customRoleInput').value = '';
+        }
+
+        function searchCustomRole() {
+            const customRole = document.getElementById('customRoleInput').value.trim();
+            if (customRole) {
+                console.log('Searching for custom role:', customRole);
+
+                // Close modal and show loading state
+                closeOtherRoleModal();
+
+                // Add the custom role as a new tab (optional - for UI feedback)
+                const activeGroup = document.querySelector('.role-group.active');
+                if (activeGroup) {
+                    const tabsContainer = activeGroup.querySelector('.role-tabs');
+
+                    // Create new custom role tab
+                    const newTab = document.createElement('button');
+                    newTab.className = 'role-tab active';
+                    newTab.innerHTML = `
+                        ${customRole}
+                        <span class="role-tab-count">...</span>
+                    `;
+
+                    // Remove active from other tabs
+                    tabsContainer.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+
+                    // Insert before "Other Role" option
+                    const otherRoleTab = tabsContainer.querySelector('.other-role');
+                    tabsContainer.insertBefore(newTab, otherRoleTab);
+
+                    // Simulate API call
+                    setTimeout(() => {
+                        newTab.querySelector('.role-tab-count').textContent = '3';
+                    }, 1000);
+                }
+            }
+        }
+
+        // Close modal on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && document.getElementById('otherRoleModal').classList.contains('active')) {
+                closeOtherRoleModal();
+            }
+        });
+
+        // Close modal on backdrop click
+        document.getElementById('otherRoleModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeOtherRoleModal();
+            }
+        });
+
+        // Submit on enter key in input
+        document.getElementById('customRoleInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchCustomRole();
+            }
+        });
+
+        // Connect button click tracking
+        const connectButtons = document.querySelectorAll('.btn-primary');
+        connectButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                // Skip modal buttons
+                if (this.onclick) return;
+
+                e.preventDefault();
+                const trackedUrl = `https://app.onfrontiers.com/profile/[username]?utm_source=yourplatform&search_log_id=1234567890&user_id=user_12345`;
+                console.log('Navigating to:', trackedUrl);
+            });
+        });
+
+        // Click outside to close dropdowns
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.role-group') && !e.target.closest('.other-role-modal')) {
+                roleGroups.forEach(g => g.classList.remove('active'));
+            }
+        });
+    </script>
+</body>
+</html>
