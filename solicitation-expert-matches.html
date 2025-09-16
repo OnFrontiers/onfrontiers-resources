@@ -1205,10 +1205,12 @@
         function showLoadingSkeletons() {
             const expertsGrid = document.querySelector('.experts-grid');
             const loadMoreBtn = document.querySelector('.load-more');
+            const roleGroups = document.querySelector('.role-groups');
 
             // Hide existing content
             expertsGrid.style.display = 'none';
             loadMoreBtn.style.display = 'none';
+            roleGroups.style.display = 'none';
 
             // Create skeleton grid
             const skeletonGrid = document.createElement('div');
@@ -1229,6 +1231,7 @@
         function hideLoadingSkeletons() {
             const expertsGrid = document.querySelector('.experts-grid');
             const loadMoreBtn = document.querySelector('.load-more');
+            const roleGroups = document.querySelector('.role-groups');
             const skeletonGrid = document.querySelector('.skeleton-grid');
             const loadingMessage = document.querySelector('.loading-message');
 
@@ -1239,6 +1242,7 @@
             // Show real content
             expertsGrid.style.display = 'grid';
             loadMoreBtn.style.display = 'block';
+            roleGroups.style.display = 'flex';
         }
 
         function generateSkeletonCards(count) {
