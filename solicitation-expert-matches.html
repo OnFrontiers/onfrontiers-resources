@@ -1106,10 +1106,10 @@
                 showLoadingSkeletons();
                 console.log('Loading experts for role:', this.textContent.trim());
 
-                // Simulate API call delay
+                // Simulate API call delay (more realistic timing)
                 setTimeout(() => {
                     hideLoadingSkeletons();
-                }, 1000);
+                }, 2500);
             });
         });
 
@@ -1155,7 +1155,7 @@
                     // Simulate API call
                     setTimeout(() => {
                         newTab.querySelector('.role-tab-count').textContent = '3';
-                    }, 1000);
+                    }, 2500);
                 }
             }
         }
