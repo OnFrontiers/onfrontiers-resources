@@ -175,6 +175,15 @@
             background-clip: text;
             margin-bottom: 5px;
         }
+
+        /* PDF-specific styles for better contrast */
+        .pdf-mode .company-name {
+            background: none;
+            -webkit-background-clip: unset;
+            -webkit-text-fill-color: white;
+            background-clip: unset;
+            color: white;
+        }
         
         .tagline {
             font-size: 18px;
@@ -369,6 +378,14 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+        }
+
+        .pdf-mode .value-number {
+            background: none;
+            -webkit-background-clip: unset;
+            -webkit-text-fill-color: white;
+            background-clip: unset;
+            color: white;
         }
         
         .value-text {
@@ -734,6 +751,9 @@
                 const navHeader = document.querySelector('.nav-header');
                 navHeader.style.display = 'none';
 
+                // Add PDF mode class for better text contrast
+                document.body.classList.add('pdf-mode');
+
                 // Temporarily adjust body margin for PDF
                 document.body.style.marginTop = '0';
 
@@ -785,11 +805,18 @@
                 // Restore navigation and styling
                 navHeader.style.display = 'flex';
                 document.body.style.marginTop = '60px';
+                document.body.classList.remove('pdf-mode');
 
             } catch (error) {
                 console.error('PDF generation failed:', error);
                 alert('Failed to generate PDF. Please try again or contact support.');
             } finally {
+                // Restore navigation and styling (in case of error)
+                const navHeader = document.querySelector('.nav-header');
+                navHeader.style.display = 'flex';
+                document.body.style.marginTop = '60px';
+                document.body.classList.remove('pdf-mode');
+
                 // Restore button
                 button.disabled = false;
                 button.innerHTML = originalText;
