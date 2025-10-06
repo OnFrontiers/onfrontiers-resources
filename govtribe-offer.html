@@ -18,6 +18,11 @@
     <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon.png">
     <link rel="manifest" href="site.webmanifest">
     <meta name="theme-color" content="#28465A">
+
+    <!-- PDF Generation Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <style>
         * {
             margin: 0;
@@ -72,6 +77,39 @@
 
         .back-link:hover {
             background: rgba(255,255,255,0.1);
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .pdf-btn {
+            background: #28BEAF;
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pdf-btn:hover {
+            background: #2299a3;
+            transform: translateY(-1px);
+        }
+
+        .pdf-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
         }
 
         @media screen {
@@ -475,6 +513,16 @@
             .price {
                 font-size: 36px;
             }
+
+            .nav-actions {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .pdf-btn {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
         }
 
         @media print {
@@ -500,7 +548,12 @@
             <img src="assets/OnFrontiers-Logo-White.png" alt="OnFrontiers" loading="lazy">
             <span class="nav-logo-text">Resources</span>
         </div>
-        <a href="index.html" class="back-link">← Back to Resources Hub</a>
+        <div class="nav-actions">
+            <button class="pdf-btn" onclick="downloadPDF()" id="pdfBtn">
+                📄 Download PDF
+            </button>
+            <a href="index.html" class="back-link">← Back to Resources Hub</a>
+        </div>
     </div>
     <div class="page-container">
         <div class="content-wrapper">
@@ -664,5 +717,92 @@
             </div>
         </div>
     </div>
+
+    <script>
+        async function downloadPDF() {
+            const button = document.getElementById('pdfBtn');
+            const originalText = button.innerHTML;
+
+            // Show loading state
+            button.disabled = true;
+            button.innerHTML = '⏳ Generating PDF...';
+
+            try {
+                const { jsPDF } = window.jspdf;
+
+                // Hide navigation for PDF
+                const navHeader = document.querySelector('.nav-header');
+                navHeader.style.display = 'none';
+
+                // Temporarily adjust body margin for PDF
+                document.body.style.marginTop = '0';
+
+                // Create canvas from the page content
+                const element = document.querySelector('.page-container');
+                const canvas = await html2canvas(element, {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: false,
+                    backgroundColor: '#f8f9fa',
+                    width: 1200,
+                    height: element.scrollHeight
+                });
+
+                // Create PDF
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+
+                // Calculate dimensions to fit A4
+                const imgWidth = 210; // A4 width in mm
+                const pageHeight = 297; // A4 height in mm
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                let heightLeft = imgHeight;
+                let position = 0;
+
+                // Add first page
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+
+                // Add additional pages if needed
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+
+                // Generate filename with current date
+                const today = new Date().toISOString().split('T')[0];
+                const filename = `OnFrontiers-GovTribe-Offer-${today}.pdf`;
+
+                // Download the PDF
+                pdf.save(filename);
+
+                // Restore navigation and styling
+                navHeader.style.display = 'flex';
+                document.body.style.marginTop = '60px';
+
+            } catch (error) {
+                console.error('PDF generation failed:', error);
+                alert('Failed to generate PDF. Please try again or contact support.');
+            } finally {
+                // Restore button
+                button.disabled = false;
+                button.innerHTML = originalText;
+            }
+        }
+
+        // Optional: Add keyboard shortcut for PDF download
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'P') {
+                e.preventDefault();
+                downloadPDF();
+            }
+        });
+    </script>
 </body>
 </html>
