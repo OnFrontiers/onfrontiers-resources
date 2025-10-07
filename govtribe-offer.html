@@ -121,7 +121,7 @@
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            background: linear-gradient(135deg, #2c5282 0%, #1a365d 100%);
             color: white;
             text-decoration: none;
             padding: 16px 32px;
@@ -129,15 +129,15 @@
             font-size: 18px;
             font-weight: 600;
             transition: all 0.3s;
-            box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+            box-shadow: 0 4px 12px rgba(44, 82, 130, 0.3);
             border: none;
             cursor: pointer;
         }
 
         .cta-button:hover {
-            background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+            background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4);
+            box-shadow: 0 6px 20px rgba(44, 82, 130, 0.4);
         }
 
         .cta-button:active {
@@ -659,14 +659,14 @@
 
             <div class="primary-cta">
                 <a href="#" class="cta-button" onclick="alert('Stripe checkout URL needed'); return false;">
-                    🚀 Start Your GovTribe Partnership
+                    🚀 Claim Special Offer
                 </a>
             </div>
             
             <div class="main-content">
                 <div class="pricing-section">
                     <div class="pricing-header">
-                        <div class="plan-name">FLEXIBLE PRICING OPTIONS</div>
+                        <div class="plan-name">FLEXIBLE SMB PRICING MODEL</div>
                         <div style="font-size: 16px; color: #718096; margin-bottom: 15px;">
                             <div>Monthly Plan: $300/month per seat</div>
                             <div style="margin-top: 5px;">
@@ -778,6 +778,9 @@
                 <div class="cta-text">Start winning more government contracts today</div>
                 <div class="contact-info">
                     <div class="contact-item">
+                        <a href="#" onclick="alert('Stripe checkout URL needed'); return false;" style="color: white; text-decoration: none; font-weight: 600; background: rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 6px; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">🚀 Get Started</a>
+                    </div>
+                    <div class="contact-item">
                         <span>📞</span>
                         <a href="https://meetings.hubspot.com/brian-caouette/intro" target="_blank" rel="noopener noreferrer" style="color: white; text-decoration: none; font-weight: 600;">Talk to Sales</a>
                     </div>
@@ -863,6 +866,34 @@
 
                 // Add single page with properly fitted content
                 pdf.addImage(imgData, 'PNG', xOffset, yOffset, imgWidth, imgHeight);
+
+                // Add clickable links to preserve hyperlinks
+                // Calculate link positions relative to PDF coordinates
+                const scaleX = imgWidth / canvas.width;
+                const scaleY = imgHeight / canvas.height;
+
+                // Get all links in the page
+                const links = element.querySelectorAll('a[href]');
+                links.forEach(link => {
+                    const rect = link.getBoundingClientRect();
+                    const containerRect = element.getBoundingClientRect();
+
+                    // Calculate position relative to the container
+                    const relativeX = rect.left - containerRect.left;
+                    const relativeY = rect.top - containerRect.top;
+
+                    // Convert to PDF coordinates
+                    const pdfX = xOffset + (relativeX * scaleX);
+                    const pdfY = yOffset + (relativeY * scaleY);
+                    const pdfWidth = rect.width * scaleX;
+                    const pdfHeight = rect.height * scaleY;
+
+                    // Add link annotation
+                    const href = link.getAttribute('href');
+                    if (href && (href.startsWith('http') || href.startsWith('https'))) {
+                        pdf.link(pdfX, pdfY, pdfWidth, pdfHeight, { url: href });
+                    }
+                });
 
                 // Generate filename with current date
                 const today = new Date().toISOString().split('T')[0];
