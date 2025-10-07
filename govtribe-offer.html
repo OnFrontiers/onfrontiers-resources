@@ -180,9 +180,9 @@
         .pdf-mode .company-name {
             background: none;
             -webkit-background-clip: unset;
-            -webkit-text-fill-color: white;
+            -webkit-text-fill-color: #1a365d;
             background-clip: unset;
-            color: white;
+            color: #1a365d;
         }
         
         .tagline {
@@ -383,9 +383,9 @@
         .pdf-mode .value-number {
             background: none;
             -webkit-background-clip: unset;
-            -webkit-text-fill-color: white;
+            -webkit-text-fill-color: #1a365d;
             background-clip: unset;
-            color: white;
+            color: #1a365d;
         }
         
         .value-text {
@@ -765,7 +765,9 @@
                     allowTaint: false,
                     backgroundColor: '#f8f9fa',
                     width: 1200,
-                    height: element.scrollHeight
+                    height: element.scrollHeight,
+                    scrollX: 0,
+                    scrollY: 0
                 });
 
                 // Create PDF
@@ -776,23 +778,26 @@
                     format: 'a4'
                 });
 
-                // Calculate dimensions to fit A4
-                const imgWidth = 210; // A4 width in mm
+                // Calculate dimensions to fit A4 with proper margins
+                const pageWidth = 210; // A4 width in mm
                 const pageHeight = 297; // A4 height in mm
+                const margin = 10; // 10mm margins
+                const imgWidth = pageWidth - (margin * 2);
                 const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
                 let heightLeft = imgHeight;
                 let position = 0;
 
                 // Add first page
-                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                heightLeft -= pageHeight;
+                pdf.addImage(imgData, 'PNG', margin, margin + position, imgWidth, imgHeight);
+                heightLeft -= (pageHeight - margin * 2);
 
                 // Add additional pages if needed
                 while (heightLeft >= 0) {
                     position = heightLeft - imgHeight;
                     pdf.addPage();
-                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                    heightLeft -= pageHeight;
+                    pdf.addImage(imgData, 'PNG', margin, margin + position, imgWidth, imgHeight);
+                    heightLeft -= (pageHeight - margin * 2);
                 }
 
                 // Generate filename with current date
