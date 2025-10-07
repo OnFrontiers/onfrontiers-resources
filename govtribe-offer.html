@@ -283,8 +283,10 @@
         .pricing-item {
             display: flex;
             justify-content: space-between;
+            align-items: flex-start;
             padding: 8px 0;
             border-bottom: 1px solid #e2e8f0;
+            gap: 10px;
         }
         
         .pricing-item:last-child {
@@ -300,6 +302,8 @@
             font-weight: 600;
             color: #2d3748;
             font-size: 14px;
+            text-align: right;
+            flex-shrink: 0;
         }
         
         .features-section {
@@ -616,16 +620,19 @@
             <div class="main-content">
                 <div class="pricing-section">
                     <div class="pricing-header">
-                        <div class="plan-name">AFFORDABLE ENTRY POINT</div>
+                        <div class="plan-name">FLEXIBLE PRICING OPTIONS</div>
                         <div class="price">$160<span class="price-unit">/month</span></div>
-                        <div class="billing-note">Billed annually after 30-day trial</div>
+                        <div class="billing-note">GovTribe Special Annual Rate</div>
+                        <div style="font-size: 14px; color: #718096; margin-top: 8px;">
+                            Monthly: $300/mo • Annual: $240/mo • <strong>GovTribe: $160/mo</strong>
+                        </div>
                     </div>
                     
                     <div class="pricing-details">
                         <div class="section-label">NO PRE-PAID CREDIT PURCHASE</div>
                         <div class="pricing-item">
-                            <span class="pricing-label">Expert rates from</span>
-                            <span class="pricing-value">$200/hr</span>
+                            <span class="pricing-label">Expert rates average</span>
+                            <span class="pricing-value">$250/hr</span>
                         </div>
                         <div class="pricing-item">
                             <span class="pricing-label">Self-service matching</span>
@@ -635,10 +642,10 @@
                             <span class="pricing-label">Custom matching</span>
                             <span class="pricing-value">$350/connection</span>
                         </div>
-                        <div class="section-label">PAY AS YOU GO</div>
+                        <div class="section-label">BILLING STRUCTURE</div>
                         <div class="pricing-item">
                             <span class="pricing-label">Billing model</span>
-                            <span class="pricing-value">Monthly invoice</span>
+                            <span class="pricing-value">Monthly/annual in advance (platform fee) + as incurred (all other fees)</span>
                         </div>
                         <div class="pricing-item">
                             <span class="pricing-label">No minimums</span>
@@ -719,16 +726,12 @@
                 <div class="cta-text">Start winning more government contracts today</div>
                 <div class="contact-info">
                     <div class="contact-item">
-                        <span>📧</span>
-                        <span>sales@onfrontiers.com</span>
-                    </div>
-                    <div class="contact-item">
                         <span>📞</span>
-                        <span>Contact via email</span>
+                        <a href="https://meetings.hubspot.com/brian-caouette/intro" target="_blank" rel="noopener noreferrer" style="color: white; text-decoration: none; font-weight: 600;">Talk to Sales</a>
                     </div>
                     <div class="contact-item">
                         <span>🌐</span>
-                        <span>onfrontiers.com/govtribe</span>
+                        <a href="https://www.onfrontiers.com/govtribe" target="_blank" rel="noopener noreferrer" style="color: white; text-decoration: none;">onfrontiers.com/govtribe</a>
                     </div>
                 </div>
             </div>
