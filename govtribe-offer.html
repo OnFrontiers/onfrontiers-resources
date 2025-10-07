@@ -770,56 +770,44 @@
                     scrollY: 0
                 });
 
-                // Create PDF
+                // Create PDF with US Letter size (8.5" x 11")
                 const imgData = canvas.toDataURL('image/png');
                 const pdf = new jsPDF({
                     orientation: 'portrait',
-                    unit: 'mm',
-                    format: 'a4'
+                    unit: 'in',
+                    format: 'letter'
                 });
 
-                // Calculate dimensions for 8.27" x 11.69" (A4) with proper margins
-                const pageWidth = 210; // A4 width in mm (8.27 inches)
-                const pageHeight = 297; // A4 height in mm (11.69 inches)
-                const margin = 10; // 10mm margins
+                // Simple approach: fit content to full page with small margins
+                const pageWidth = 8.5;  // Letter width in inches
+                const pageHeight = 11;  // Letter height in inches
+                const margin = 0.25;   // Small margins in inches
+
                 const contentWidth = pageWidth - (margin * 2);
                 const contentHeight = pageHeight - (margin * 2);
 
-                // Calculate image dimensions to fill the page properly
-                const imgWidth = contentWidth;
-                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                // Calculate image size to fit the content area
+                const imgAspectRatio = canvas.width / canvas.height;
+                const contentAspectRatio = contentWidth / contentHeight;
 
-                // Scale the image to fit the full page height if it's shorter
-                const scaleToFitHeight = contentHeight / imgHeight;
-                let finalWidth = imgWidth;
-                let finalHeight = imgHeight;
+                let imgWidth, imgHeight;
 
-                if (scaleToFitHeight > 1) {
-                    // If content is shorter than page, scale it up to fit
-                    finalHeight = contentHeight;
-                    finalWidth = imgWidth * scaleToFitHeight;
-
-                    // Center horizontally if scaled width is less than content width
-                    if (finalWidth < contentWidth) {
-                        finalWidth = contentWidth;
-                        finalHeight = (canvas.height * finalWidth) / canvas.width;
-                    }
+                if (imgAspectRatio > contentAspectRatio) {
+                    // Image is wider - fit to width
+                    imgWidth = contentWidth;
+                    imgHeight = contentWidth / imgAspectRatio;
+                } else {
+                    // Image is taller - fit to height
+                    imgHeight = contentHeight;
+                    imgWidth = contentHeight * imgAspectRatio;
                 }
 
-                let heightLeft = finalHeight;
-                let position = 0;
+                // Center the image on the page
+                const xOffset = margin + (contentWidth - imgWidth) / 2;
+                const yOffset = margin + (contentHeight - imgHeight) / 2;
 
-                // Add first page
-                pdf.addImage(imgData, 'PNG', margin, margin + position, finalWidth, finalHeight);
-                heightLeft -= contentHeight;
-
-                // Add additional pages if needed
-                while (heightLeft >= 0) {
-                    position = heightLeft - finalHeight;
-                    pdf.addPage();
-                    pdf.addImage(imgData, 'PNG', margin, margin + position, finalWidth, finalHeight);
-                    heightLeft -= contentHeight;
-                }
+                // Add single page with properly fitted content
+                pdf.addImage(imgData, 'PNG', xOffset, yOffset, imgWidth, imgHeight);
 
                 // Generate filename with current date
                 const today = new Date().toISOString().split('T')[0];
