@@ -22,6 +22,7 @@
     <!-- PDF Generation Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
         * {
@@ -803,8 +804,6 @@
             button.innerHTML = '⏳ Generating PDF...';
 
             try {
-                const { jsPDF } = window.jspdf;
-
                 // Hide navigation for PDF
                 const navHeader = document.querySelector('.nav-header');
                 navHeader.style.display = 'none';
@@ -815,92 +814,32 @@
                 // Temporarily adjust body margin for PDF
                 document.body.style.marginTop = '0';
 
-                // Create canvas from the page content
+                // Get the content element
                 const element = document.querySelector('.page-container');
-                const canvas = await html2canvas(element, {
-                    scale: 2,
-                    useCORS: true,
-                    allowTaint: false,
-                    backgroundColor: '#f8f9fa',
-                    width: 1200,
-                    height: element.scrollHeight,
-                    scrollX: 0,
-                    scrollY: 0
-                });
 
-                // Create PDF with US Letter size (8.5" x 11")
-                const imgData = canvas.toDataURL('image/png');
-                const pdf = new jsPDF({
-                    orientation: 'portrait',
-                    unit: 'in',
-                    format: 'letter'
-                });
+                // Configure html2pdf options
+                const opt = {
+                    margin: 0.25,
+                    filename: `OnFrontiers-GovTribe-Offer-${new Date().toISOString().split('T')[0]}.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: {
+                        scale: 2,
+                        useCORS: true,
+                        allowTaint: false,
+                        backgroundColor: '#f8f9fa',
+                        scrollX: 0,
+                        scrollY: 0
+                    },
+                    jsPDF: {
+                        unit: 'in',
+                        format: 'letter',
+                        orientation: 'portrait'
+                    },
+                    enableLinks: true  // This preserves hyperlinks
+                };
 
-                // Simple approach: fit content to full page with small margins
-                const pageWidth = 8.5;  // Letter width in inches
-                const pageHeight = 11;  // Letter height in inches
-                const margin = 0.25;   // Small margins in inches
-
-                const contentWidth = pageWidth - (margin * 2);
-                const contentHeight = pageHeight - (margin * 2);
-
-                // Calculate image size to fit the content area
-                const imgAspectRatio = canvas.width / canvas.height;
-                const contentAspectRatio = contentWidth / contentHeight;
-
-                let imgWidth, imgHeight;
-
-                if (imgAspectRatio > contentAspectRatio) {
-                    // Image is wider - fit to width
-                    imgWidth = contentWidth;
-                    imgHeight = contentWidth / imgAspectRatio;
-                } else {
-                    // Image is taller - fit to height
-                    imgHeight = contentHeight;
-                    imgWidth = contentHeight * imgAspectRatio;
-                }
-
-                // Center the image on the page
-                const xOffset = margin + (contentWidth - imgWidth) / 2;
-                const yOffset = margin + (contentHeight - imgHeight) / 2;
-
-                // Add single page with properly fitted content
-                pdf.addImage(imgData, 'PNG', xOffset, yOffset, imgWidth, imgHeight);
-
-                // Add clickable links to preserve hyperlinks
-                // Calculate link positions relative to PDF coordinates
-                const scaleX = imgWidth / canvas.width;
-                const scaleY = imgHeight / canvas.height;
-
-                // Get all links in the page
-                const links = element.querySelectorAll('a[href]');
-                links.forEach(link => {
-                    const rect = link.getBoundingClientRect();
-                    const containerRect = element.getBoundingClientRect();
-
-                    // Calculate position relative to the container
-                    const relativeX = rect.left - containerRect.left;
-                    const relativeY = rect.top - containerRect.top;
-
-                    // Convert to PDF coordinates
-                    const pdfX = xOffset + (relativeX * scaleX);
-                    const pdfY = yOffset + (relativeY * scaleY);
-                    const pdfWidth = rect.width * scaleX;
-                    const pdfHeight = rect.height * scaleY;
-
-                    // Add link annotation
-                    const href = link.getAttribute('href');
-                    if (href && (href.startsWith('http') || href.startsWith('https'))) {
-                        pdf.link(pdfX, pdfY, pdfWidth, pdfHeight, { url: href });
-                    }
-                });
-
-                // Generate filename with current date
-                const today = new Date().toISOString().split('T')[0];
-                const filename = `OnFrontiers-GovTribe-Offer-${today}.pdf`;
-
-                // Download the PDF
-                pdf.save(filename);
+                // Generate PDF using html2pdf
+                await html2pdf().from(element).set(opt).save();
 
                 // Restore navigation and styling
                 navHeader.style.display = 'flex';
