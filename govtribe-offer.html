@@ -794,6 +794,30 @@
     </div>
 
     <!-- React Checkout Component -->
+    <!--
+    SETUP INSTRUCTIONS:
+    ===================
+    To make the checkout work, you need to create Stripe Payment Links:
+
+    1. Go to your Stripe Dashboard: https://dashboard.stripe.com/
+    2. Navigate to: Products > [Select your product] > Payment links (or go to Payment links in sidebar)
+    3. Click "Create payment link" button
+    4. Configure Monthly Payment Link:
+       - Select your monthly price (price_1SI9mtAE1fARVUOGEa05tboF)
+       - Enable "Adjust quantity" option
+       - Set success URL: https://resources.onfrontiers.com/success
+       - Set cancel URL: https://resources.onfrontiers.com/govtribe-offer
+       - Click "Create link"
+       - Copy the link (looks like: https://buy.stripe.com/xxxxx)
+    5. Repeat step 4 for Annual Payment Link using annual price (price_1SI9oOAE1fARVUOGj7ov4n22)
+    6. Replace the placeholder URLs below in STRIPE_CONFIG.paymentLinks with your actual links
+    7. Create a Promotion Code in Stripe:
+       - Go to: Products > Coupons > Create coupon (33% off, first payment)
+       - Then go to: Products > Promotion codes > Create promotion code
+       - Set code to: GTRIBEOCT25
+       - Attach to the 33% coupon
+       - Ensure it's active
+    -->
     <script type="text/babel">
         const { useState, useEffect } = React;
 
@@ -803,11 +827,13 @@
           const [promoCode, setPromoCode] = useState('');
           const [loading, setLoading] = useState(false);
 
-          // Stripe Configuration - YOUR ACTUAL IDS
+          // Stripe Configuration - Payment Links (create these in your Stripe Dashboard)
+          // To create Payment Links: Dashboard > Products > [Your Product] > Payment Links
           const STRIPE_CONFIG = {
-            priceIds: {
-              monthly: 'price_1SI9mtAE1fARVUOGEa05tboF',
-              annual: 'price_1SI9oOAE1fARVUOGj7ov4n22',
+            paymentLinks: {
+              // REPLACE THESE WITH YOUR ACTUAL STRIPE PAYMENT LINK URLs
+              monthly: 'https://buy.stripe.com/YOUR_MONTHLY_PAYMENT_LINK',
+              annual: 'https://buy.stripe.com/YOUR_ANNUAL_PAYMENT_LINK',
             },
             promotionCode: 'GTRIBEOCT25', // The actual code customers use
             prices: {
@@ -841,25 +867,21 @@
             setLoading(true);
 
             try {
-              const priceId = STRIPE_CONFIG.priceIds[billingPeriod];
+              // Get the payment link for the selected billing period
+              let paymentLink = STRIPE_CONFIG.paymentLinks[billingPeriod];
 
-              // Build Stripe Checkout URL with parameters
-              const params = new URLSearchParams({
-                'client_reference_id': 'customer_' + Date.now(),
-                'line_items[0][price]': priceId,
-                'line_items[0][quantity]': seats.toString(),
-                'mode': 'subscription',
-                'success_url': `${window.location.origin}/success?session_id={CHECKOUT_SESSION_ID}`,
-                'cancel_url': `${window.location.origin}/govtribe-offer.html`,
-              });
+              // Build URL with query parameters for quantity and promo code
+              const url = new URL(paymentLink);
+              url.searchParams.set('quantity', seats.toString());
+              url.searchParams.set('client_reference_id', 'govtribe_' + Date.now());
 
               // Only add promo code if annual plan is selected AND promo code exists
               if (promoCode && billingPeriod === 'annual') {
-                params.append('discounts[0][promotion_code]', promoCode);
+                url.searchParams.set('prefilled_promo_code', promoCode);
               }
 
-              // Redirect to Stripe Checkout
-              window.location.href = `https://checkout.stripe.com/c/pay/${params.toString()}`;
+              // Redirect to Stripe Payment Link
+              window.location.href = url.toString();
             } catch (error) {
               console.error('Checkout error:', error);
               setLoading(false);
