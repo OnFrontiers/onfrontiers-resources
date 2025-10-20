@@ -69,7 +69,7 @@ exports.handler = async (event, context) => {
       success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/govtribe-offer`,
       client_reference_id: `govtribe_${plan}_${quantity}_${Date.now()}`,
-      // Collect customer information
+      // Require customer information
       billing_address_collection: 'required',
       phone_number_collection: {
         enabled: true
@@ -78,9 +78,9 @@ exports.handler = async (event, context) => {
       automatic_tax: {
         enabled: true
       },
-      // Collect customer details
+      // Always create customer record
       customer_creation: 'always',
-      // Allow customers to enter company name
+      // Collect company name as custom field
       custom_fields: [
         {
           key: 'company',
@@ -117,12 +117,16 @@ exports.handler = async (event, context) => {
 
   } catch (error) {
     console.error('Stripe checkout error:', error);
+    console.error('Error details:', JSON.stringify(error, null, 2));
     return {
       statusCode: 500,
       headers,
       body: JSON.stringify({
         error: 'Failed to create checkout session',
-        message: error.message
+        message: error.message,
+        type: error.type,
+        code: error.code,
+        details: error.raw?.message || error.toString()
       })
     };
   }
