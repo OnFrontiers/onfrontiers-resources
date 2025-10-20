@@ -1,0 +1,8 @@
+{
+  "name": "onfrontiers-resources",
+  "version": "1.0.0",
+  "description": "OnFrontiers Resources Hub with Stripe Checkout",
+  "dependencies": {
+    "stripe": "^14.10.0"
+  }
+}

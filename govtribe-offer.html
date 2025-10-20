@@ -975,17 +975,16 @@
         const CheckoutModal = ({ isOpen, onClose }) => {
           const [billingPeriod, setBillingPeriod] = useState('annual');
           const [seats, setSeats] = useState(1);
+          const [loading, setLoading] = useState(false);
+          const [error, setError] = useState(null);
 
           const PRICING = {
             monthly: {
-              pricePerSeat: 300,
-              paymentLink: 'https://pay.onfrontiers.com/b/cNidR8gy77Bz06v4Ms7kc03'
+              pricePerSeat: 300
             },
             annual: {
               pricePerSeat: 2880,
-              monthlyEquivalent: 240,
-              paymentLink: 'https://pay.onfrontiers.com/b/bJe28q2Hhf4106v4Ms7kc02',
-              promoCode: 'GTRIBEOCT25'
+              monthlyEquivalent: 240
             }
           };
 
@@ -993,16 +992,38 @@
             return PRICING[billingPeriod].pricePerSeat * seats;
           };
 
-          const handleCheckout = () => {
-            const config = PRICING[billingPeriod];
-            const url = new URL(config.paymentLink);
-            url.searchParams.set('quantity', seats.toString());
+          const handleCheckout = async () => {
+            setLoading(true);
+            setError(null);
 
-            if (billingPeriod === 'annual' && config.promoCode) {
-              url.searchParams.set('prefilled_promo_code', config.promoCode);
+            try {
+              // Call Netlify serverless function
+              const response = await fetch('/.netlify/functions/create-checkout', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  plan: billingPeriod,
+                  seats: seats,
+                  promoCode: billingPeriod === 'annual' ? 'GTRIBEOCT25' : null
+                })
+              });
+
+              const data = await response.json();
+
+              if (!response.ok) {
+                throw new Error(data.error || 'Failed to create checkout session');
+              }
+
+              // Redirect to Stripe Checkout
+              window.location.href = data.url;
+
+            } catch (err) {
+              console.error('Checkout error:', err);
+              setError(err.message || 'Something went wrong. Please try again.');
+              setLoading(false);
             }
-
-            window.open(url.toString(), '_blank');
           };
 
           if (!isOpen) return null;
@@ -1244,26 +1265,47 @@
                     </div>
                   </div>
 
+                  {/* Error Message */}
+                  {error && (
+                    <div style={{
+                      background: '#fee',
+                      color: '#c33',
+                      padding: '12px',
+                      borderRadius: '8px',
+                      marginBottom: '16px',
+                      fontSize: '14px',
+                      textAlign: 'center'
+                    }}>
+                      {error}
+                    </div>
+                  )}
+
                   {/* Checkout Button */}
                   <button
                     onClick={handleCheckout}
+                    disabled={loading}
                     style={{
                       width: '100%',
                       padding: '16px',
-                      background: 'linear-gradient(135deg, #2c5282 0%, #1a365d 100%)',
+                      background: loading ? '#999' : 'linear-gradient(135deg, #2c5282 0%, #1a365d 100%)',
                       color: 'white',
                       border: 'none',
                       borderRadius: '10px',
                       fontSize: '18px',
                       fontWeight: 'bold',
-                      cursor: 'pointer',
+                      cursor: loading ? 'not-allowed' : 'pointer',
                       transition: 'all 0.2s',
-                      boxShadow: '0 4px 6px rgba(44, 82, 130, 0.3)'
+                      boxShadow: loading ? 'none' : '0 4px 6px rgba(44, 82, 130, 0.3)',
+                      opacity: loading ? 0.7 : 1
                     }}
-                    onMouseOver={(e) => e.target.style.transform = 'translateY(-2px)'}
-                    onMouseOut={(e) => e.target.style.transform = 'translateY(0)'}
+                    onMouseOver={(e) => {
+                      if (!loading) e.target.style.transform = 'translateY(-2px)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.target.style.transform = 'translateY(0)';
+                    }}
                   >
-                    🚀 Proceed to Checkout
+                    {loading ? '⏳ Creating checkout session...' : '🚀 Proceed to Checkout'}
                   </button>
 
                   <p style={{
