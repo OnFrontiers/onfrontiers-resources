@@ -68,7 +68,30 @@ exports.handler = async (event, context) => {
       ],
       success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/govtribe-offer`,
-      client_reference_id: `govtribe_${plan}_${quantity}_${Date.now()}`
+      client_reference_id: `govtribe_${plan}_${quantity}_${Date.now()}`,
+      // Collect customer information
+      billing_address_collection: 'required',
+      phone_number_collection: {
+        enabled: true
+      },
+      // Enable automatic tax calculation
+      automatic_tax: {
+        enabled: true
+      },
+      // Collect customer details
+      customer_creation: 'always',
+      // Allow customers to enter company name
+      custom_fields: [
+        {
+          key: 'company',
+          label: {
+            type: 'custom',
+            custom: 'Company Name'
+          },
+          type: 'text',
+          optional: false
+        }
+      ]
     };
 
     // Add promo code if provided and plan is annual
