@@ -78,8 +78,6 @@ exports.handler = async (event, context) => {
       automatic_tax: {
         enabled: true
       },
-      // Always create customer record
-      customer_creation: 'always',
       // Collect company name as custom field
       custom_fields: [
         {
