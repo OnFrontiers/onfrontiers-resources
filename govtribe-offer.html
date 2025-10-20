@@ -24,6 +24,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
+    <!-- React and ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
     <style>
         * {
             margin: 0;
@@ -599,6 +604,99 @@
                 border-radius: 0;
             }
         }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 20px;
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid #E9ECEF;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2c5282;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #666;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        @media (max-width: 640px) {
+            .modal-content {
+                max-height: 95vh;
+                border-radius: 12px;
+            }
+
+            .modal-header, .modal-body {
+                padding: 20px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -659,10 +757,13 @@
             </div>
 
             <div class="primary-cta">
-                <a href="https://pay.onfrontiers.com/b/bJe28q2Hhf4106v4Ms7kc02?prefilled_promo_code=GTRIBEOCT25" class="cta-button" target="_blank" rel="noopener noreferrer">
-                    🚀 Claim Special Offer
-                </a>
+                <button class="cta-button" onclick="window.openCheckoutModal()">
+                    🚀 Get Started
+                </button>
             </div>
+
+            <!-- Modal Container -->
+            <div id="checkout-modal-root"></div>
             
             <div class="main-content">
                 <div class="pricing-section">
@@ -775,7 +876,7 @@
                 <div class="cta-text">Start winning more government contracts today</div>
                 <div class="contact-info">
                     <div class="contact-item">
-                        <a href="https://pay.onfrontiers.com/b/bJe28q2Hhf4106v4Ms7kc02?prefilled_promo_code=GTRIBEOCT25" target="_blank" rel="noopener noreferrer" style="color: white; text-decoration: none; font-weight: 600; background: rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 6px; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">🚀 Get Started</a>
+                        <button onclick="window.openCheckoutModal()" style="color: white; text-decoration: none; font-weight: 600; background: rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 6px; transition: all 0.2s; border: none; cursor: pointer; font-size: inherit; font-family: inherit;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">🚀 Get Started</button>
                     </div>
                     <div class="contact-item">
                         <span>📞</span>
@@ -865,6 +966,335 @@
                 downloadPDF();
             }
         });
+    </script>
+
+    <!-- Checkout Modal Component -->
+    <script type="text/babel">
+        const { useState } = React;
+
+        const CheckoutModal = ({ isOpen, onClose }) => {
+          const [billingPeriod, setBillingPeriod] = useState('annual');
+          const [seats, setSeats] = useState(1);
+
+          const PRICING = {
+            monthly: {
+              pricePerSeat: 300,
+              paymentLink: 'https://pay.onfrontiers.com/b/cNidR8gy77Bz06v4Ms7kc03'
+            },
+            annual: {
+              pricePerSeat: 2880,
+              monthlyEquivalent: 240,
+              paymentLink: 'https://pay.onfrontiers.com/b/bJe28q2Hhf4106v4Ms7kc02',
+              promoCode: 'GTRIBEOCT25'
+            }
+          };
+
+          const calculateTotal = () => {
+            return PRICING[billingPeriod].pricePerSeat * seats;
+          };
+
+          const handleCheckout = () => {
+            const config = PRICING[billingPeriod];
+            const url = new URL(config.paymentLink);
+            url.searchParams.set('quantity', seats.toString());
+
+            if (billingPeriod === 'annual' && config.promoCode) {
+              url.searchParams.set('prefilled_promo_code', config.promoCode);
+            }
+
+            window.open(url.toString(), '_blank');
+          };
+
+          if (!isOpen) return null;
+
+          return (
+            <div className="modal-overlay" onClick={onClose}>
+              <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                <div className="modal-header">
+                  <div className="modal-title">Choose Your Plan</div>
+                  <button className="modal-close" onClick={onClose}>×</button>
+                </div>
+                <div className="modal-body">
+
+                  {/* GovTribe Promo Banner - Only for Annual */}
+                  {billingPeriod === 'annual' && (
+                    <div style={{
+                      background: 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)',
+                      color: 'white',
+                      padding: '20px',
+                      borderRadius: '12px',
+                      marginBottom: '24px',
+                      boxShadow: '0 4px 12px rgba(72, 187, 120, 0.2)'
+                    }}>
+                      <div style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span>🎉</span>
+                        <span>GovTribe Exclusive Offer</span>
+                      </div>
+                      <div style={{ fontSize: '14px', lineHeight: '1.6', opacity: 0.95 }}>
+                        <div style={{ marginBottom: '8px' }}>✓ <strong>33% discount on first year</strong></div>
+                        <div style={{ marginBottom: '8px' }}>✓ <strong>Free initial custom match</strong></div>
+                        <div>✓ <strong>Free capture strategy consultation</strong></div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Billing Period Selector */}
+                  <div style={{ marginBottom: '24px' }}>
+                    <h3 style={{ marginBottom: '12px', color: '#2C3E50', fontSize: '16px', fontWeight: '600' }}>
+                      Select Billing Period
+                    </h3>
+
+                    {/* Monthly Option */}
+                    <label style={{
+                      display: 'block',
+                      padding: '16px',
+                      border: billingPeriod === 'monthly' ? '2px solid #2c5282' : '2px solid #E9ECEF',
+                      borderRadius: '10px',
+                      marginBottom: '12px',
+                      cursor: 'pointer',
+                      background: billingPeriod === 'monthly' ? '#F0F8FF' : 'white',
+                      transition: 'all 0.2s'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <input
+                          type="radio"
+                          value="monthly"
+                          checked={billingPeriod === 'monthly'}
+                          onChange={(e) => setBillingPeriod(e.target.value)}
+                          style={{ marginRight: '12px', width: '18px', height: '18px', cursor: 'pointer' }}
+                        />
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontWeight: 'bold', fontSize: '16px', marginBottom: '4px' }}>
+                            Monthly
+                          </div>
+                          <div style={{ color: '#666', fontSize: '14px' }}>
+                            $300/month per seat
+                          </div>
+                        </div>
+                      </div>
+                    </label>
+
+                    {/* Annual Option */}
+                    <label style={{
+                      display: 'block',
+                      padding: '16px',
+                      border: billingPeriod === 'annual' ? '2px solid #2c5282' : '2px solid #E9ECEF',
+                      borderRadius: '10px',
+                      cursor: 'pointer',
+                      background: billingPeriod === 'annual' ? '#F0F8FF' : 'white',
+                      transition: 'all 0.2s'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+                        <input
+                          type="radio"
+                          value="annual"
+                          checked={billingPeriod === 'annual'}
+                          onChange={(e) => setBillingPeriod(e.target.value)}
+                          style={{ marginRight: '12px', marginTop: '2px', width: '18px', height: '18px', cursor: 'pointer' }}
+                        />
+                        <div style={{ flex: 1 }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                            <div style={{ fontWeight: 'bold', fontSize: '16px' }}>
+                              Annual
+                            </div>
+                            <span style={{
+                              background: '#48bb78',
+                              color: 'white',
+                              padding: '4px 10px',
+                              borderRadius: '4px',
+                              fontSize: '12px',
+                              fontWeight: 'bold'
+                            }}>
+                              Save 20%
+                            </span>
+                          </div>
+                          <div style={{ color: '#666', fontSize: '14px' }}>
+                            $240/month per seat (billed annually at $2,880/year)
+                          </div>
+                        </div>
+                      </div>
+                    </label>
+                  </div>
+
+                  {/* Seat Selector */}
+                  <div style={{
+                    marginBottom: '24px',
+                    padding: '20px',
+                    background: '#F8F9FA',
+                    borderRadius: '10px'
+                  }}>
+                    <h3 style={{ marginTop: 0, marginBottom: '12px', color: '#2C3E50', fontSize: '16px', fontWeight: '600' }}>
+                      Number of Seats
+                    </h3>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <button
+                        onClick={() => setSeats(Math.max(1, seats - 1))}
+                        disabled={seats <= 1}
+                        style={{
+                          width: '40px',
+                          height: '40px',
+                          fontSize: '20px',
+                          border: '2px solid #2c5282',
+                          background: 'white',
+                          borderRadius: '8px',
+                          cursor: seats <= 1 ? 'not-allowed' : 'pointer',
+                          opacity: seats <= 1 ? 0.5 : 1,
+                          transition: 'all 0.2s',
+                          fontWeight: 'bold',
+                          color: '#2c5282'
+                        }}
+                      >
+                        −
+                      </button>
+
+                      <input
+                        type="number"
+                        min="1"
+                        max="99"
+                        value={seats}
+                        onChange={(e) => setSeats(Math.max(1, Math.min(99, parseInt(e.target.value) || 1)))}
+                        style={{
+                          width: '70px',
+                          padding: '10px',
+                          fontSize: '18px',
+                          textAlign: 'center',
+                          border: '2px solid #E9ECEF',
+                          borderRadius: '8px',
+                          fontWeight: 'bold'
+                        }}
+                      />
+
+                      <button
+                        onClick={() => setSeats(Math.min(99, seats + 1))}
+                        disabled={seats >= 99}
+                        style={{
+                          width: '40px',
+                          height: '40px',
+                          fontSize: '20px',
+                          border: '2px solid #2c5282',
+                          background: 'white',
+                          borderRadius: '8px',
+                          cursor: seats >= 99 ? 'not-allowed' : 'pointer',
+                          opacity: seats >= 99 ? 0.5 : 1,
+                          transition: 'all 0.2s',
+                          fontWeight: 'bold',
+                          color: '#2c5282'
+                        }}
+                      >
+                        +
+                      </button>
+
+                      <span style={{ fontSize: '15px', color: '#666', fontWeight: '500', marginLeft: '4px' }}>
+                        {seats} {seats === 1 ? 'seat' : 'seats'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Price Summary */}
+                  <div style={{
+                    padding: '20px',
+                    background: '#F8F9FA',
+                    borderRadius: '10px',
+                    marginBottom: '20px'
+                  }}>
+                    <h3 style={{ marginTop: 0, marginBottom: '16px', color: '#2C3E50', fontSize: '16px', fontWeight: '600' }}>
+                      Order Summary
+                    </h3>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '15px' }}>
+                      <span style={{ color: '#666' }}>Number of seats:</span>
+                      <strong>{seats}</strong>
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '15px' }}>
+                      <span style={{ color: '#666' }}>
+                        {billingPeriod === 'monthly' ? 'Monthly' : 'Annual'} price per seat:
+                      </span>
+                      <strong>
+                        ${billingPeriod === 'monthly' ? '300' : '2,880'}
+                      </strong>
+                    </div>
+
+                    <hr style={{ border: 'none', borderTop: '1px solid #DEE2E6', margin: '12px 0' }} />
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '18px', marginBottom: '12px' }}>
+                      <strong>Total {billingPeriod === 'monthly' ? 'Monthly' : 'Annual'}:</strong>
+                      <strong style={{ color: '#2c5282', fontSize: '24px' }}>
+                        ${calculateTotal().toLocaleString()}
+                      </strong>
+                    </div>
+
+                    {billingPeriod === 'annual' && (
+                      <div style={{ fontSize: '13px', color: '#666', textAlign: 'right', marginBottom: '8px' }}>
+                        ($240/month × 12 months × {seats} {seats === 1 ? 'seat' : 'seats'})
+                      </div>
+                    )}
+
+                    {/* Tax Disclaimer */}
+                    <div style={{
+                      fontSize: '12px',
+                      color: '#999',
+                      fontStyle: 'italic',
+                      textAlign: 'center',
+                      marginTop: '12px',
+                      paddingTop: '12px',
+                      borderTop: '1px solid #E9ECEF'
+                    }}>
+                      Prices shown are before taxes, which will be applied at checkout
+                    </div>
+                  </div>
+
+                  {/* Checkout Button */}
+                  <button
+                    onClick={handleCheckout}
+                    style={{
+                      width: '100%',
+                      padding: '16px',
+                      background: 'linear-gradient(135deg, #2c5282 0%, #1a365d 100%)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '10px',
+                      fontSize: '18px',
+                      fontWeight: 'bold',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      boxShadow: '0 4px 6px rgba(44, 82, 130, 0.3)'
+                    }}
+                    onMouseOver={(e) => e.target.style.transform = 'translateY(-2px)'}
+                    onMouseOut={(e) => e.target.style.transform = 'translateY(0)'}
+                  >
+                    🚀 Proceed to Checkout
+                  </button>
+
+                  <p style={{
+                    textAlign: 'center',
+                    marginTop: '16px',
+                    color: '#999',
+                    fontSize: '13px'
+                  }}>
+                    Secure checkout powered by Stripe
+                  </p>
+                </div>
+              </div>
+            </div>
+          );
+        };
+
+        // Modal state management
+        let modalRoot = null;
+
+        window.openCheckoutModal = function() {
+          if (!modalRoot) {
+            modalRoot = ReactDOM.createRoot(document.getElementById('checkout-modal-root'));
+          }
+          modalRoot.render(<CheckoutModal isOpen={true} onClose={window.closeCheckoutModal} />);
+        };
+
+        window.closeCheckoutModal = function() {
+          if (modalRoot) {
+            modalRoot.render(<CheckoutModal isOpen={false} onClose={window.closeCheckoutModal} />);
+          }
+        };
     </script>
 </body>
 </html>
