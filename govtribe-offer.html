@@ -981,11 +981,15 @@
 
           const PRICING = {
             monthly: {
-              pricePerSeat: 300
+              pricePerSeat: 300,
+              displayPrice: 300
             },
             annual: {
-              pricePerSeat: 2880,
-              monthlyEquivalent: 240
+              pricePerSeat: 1920, // $160/month × 12 = $1,920/year (with 46% discount)
+              monthlyEquivalent: 160, // After 33% GovTribe promo on top of 20% annual discount
+              originalPrice: 2880,
+              originalMonthly: 240,
+              discountPercent: 46
             }
           };
 
@@ -1117,7 +1121,7 @@
                         <div style={{ flex: 1 }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
                             <div style={{ fontWeight: 'bold', fontSize: '16px' }}>
-                              Annual
+                              Annual (GovTribe Offer)
                             </div>
                             <span style={{
                               background: '#48bb78',
@@ -1127,11 +1131,17 @@
                               fontSize: '12px',
                               fontWeight: 'bold'
                             }}>
-                              Save 20%
+                              Save 46%
                             </span>
                           </div>
-                          <div style={{ color: '#666', fontSize: '14px' }}>
-                            $240/month per seat (billed annually at $2,880/year)
+                          <div style={{ color: '#2c5282', fontSize: '15px', fontWeight: '600', marginBottom: '4px' }}>
+                            $160/month per seat
+                          </div>
+                          <div style={{ color: '#999', fontSize: '12px', textDecoration: 'line-through' }}>
+                            Regular: $300/month
+                          </div>
+                          <div style={{ color: '#666', fontSize: '13px', marginTop: '4px' }}>
+                            (billed annually at $1,920/year)
                           </div>
                         </div>
                       </div>
@@ -1232,14 +1242,21 @@
                       <span style={{ color: '#666' }}>
                         {billingPeriod === 'monthly' ? 'Monthly' : 'Annual'} price per seat:
                       </span>
-                      <strong>
-                        ${billingPeriod === 'monthly' ? '300' : '2,880'}
-                      </strong>
+                      <div style={{ textAlign: 'right' }}>
+                        <strong style={{ color: '#2c5282' }}>
+                          ${billingPeriod === 'monthly' ? '300' : '1,920'}
+                        </strong>
+                        {billingPeriod === 'annual' && (
+                          <div style={{ fontSize: '12px', color: '#999', textDecoration: 'line-through', marginTop: '2px' }}>
+                            Regular: $2,880
+                          </div>
+                        )}
+                      </div>
                     </div>
 
                     <hr style={{ border: 'none', borderTop: '1px solid #DEE2E6', margin: '12px 0' }} />
 
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '18px', marginBottom: '12px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '18px', marginBottom: '8px' }}>
                       <strong>Total {billingPeriod === 'monthly' ? 'Monthly' : 'Annual'}:</strong>
                       <strong style={{ color: '#2c5282', fontSize: '24px' }}>
                         ${calculateTotal().toLocaleString()}
@@ -1248,7 +1265,7 @@
 
                     {billingPeriod === 'annual' && (
                       <div style={{ fontSize: '13px', color: '#666', textAlign: 'right', marginBottom: '8px' }}>
-                        ($240/month × 12 months × {seats} {seats === 1 ? 'seat' : 'seats'})
+                        ($160/month × 12 months × {seats} {seats === 1 ? 'seat' : 'seats'})
                       </div>
                     )}
 
