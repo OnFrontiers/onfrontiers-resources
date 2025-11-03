@@ -51,7 +51,7 @@ exports.handler = async (event, context) => {
     // Price IDs from Stripe
     const priceIds = {
       monthly: 'price_1SI9mtAE1fARVUOGEa05tboF',
-      annual: 'price_1SI9oOAE1fARVUOGj7ov4n22'
+      annual: 'price_1SPX65AE1fARVUOGHdYCaKXD'
     };
 
     // Get the origin for redirect URLs
@@ -92,13 +92,7 @@ exports.handler = async (event, context) => {
       ]
     };
 
-    // Add promo code if provided and plan is annual
-    if (plan === 'annual') {
-      // GovTribe exclusive promo code
-      sessionConfig.discounts = [{
-        promotion_code: 'promo_1SI9z2AE1fARVUOGXb5M7TBq'
-      }];
-    }
+    // No promo code needed - discount is already built into the price
 
     // Create the checkout session
     const session = await stripe.checkout.sessions.create(sessionConfig);
