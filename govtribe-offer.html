@@ -726,7 +726,7 @@
                 <div class="trial-features">
                     <div class="trial-feature">
                         <span>✓</span>
-                        <span>33% discount on Platform Access for First Year*</span>
+                        <span>10% discount on Platform Access for First Year*</span>
                     </div>
                     <div class="trial-feature">
                         <span>✓</span>
@@ -773,11 +773,9 @@
                         <div style="font-size: 16px; color: #718096; margin-bottom: 15px;">
                             <div>Monthly Plan: $300/month per seat</div>
                             <div style="margin-top: 5px;">
-                                Annual Plan: <span style="text-decoration: line-through; color: #9ca3af;">$240/month per seat</span>
+                                Annual Plan: $270/month per seat
                             </div>
                         </div>
-                        <div class="price">$160<span class="price-unit">/month per seat</span></div>
-                        <div class="billing-note">GovTribe Limited Time Offer</div>
                     </div>
                     
                     <div class="pricing-details">
@@ -985,11 +983,11 @@
               displayPrice: 300
             },
             annual: {
-              pricePerSeat: 1920, // $160/month × 12 = $1,920/year (with 46% discount)
-              monthlyEquivalent: 160, // After 33% GovTribe promo on top of 20% annual discount
-              originalPrice: 2880,
-              originalMonthly: 240,
-              discountPercent: 46
+              pricePerSeat: 3240, // $270/month × 12 = $3,240/year (with 10% discount)
+              monthlyEquivalent: 270, // After 10% GovTribe discount
+              originalPrice: 3600,
+              originalMonthly: 300,
+              discountPercent: 10
             }
           };
 
@@ -1057,7 +1055,7 @@
                         <span>GovTribe Exclusive Offer</span>
                       </div>
                       <div style={{ fontSize: '14px', lineHeight: '1.6', opacity: 0.95 }}>
-                        <div style={{ marginBottom: '8px' }}>✓ <strong>33% discount on first year</strong></div>
+                        <div style={{ marginBottom: '8px' }}>✓ <strong>10% discount on first year</strong></div>
                         <div style={{ marginBottom: '8px' }}>✓ <strong>Free initial custom match</strong></div>
                         <div>✓ <strong>Free capture strategy consultation</strong></div>
                       </div>
@@ -1131,17 +1129,17 @@
                               fontSize: '12px',
                               fontWeight: 'bold'
                             }}>
-                              Save 46%
+                              Save 10%
                             </span>
                           </div>
                           <div style={{ color: '#2c5282', fontSize: '15px', fontWeight: '600', marginBottom: '4px' }}>
-                            $160/month per seat
+                            $270/month per seat
                           </div>
                           <div style={{ color: '#999', fontSize: '12px', textDecoration: 'line-through' }}>
                             Regular: $300/month
                           </div>
                           <div style={{ color: '#666', fontSize: '13px', marginTop: '4px' }}>
-                            (billed annually at $1,920/year)
+                            (billed annually at $3,240/year)
                           </div>
                         </div>
                       </div>
@@ -1244,11 +1242,11 @@
                       </span>
                       <div style={{ textAlign: 'right' }}>
                         <strong style={{ color: '#2c5282' }}>
-                          ${billingPeriod === 'monthly' ? '300' : '1,920'}
+                          ${billingPeriod === 'monthly' ? '300' : '3,240'}
                         </strong>
                         {billingPeriod === 'annual' && (
                           <div style={{ fontSize: '12px', color: '#999', textDecoration: 'line-through', marginTop: '2px' }}>
-                            Regular: $2,880
+                            Regular: $3,600
                           </div>
                         )}
                       </div>
@@ -1265,7 +1263,7 @@
 
                     {billingPeriod === 'annual' && (
                       <div style={{ fontSize: '13px', color: '#666', textAlign: 'right', marginBottom: '8px' }}>
-                        ($160/month × 12 months × {seats} {seats === 1 ? 'seat' : 'seats'})
+                        ($270/month × 12 months × {seats} {seats === 1 ? 'seat' : 'seats'})
                       </div>
                     )}
 
