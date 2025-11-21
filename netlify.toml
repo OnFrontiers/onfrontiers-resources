@@ -6,6 +6,16 @@
   NODE_VERSION = "18"
 
 [[redirects]]
+  from = "/govtribe-offer"
+  to = "/partner-offer.html"
+  status = 301
+
+[[redirects]]
+  from = "/govtribe-offer.html"
+  to = "/partner-offer.html"
+  status = 301
+
+[[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200
