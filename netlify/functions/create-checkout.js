@@ -28,7 +28,7 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    const { plan, seats, promoCode } = JSON.parse(event.body);
+    const { plan, seats, promoCode, trialDays } = JSON.parse(event.body);
 
     // Validate inputs
     if (!plan || !['monthly', 'annual'].includes(plan)) {
@@ -91,6 +91,13 @@ exports.handler = async (event, context) => {
         }
       ]
     };
+
+    // Add trial period if specified
+    if (trialDays && trialDays > 0) {
+      sessionConfig.subscription_data = {
+        trial_period_days: trialDays
+      };
+    }
 
     // No promo code needed - discount is already built into the price
 
