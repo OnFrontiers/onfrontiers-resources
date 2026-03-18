@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OnFrontiers — Search UX Prototype</title>
+  <meta name="description" content="Interactive prototype: Progressive Context Enrichment search experience for GovCon expert discovery" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.26.4/babel.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-font-smoothing: antialiased; }
+    input[type="checkbox"] { accent-color: #2E75B6; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    /* Hide scrollbar but allow scroll */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #D0D5DD; border-radius: 3px; }
+    /* Responsive */
+    @media (max-width: 768px) {
+      .desktop-only { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect, useCallback } = React;
+
+
+// ─── Color Palette ───
+const C = {
+  navy: "#1B3A5C", blue: "#2E75B6", lightBlue: "#D5E8F0", paleBlue: "#EBF3F9",
+  green: "#2E8B57", amber: "#D4A017", red: "#C0392B", white: "#FFFFFF",
+  gray50: "#F9FAFB", gray100: "#F2F4F7", gray200: "#E4E7EC", gray300: "#D0D5DD",
+  gray500: "#667085", gray700: "#344054", gray900: "#101828",
+  orange: "#E8590C", purple: "#7C3AED",
+};
+
+// ─── Icons (inline SVG) ───
+const Icon = ({ name, size = 20, color = C.gray500 }) => {
+  const icons = {
+    search: <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />,
+    upload: <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />,
+    link: <path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />,
+    check: <path d="M5 13l4 4L19 7" />,
+    edit: <path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />,
+    star: <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />,
+    plus: <path d="M12 4v16m8-8H4" />,
+    chevRight: <path d="M9 5l7 7-7 7" />,
+    chevDown: <path d="M19 9l-7 7-7-7" />,
+    bookmark: <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />,
+    bookmarkFill: <path fill={color} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />,
+    x: <path d="M6 18L18 6M6 6l12 12" />,
+    filter: <path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />,
+    building: <path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />,
+    clock: <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />,
+    shield: <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />,
+    user: <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />,
+    briefcase: <path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />,
+    flag: <path d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />,
+    zap: <path d="M13 10V3L4 14h7v7l9-11h-7z" />,
+    arrowLeft: <path d="M10 19l-7-7m0 0l7-7m-7 7h18" />,
+  };
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      {icons[name]}
+    </svg>
+  );
+};
+
+// ─── Badge Component ───
+const Badge = ({ children, color = C.blue, bg, icon }) => (
+  <span style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "3px 10px", borderRadius: 12, fontSize: 12, fontWeight: 600, color, background: bg || `${color}15`, whiteSpace: "nowrap" }}>
+    {icon && <Icon name={icon} size={12} color={color} />}
+    {children}
+  </span>
+);
+
+// ─── Button Component ───
+const Button = ({ children, variant = "primary", size = "md", onClick, icon, disabled, style: sx }) => {
+  const base = { display: "inline-flex", alignItems: "center", gap: 8, border: "none", cursor: disabled ? "default" : "pointer", fontWeight: 600, borderRadius: 8, transition: "all 0.15s", opacity: disabled ? 0.5 : 1, fontFamily: "inherit" };
+  const sizes = { sm: { padding: "6px 12px", fontSize: 13 }, md: { padding: "10px 20px", fontSize: 14 }, lg: { padding: "12px 24px", fontSize: 15 } };
+  const variants = {
+    primary: { background: C.blue, color: C.white },
+    secondary: { background: C.gray100, color: C.gray700, border: `1px solid ${C.gray200}` },
+    ghost: { background: "transparent", color: C.blue },
+    success: { background: C.green, color: C.white },
+    danger: { background: `${C.red}12`, color: C.red, border: `1px solid ${C.red}30` },
+  };
+  return (
+    <button onClick={onClick} disabled={disabled} style={{ ...base, ...sizes[size], ...variants[variant], ...sx }}>
+      {icon && <Icon name={icon} size={size === "sm" ? 14 : 16} color={variants[variant].color} />}
+      {children}
+    </button>
+  );
+};
+
+// ─── SAMPLE DATA ───
+const CAEI_OPPORTUNITY = {
+  title: "C5ISR Architecture Engineering and Integration Production and Integration Support (CAEI)",
+  agency: "Department of the Navy",
+  subAgency: "Naval Information Warfare Systems Command (NAVWAR)",
+  office: "Naval Information Warfare Center Atlantic (NIWC Atlantic)",
+  status: "Pre-RFP",
+  naics: "335999 — All Other Miscellaneous Electrical Equipment and Component Manufacturing",
+  value: "$1,000,000K (~$1B+)",
+  competitionType: "Full and Open / Unrestricted",
+  contractType: "Firm Fixed Price, Fixed Price Incentive, Cost Plus Fixed Fee, IDIQ",
+  awardType: "IDIQ — Agency Specific",
+  duration: "5 year(s) base plus 1 x 2 year(s) option(s)",
+  placeOfPerformance: "Charleston, South Carolina",
+  solicitationDate: "12/2025 (Deltek Estimate)",
+  awardDate: "09/2026 (Deltek Estimate)",
+  incumbent: "Science Applications International Corp (SAIC)",
+  incumbentContract: "N6523618D8014",
+  incumbentValue: "$861,100,000",
+  domain: "C4ISR / Combat Systems",
+  solicitationNumber: "NIWCAtlanticMKTSVY19DC3E",
+  samUrl: "https://sam.gov/opp/1a7bc2bd71ca4039a5646c76b3cb75...",
+  topSubcontractors: ["Dell Technologies ($8.7M)", "CDW Corporation ($8.3M)", "Crystal Group ($6.1M)", "Federal Custom Cable ($4.5M)", "Cardinal Metalworks ($3.7M)"],
+};
+
+const PIPELINE_STAGES = [
+  { id: "market_research", label: "Market Research & Qualification", desc: "Qualifying the deal, understanding agency priorities" },
+  { id: "capture", label: "Capture Planning", desc: "Competitive intel, relationship mapping, solution shaping" },
+  { id: "pre_proposal", label: "Pre-Proposal Positioning", desc: "Teaming strategy, win themes, customer engagement" },
+  { id: "proposal", label: "Proposal Response", desc: "Writing, reviewing, pricing the proposal" },
+  { id: "execution", label: "Contract Execution", desc: "Performance support, transition, option-year" },
+  { id: "recompete", label: "Recompete Preparation", desc: "Incumbent assessment, rebid strategy" },
+];
+
+const SERVICE_TEMPLATES = {
+  capture: [
+    { name: "Black Hat Review", desc: "Evaluate SAIC's likely approach and identify competitive differentiators for the CAEI recompete", icon: "shield", recommended: true },
+    { name: "Customer Engagement Briefing", desc: "Intelligence on NIWC Atlantic buying office priorities, evaluation criteria, and key stakeholders", icon: "user" },
+    { name: "Competitive Intelligence Session", desc: "Landscape analysis of likely bidders, teaming arrangements, and competitive positioning", icon: "search" },
+  ],
+  market_research: [
+    { name: "Customer Engagement Briefing", desc: "Intelligence on agency priorities and buying office", icon: "user", recommended: true },
+    { name: "Market Entry Assessment", desc: "Overview of agency landscape and go-to-market strategy", icon: "building" },
+  ],
+  proposal: [
+    { name: "Red Team / Technical Review", desc: "Independent review of proposal volumes by a former NAVWAR evaluator", icon: "flag", recommended: true },
+    { name: "Pricing Strategy Session", desc: "Competitive pricing analysis for FFP/CPFF contract types", icon: "briefcase" },
+  ],
+  recompete: [
+    { name: "Black Hat Review", desc: "Evaluate SAIC's likely approach as incumbent", icon: "shield", recommended: true },
+    { name: "Incumbent Assessment", desc: "Deep dive on incumbent performance, pain points, and potential weaknesses", icon: "search" },
+  ],
+};
+
+const SAMPLE_EXPERTS = [
+  { id: 1, name: "Robert Chen", headline: "Former NIWC Atlantic Deputy Program Manager — C5ISR Systems Integration", title: "Senior Defense Consultant", company: "Independent", matchScore: 96, matchReasons: ["8 years at NIWC Atlantic overseeing C5ISR production programs", "Direct experience with CAEI IPT management system", "Former Navy Captain, TS/SCI clearance"], agency: "NAVWAR / NIWC Atlantic", domain: "C4ISR / Combat Systems", clearance: "TS/SCI", yearsExp: 28, setting: "Retired Government", rating: 4.9, consultations: 12, responseTime: "< 4 hours", tags: ["Program SME", "Agency Match"] },
+  { id: 2, name: "Patricia Hawkins", headline: "Former SPAWARSYSCEN Atlantic Technical Lead — Naval Tactical Systems", title: "Principal Systems Engineer", company: "Defense Advisory Group LLC", matchScore: 92, matchReasons: ["Led NTCSS and CANES technical integration at SPAWARSYSCEN", "Knowledge of CAEI production processes and quality standards", "Current NAVWAR industry relationships"], agency: "NAVWAR / SPAWARSYSCEN Atlantic", domain: "C4ISR / Naval Systems", clearance: "Secret", yearsExp: 22, setting: "Vendor / Contractor", rating: 4.7, consultations: 8, responseTime: "< 8 hours", tags: ["Technical SME", "Agency Match"] },
+  { id: 3, name: "James Morrison", headline: "Former SAIC CAEI Program Director — Managed $120M annual C5ISR portfolio", title: "VP, Defense Programs (Retired)", company: "Morrison Consulting", matchScore: 89, matchReasons: ["Former SAIC program director on the current CAEI contract", "Managed full CAEI IPT production lifecycle", "Deep knowledge of incumbent operations and subcontractor base"], agency: "SAIC (Contractor)", domain: "C4ISR / Combat Systems", clearance: "TS/SCI", yearsExp: 30, setting: "Retired Contractor", rating: 4.8, consultations: 5, responseTime: "< 24 hours", tags: ["Contractor SME", "Incumbent Knowledge"], flag: "Former Incumbent Contractor" },
+  { id: 4, name: "Dr. Angela Torres", headline: "Former Navy Acquisition Executive — NAVWAR PEO C4I Portfolio", title: "Acquisition Strategy Advisor", company: "Independent", matchScore: 86, matchReasons: ["Oversaw C4I acquisition strategy at PEO level", "Evaluated source selection boards for IDIQ vehicles", "Understands NAVWAR budget priorities and evaluation criteria"], agency: "NAVWAR / PEO C4I", domain: "Acquisition / C4ISR", clearance: "TS/SCI", yearsExp: 25, setting: "Retired Government", rating: 5.0, consultations: 3, responseTime: "< 12 hours", tags: ["Acquisition SME", "Agency Match"] },
+  { id: 5, name: "Marcus Williams", headline: "Federal BD Executive — Won $2B+ in Navy C4ISR contracts", title: "VP Business Development", company: "Mid-tier Defense Firm", matchScore: 83, matchReasons: ["Led capture for multiple NAVWAR IDIQ wins", "Current relationships with NIWC Atlantic leadership", "Experience with CAEI-adjacent production programs"], agency: "Industry (Navy-focused)", domain: "C4ISR / Business Development", clearance: "Secret", yearsExp: 18, setting: "Vendor / Contractor", rating: 4.6, consultations: 15, responseTime: "< 4 hours", tags: ["Capture Manager", "BD Resource"] },
+  { id: 6, name: "Sandra Kim", headline: "Former DHS C5ISR Integration Engineer — Cross-agency combat systems experience", title: "Senior Systems Integrator", company: "Independent", matchScore: 78, matchReasons: ["C5ISR integration experience across DoD agencies", "Familiar with DCGS and JBC-P platforms mentioned in CAEI scope", "Strong technical review and proposal writing skills"], agency: "DHS / Cross-Agency", domain: "C4ISR / Systems Integration", clearance: "Secret", yearsExp: 15, setting: "Independent", rating: 4.4, consultations: 7, responseTime: "< 8 hours", tags: ["Technical SME", "Domain Match"] },
+];
+
+// ─── SCREEN: OMNIBOX ───
+const OmniboxScreen = ({ onSubmit }) => {
+  const [inputValue, setInputValue] = useState("");
+  const [inputType, setInputType] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+
+  const detectInputType = (val) => {
+    if (val.includes("govtribe.com")) return "govtribe";
+    if (val.includes("sam.gov")) return "sam";
+    if (val.includes("govwin") || val.includes("iq.govwin")) return "govwin";
+    if (val.includes("bgov.com")) return "bgov";
+    if (/^N\d{5}/.test(val) || /^\w{2}\d{4}/.test(val)) return "contract";
+    if (val.length > 20) return "text";
+    return null;
+  };
+
+  const handleInput = (e) => {
+    const val = e.target.value;
+    setInputValue(val);
+    setInputType(detectInputType(val));
+  };
+
+  const handleSubmit = () => {
+    setIsProcessing(true);
+    setTimeout(() => onSubmit(), 1800);
+  };
+
+  const quickStarts = [
+    { label: "Program SME", sub: "Former government program managers" },
+    { label: "Technical SME", sub: "Government technologists & engineers" },
+    { label: "Capture Manager", sub: "BD & capture professionals" },
+    { label: "Agency SME", sub: "Senior federal leaders (SES/GS-15)" },
+  ];
+
+  const inputTypeLabels = {
+    govtribe: { label: "Govtribe Opportunity", color: C.blue },
+    sam: { label: "SAM.gov Solicitation", color: C.green },
+    govwin: { label: "Govwin IQ Link", color: C.orange },
+    bgov: { label: "Bloomberg Government", color: C.purple },
+    contract: { label: "Contract Number", color: C.amber },
+    text: { label: "Description", color: C.gray500 },
+  };
+
+  if (isProcessing) {
+    return (
+      <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: C.gray50 }}>
+        <div style={{ width: 48, height: 48, border: `3px solid ${C.gray200}`, borderTopColor: C.blue, borderRadius: "50%", animation: "spin 1s linear infinite" }} />
+        <p style={{ marginTop: 24, fontSize: 16, color: C.gray700, fontWeight: 500 }}>Enriching opportunity data...</p>
+        <p style={{ fontSize: 13, color: C.gray500, marginTop: 4 }}>Fetching from Govtribe MCP • Extracting attributes • Mapping to expert taxonomy</p>
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ minHeight: "100vh", background: C.gray50 }}>
+      {/* Header */}
+      <div style={{ background: C.white, borderBottom: `1px solid ${C.gray200}`, padding: "12px 32px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ fontSize: 18, fontWeight: 700, color: C.navy, letterSpacing: 1 }}>ONFRONTIERS</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <span style={{ fontSize: 13, color: C.gray500 }}>Pro Account</span>
+          <div style={{ width: 32, height: 32, borderRadius: "50%", background: C.blue, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <span style={{ color: C.white, fontSize: 13, fontWeight: 600 }}>BC</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Hero */}
+      <div style={{ maxWidth: 800, margin: "0 auto", padding: "80px 24px 40px" }}>
+        <h1 style={{ fontSize: 32, fontWeight: 700, color: C.navy, margin: 0, textAlign: "center" }}>Find the right expert for your opportunity</h1>
+        <p style={{ fontSize: 16, color: C.gray500, textAlign: "center", marginTop: 8 }}>Paste a link, upload a document, or describe what you need</p>
+
+        {/* Omnibox */}
+        <div style={{ marginTop: 32, background: C.white, borderRadius: 16, boxShadow: "0 4px 24px rgba(0,0,0,0.08)", border: `2px solid ${dragOver ? C.blue : "transparent"}`, padding: 24, transition: "border-color 0.2s" }}
+          onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+          onDragLeave={() => setDragOver(false)}
+          onDrop={(e) => { e.preventDefault(); setDragOver(false); }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <Icon name="search" size={24} color={C.gray300} />
+            <input
+              value={inputValue}
+              onChange={handleInput}
+              placeholder="Paste a Govtribe URL, SAM.gov link, Govwin URL, contract number, or describe your need..."
+              style={{ flex: 1, border: "none", outline: "none", fontSize: 16, color: C.gray900, fontFamily: "inherit", background: "transparent" }}
+            />
+            {inputType && inputTypeLabels[inputType] && (
+              <Badge color={inputTypeLabels[inputType].color}>{inputTypeLabels[inputType].label}</Badge>
+            )}
+          </div>
+
+          {/* Detected input hint */}
+          {inputValue && (
+            <div style={{ marginTop: 16, paddingTop: 16, borderTop: `1px solid ${C.gray100}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ display: "flex", gap: 8 }}>
+                <Button variant="ghost" size="sm" icon="upload">Upload PDF</Button>
+                <span style={{ color: C.gray300, fontSize: 13, lineHeight: "30px" }}>Govwin, Bloomberg, or solicitation document</span>
+              </div>
+              <Button onClick={handleSubmit} icon="search">Search Experts</Button>
+            </div>
+          )}
+
+          {!inputValue && (
+            <div style={{ marginTop: 16, paddingTop: 16, borderTop: `1px solid ${C.gray100}` }}>
+              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                <Button variant="ghost" size="sm" icon="upload">Upload PDF</Button>
+                <span style={{ color: C.gray300, fontSize: 13 }}>Drag & drop Govwin export, solicitation, or any document</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Quick starts */}
+        {!inputValue && (
+          <div style={{ marginTop: 40 }}>
+            <p style={{ fontSize: 13, fontWeight: 600, color: C.gray500, textTransform: "uppercase", letterSpacing: 1, marginBottom: 16 }}>Or browse by expert type</p>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              {quickStarts.map((qs) => (
+                <div key={qs.label} onClick={handleSubmit}
+                  style={{ background: C.white, border: `1px solid ${C.gray200}`, borderRadius: 12, padding: "16px 20px", cursor: "pointer", transition: "all 0.15s" }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = C.blue; e.currentTarget.style.boxShadow = `0 2px 8px ${C.blue}15`; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = C.gray200; e.currentTarget.style.boxShadow = "none"; }}>
+                  <div style={{ fontSize: 15, fontWeight: 600, color: C.gray900 }}>{qs.label}</div>
+                  <div style={{ fontSize: 13, color: C.gray500, marginTop: 2 }}>{qs.sub}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Accepted sources */}
+        {!inputValue && (
+          <div style={{ marginTop: 40, textAlign: "center" }}>
+            <p style={{ fontSize: 12, color: C.gray500 }}>Works with</p>
+            <div style={{ display: "flex", justifyContent: "center", gap: 24, marginTop: 8 }}>
+              {["Govtribe", "Govwin IQ", "SAM.gov", "Bloomberg Gov", "Any PDF/Doc"].map(s => (
+                <span key={s} style={{ fontSize: 12, color: C.gray500, fontWeight: 500 }}>{s}</span>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// ─── SCREEN: ENRICHMENT CARD ───
+const EnrichmentScreen = ({ onContinue }) => {
+  const [stage, setStage] = useState("capture");
+  const [selectedService, setSelectedService] = useState(null);
+  const opp = CAEI_OPPORTUNITY;
+  const services = SERVICE_TEMPLATES[stage] || SERVICE_TEMPLATES.capture;
+
+  useEffect(() => { setSelectedService(null); }, [stage]);
+
+  return (
+    <div style={{ minHeight: "100vh", background: C.gray50 }}>
+      {/* Header */}
+      <div style={{ background: C.white, borderBottom: `1px solid ${C.gray200}`, padding: "12px 32px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <span style={{ fontSize: 18, fontWeight: 700, color: C.navy, letterSpacing: 1 }}>ONFRONTIERS</span>
+          <span style={{ color: C.gray300 }}>|</span>
+          <span style={{ fontSize: 14, color: C.gray500 }}>New Search</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <div style={{ display: "flex", gap: 4 }}>
+            {[1,2,3,4].map(i => (
+              <div key={i} style={{ width: i <= 2 ? 24 : 24, height: 4, borderRadius: 2, background: i <= 2 ? C.blue : C.gray200 }} />
+            ))}
+          </div>
+          <span style={{ fontSize: 12, color: C.gray500, marginLeft: 8 }}>Step 2 of 4</span>
+        </div>
+      </div>
+
+      <div style={{ maxWidth: 960, margin: "0 auto", padding: "32px 24px" }}>
+        {/* Enrichment Card */}
+        <div style={{ background: C.white, borderRadius: 16, boxShadow: "0 2px 12px rgba(0,0,0,0.06)", overflow: "hidden" }}>
+          {/* Card header */}
+          <div style={{ background: C.navy, padding: "20px 28px", color: C.white }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+              <div>
+                <div style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: 1, opacity: 0.7, marginBottom: 4 }}>Opportunity Detected</div>
+                <h2 style={{ fontSize: 20, fontWeight: 700, margin: 0, lineHeight: 1.3 }}>{opp.title}</h2>
+              </div>
+              <Badge color={C.white} bg="rgba(255,255,255,0.15)">Pre-RFP</Badge>
+            </div>
+            <div style={{ display: "flex", gap: 16, marginTop: 12, flexWrap: "wrap" }}>
+              <span style={{ fontSize: 13, opacity: 0.8 }}>📎 Source: Govwin IQ (Opp #243256)</span>
+              <span style={{ fontSize: 13, opacity: 0.8 }}>🔗 SAM.gov cross-reference available</span>
+            </div>
+          </div>
+
+          {/* Extracted attributes */}
+          <div style={{ padding: "24px 28px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+              <h3 style={{ fontSize: 14, fontWeight: 600, color: C.gray500, textTransform: "uppercase", letterSpacing: 1, margin: 0 }}>Extracted Opportunity Details</h3>
+              <Button variant="ghost" size="sm" icon="edit">Edit</Button>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px 32px" }}>
+              {[
+                ["Buying Organization", `${opp.agency} » ${opp.subAgency}`],
+                ["Office", opp.office],
+                ["NAICS", opp.naics],
+                ["Value", opp.value],
+                ["Work Domain", opp.domain],
+                ["Competition", opp.competitionType],
+                ["Contract Type", opp.contractType],
+                ["Award Type", opp.awardType],
+                ["Duration", opp.duration],
+                ["Place of Performance", opp.placeOfPerformance],
+                ["Est. Solicitation", opp.solicitationDate],
+                ["Est. Award", opp.awardDate],
+              ].map(([label, value]) => (
+                <div key={label}>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: C.gray500, textTransform: "uppercase", letterSpacing: 0.5 }}>{label}</div>
+                  <div style={{ fontSize: 14, color: C.gray900, marginTop: 2 }}>{value}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Incumbent section */}
+            <div style={{ marginTop: 20, padding: 16, background: `${C.amber}08`, borderRadius: 8, border: `1px solid ${C.amber}20` }}>
+              <div style={{ fontSize: 12, fontWeight: 600, color: C.amber, textTransform: "uppercase", letterSpacing: 0.5 }}>Incumbent Information</div>
+              <div style={{ marginTop: 8, display: "flex", gap: 32 }}>
+                <div><div style={{ fontSize: 11, color: C.gray500 }}>Prime Contractor</div><div style={{ fontSize: 14, fontWeight: 600, color: C.gray900 }}>{opp.incumbent}</div></div>
+                <div><div style={{ fontSize: 11, color: C.gray500 }}>Contract #</div><div style={{ fontSize: 14, color: C.gray900 }}>{opp.incumbentContract}</div></div>
+                <div><div style={{ fontSize: 11, color: C.gray500 }}>Value</div><div style={{ fontSize: 14, color: C.gray900 }}>{opp.incumbentValue}</div></div>
+              </div>
+              <div style={{ marginTop: 8 }}>
+                <div style={{ fontSize: 11, color: C.gray500 }}>Top Subcontractors</div>
+                <div style={{ fontSize: 13, color: C.gray700, marginTop: 2 }}>{opp.topSubcontractors.join(" • ")}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Divider */}
+          <div style={{ height: 1, background: C.gray200, margin: "0 28px" }} />
+
+          {/* Pipeline Stage Selection */}
+          <div style={{ padding: "24px 28px" }}>
+            <h3 style={{ fontSize: 14, fontWeight: 600, color: C.gray500, textTransform: "uppercase", letterSpacing: 1, margin: "0 0 4px" }}>Where are you in the opportunity lifecycle?</h3>
+            <p style={{ fontSize: 13, color: C.gray500, margin: "0 0 16px" }}>This helps us recommend the right type of expert engagement</p>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
+              {PIPELINE_STAGES.map(s => (
+                <div key={s.id} onClick={() => setStage(s.id)}
+                  style={{
+                    padding: "12px 16px", borderRadius: 8, cursor: "pointer", transition: "all 0.15s",
+                    border: `2px solid ${stage === s.id ? C.blue : C.gray200}`,
+                    background: stage === s.id ? C.paleBlue : C.white,
+                  }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: stage === s.id ? C.blue : C.gray700 }}>{s.label}</div>
+                  <div style={{ fontSize: 11, color: C.gray500, marginTop: 2 }}>{s.desc}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Service Templates */}
+          <div style={{ padding: "0 28px 24px" }}>
+            <h3 style={{ fontSize: 14, fontWeight: 600, color: C.gray500, textTransform: "uppercase", letterSpacing: 1, margin: "0 0 4px" }}>Recommended engagement</h3>
+            <p style={{ fontSize: 13, color: C.gray500, margin: "0 0 16px" }}>Based on this opportunity and your pipeline stage</p>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {services.map((svc) => (
+                <div key={svc.name} onClick={() => setSelectedService(svc.name)}
+                  style={{
+                    display: "flex", alignItems: "flex-start", gap: 16, padding: "14px 16px", borderRadius: 10, cursor: "pointer", transition: "all 0.15s",
+                    border: `2px solid ${selectedService === svc.name ? C.blue : C.gray200}`,
+                    background: selectedService === svc.name ? C.paleBlue : C.white,
+                  }}>
+                  <div style={{ width: 36, height: 36, borderRadius: 8, background: selectedService === svc.name ? C.blue : C.gray100, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <Icon name={svc.icon} size={18} color={selectedService === svc.name ? C.white : C.gray500} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <span style={{ fontSize: 15, fontWeight: 600, color: C.gray900 }}>{svc.name}</span>
+                      {svc.recommended && <Badge color={C.green}>Recommended</Badge>}
+                    </div>
+                    <div style={{ fontSize: 13, color: C.gray500, marginTop: 2 }}>{svc.desc}</div>
+                  </div>
+                  {selectedService === svc.name && <Icon name="check" size={20} color={C.blue} />}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Action */}
+          <div style={{ padding: "16px 28px 24px", display: "flex", justifyContent: "flex-end", gap: 12 }}>
+            <Button variant="secondary">Skip — just show experts</Button>
+            <Button onClick={onContinue} disabled={!selectedService}>See matching experts</Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ─── SCREEN: RESULTS ───
+const ResultsScreen = ({ onViewShortlist }) => {
+  const [shortlist, setShortlist] = useState(new Set());
+  const [expandedId, setExpandedId] = useState(null);
+  const [showFilters, setShowFilters] = useState(false);
+
+  const toggleShortlist = (id) => {
+    setShortlist(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
+  const ExpertCard = ({ expert }) => {
+    const isShortlisted = shortlist.has(expert.id);
+    const isExpanded = expandedId === expert.id;
+
+    return (
+      <div style={{
+        background: C.white, borderRadius: 12, border: `1px solid ${isShortlisted ? C.blue : C.gray200}`,
+        boxShadow: isShortlisted ? `0 0 0 1px ${C.blue}` : "0 1px 4px rgba(0,0,0,0.04)",
+        overflow: "hidden", transition: "all 0.15s",
+      }}>
+        <div style={{ padding: "20px 24px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+            <div style={{ flex: 1 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                {/* Avatar */}
+                <div style={{ width: 48, height: 48, borderRadius: "50%", background: `${C.blue}15`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <span style={{ fontSize: 18, fontWeight: 600, color: C.blue }}>{expert.name.split(" ").map(n => n[0]).join("")}</span>
+                </div>
+                <div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <span style={{ fontSize: 17, fontWeight: 700, color: C.gray900 }}>{expert.name}</span>
+                    <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
+                      <Icon name="star" size={14} color={C.amber} />
+                      <span style={{ fontSize: 13, fontWeight: 600, color: C.gray700 }}>{expert.rating}</span>
+                    </div>
+                    <span style={{ fontSize: 12, color: C.gray500 }}>({expert.consultations} consultations)</span>
+                  </div>
+                  <div style={{ fontSize: 13, color: C.gray500, marginTop: 1 }}>{expert.title} • {expert.company}</div>
+                </div>
+              </div>
+
+              {/* Match headline */}
+              <div style={{ marginTop: 12, padding: "10px 14px", background: C.paleBlue, borderRadius: 8, borderLeft: `3px solid ${C.blue}` }}>
+                <div style={{ fontSize: 14, fontWeight: 600, color: C.navy }}>{expert.headline}</div>
+              </div>
+
+              {/* Tags */}
+              <div style={{ marginTop: 12, display: "flex", gap: 6, flexWrap: "wrap" }}>
+                {expert.tags.map(t => <Badge key={t} color={C.blue}>{t}</Badge>)}
+                <Badge color={C.gray500} icon="shield">{expert.clearance}</Badge>
+                <Badge color={C.gray500} icon="clock">{expert.responseTime}</Badge>
+                <Badge color={C.gray500} icon="briefcase">{expert.setting}</Badge>
+                {expert.flag && <Badge color={C.amber} icon="flag">{expert.flag}</Badge>}
+              </div>
+            </div>
+
+            {/* Score + actions */}
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8, marginLeft: 16 }}>
+              <div style={{ textAlign: "center" }}>
+                <div style={{ fontSize: 28, fontWeight: 700, color: expert.matchScore >= 90 ? C.green : expert.matchScore >= 80 ? C.blue : C.gray500 }}>{expert.matchScore}</div>
+                <div style={{ fontSize: 10, fontWeight: 600, color: C.gray500, textTransform: "uppercase" }}>Match</div>
+              </div>
+              <button onClick={() => toggleShortlist(expert.id)}
+                style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 8, border: `1px solid ${isShortlisted ? C.blue : C.gray200}`, background: isShortlisted ? C.paleBlue : C.white, cursor: "pointer", fontSize: 13, fontWeight: 600, color: isShortlisted ? C.blue : C.gray700, fontFamily: "inherit" }}>
+                <Icon name={isShortlisted ? "bookmarkFill" : "bookmark"} size={16} color={isShortlisted ? C.blue : C.gray500} />
+                {isShortlisted ? "Shortlisted" : "Shortlist"}
+              </button>
+            </div>
+          </div>
+
+          {/* Expand toggle */}
+          <div onClick={() => setExpandedId(isExpanded ? null : expert.id)}
+            style={{ marginTop: 12, display: "flex", alignItems: "center", gap: 4, cursor: "pointer", fontSize: 13, color: C.blue, fontWeight: 500 }}>
+            <Icon name={isExpanded ? "chevDown" : "chevRight"} size={14} color={C.blue} />
+            {isExpanded ? "Hide" : "Show"} match details
+          </div>
+
+          {isExpanded && (
+            <div style={{ marginTop: 12, paddingTop: 12, borderTop: `1px solid ${C.gray100}` }}>
+              <div style={{ fontSize: 12, fontWeight: 600, color: C.gray500, textTransform: "uppercase", marginBottom: 8 }}>Why this expert matches</div>
+              {expert.matchReasons.map((r, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: 6 }}>
+                  <Icon name="check" size={14} color={C.green} />
+                  <span style={{ fontSize: 13, color: C.gray700 }}>{r}</span>
+                </div>
+              ))}
+              <div style={{ marginTop: 12, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+                <div><div style={{ fontSize: 11, color: C.gray500 }}>Agency Experience</div><div style={{ fontSize: 13, fontWeight: 600 }}>{expert.agency}</div></div>
+                <div><div style={{ fontSize: 11, color: C.gray500 }}>Domain</div><div style={{ fontSize: 13, fontWeight: 600 }}>{expert.domain}</div></div>
+                <div><div style={{ fontSize: 11, color: C.gray500 }}>Years of Experience</div><div style={{ fontSize: 13, fontWeight: 600 }}>{expert.yearsExp} years</div></div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div style={{ minHeight: "100vh", background: C.gray50 }}>
+      {/* Header */}
+      <div style={{ background: C.white, borderBottom: `1px solid ${C.gray200}`, padding: "12px 32px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <span style={{ fontSize: 18, fontWeight: 700, color: C.navy, letterSpacing: 1 }}>ONFRONTIERS</span>
+          <span style={{ color: C.gray300 }}>|</span>
+          <span style={{ fontSize: 14, color: C.gray500 }}>CAEI / NAVWAR Expert Search</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{ display: "flex", gap: 4 }}>
+            {[1,2,3,4].map(i => (
+              <div key={i} style={{ width: 24, height: 4, borderRadius: 2, background: i <= 3 ? C.blue : C.gray200 }} />
+            ))}
+          </div>
+          {shortlist.size > 0 && (
+            <Button onClick={onViewShortlist} size="sm" icon="bookmark">
+              Shortlist ({shortlist.size})
+            </Button>
+          )}
+        </div>
+      </div>
+
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "24px 24px" }}>
+        {/* Context summary */}
+        <div style={{ background: C.white, borderRadius: 12, padding: "16px 20px", marginBottom: 20, border: `1px solid ${C.gray200}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div>
+            <div style={{ fontSize: 15, fontWeight: 600, color: C.gray900 }}>CAEI — C5ISR Architecture Engineering & Integration</div>
+            <div style={{ display: "flex", gap: 8, marginTop: 6, flexWrap: "wrap" }}>
+              <Badge color={C.navy}>NAVWAR / NIWC Atlantic</Badge>
+              <Badge color={C.green}>Capture Planning</Badge>
+              <Badge color={C.blue} icon="shield">Black Hat Review</Badge>
+              <Badge color={C.amber}>Incumbent: SAIC</Badge>
+            </div>
+          </div>
+          <Button variant="ghost" size="sm" icon="edit">Edit search</Button>
+        </div>
+
+        <div style={{ display: "flex", gap: 24 }}>
+          {/* Filters sidebar */}
+          <div style={{ width: 220, flexShrink: 0 }}>
+            <div style={{ background: C.white, borderRadius: 12, padding: 16, border: `1px solid ${C.gray200}` }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: C.gray700, marginBottom: 12, display: "flex", alignItems: "center", gap: 6 }}>
+                <Icon name="filter" size={14} color={C.gray500} /> Refine Results
+              </div>
+              {[
+                { label: "Clearance", options: ["TS/SCI", "Secret", "Public Trust", "None"] },
+                { label: "Work Setting", options: ["Retired Government", "Vendor / Contractor", "Independent", "Active Government"] },
+                { label: "Response Time", options: ["< 4 hours", "< 8 hours", "< 24 hours", "Any"] },
+                { label: "Min. Rating", options: ["4.5+", "4.0+", "3.5+", "Any"] },
+                { label: "Experience", options: ["20+ years", "15+ years", "10+ years", "Any"] },
+              ].map(filter => (
+                <div key={filter.label} style={{ marginBottom: 16 }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: C.gray500, marginBottom: 6 }}>{filter.label}</div>
+                  {filter.options.map(opt => (
+                    <label key={opt} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: C.gray700, marginBottom: 4, cursor: "pointer" }}>
+                      <input type="checkbox" style={{ accentColor: C.blue }} />
+                      {opt}
+                    </label>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Results */}
+          <div style={{ flex: 1 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+              <span style={{ fontSize: 14, color: C.gray500 }}><strong style={{ color: C.gray900 }}>{SAMPLE_EXPERTS.length} experts</strong> matched • Ranked by relevance</span>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {SAMPLE_EXPERTS.map(expert => <ExpertCard key={expert.id} expert={expert} />)}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ─── SCREEN: SHORTLIST REVIEW ───
+const ShortlistScreen = ({ onBack }) => {
+  const shortlisted = SAMPLE_EXPERTS.filter(e => [1, 3, 4].includes(e.id));
+
+  return (
+    <div style={{ minHeight: "100vh", background: C.gray50 }}>
+      <div style={{ background: C.white, borderBottom: `1px solid ${C.gray200}`, padding: "12px 32px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <button onClick={onBack} style={{ background: "none", border: "none", cursor: "pointer", display: "flex" }}><Icon name="arrowLeft" size={20} color={C.gray500} /></button>
+          <span style={{ fontSize: 18, fontWeight: 700, color: C.navy, letterSpacing: 1 }}>ONFRONTIERS</span>
+          <span style={{ color: C.gray300 }}>|</span>
+          <span style={{ fontSize: 14, color: C.gray500 }}>Review Shortlist</span>
+        </div>
+        <div style={{ display: "flex", gap: 4 }}>
+          {[1,2,3,4].map(i => <div key={i} style={{ width: 24, height: 4, borderRadius: 2, background: C.blue }} />)}
+        </div>
+      </div>
+
+      <div style={{ maxWidth: 800, margin: "0 auto", padding: "32px 24px" }}>
+        <h2 style={{ fontSize: 24, fontWeight: 700, color: C.navy, margin: "0 0 4px" }}>Your Shortlist</h2>
+        <p style={{ fontSize: 14, color: C.gray500, margin: "0 0 24px" }}>Review your selected experts for the CAEI / NAVWAR Black Hat Review</p>
+
+        {/* Shortlisted experts */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32 }}>
+          {shortlisted.map(expert => (
+            <div key={expert.id} style={{ background: C.white, borderRadius: 12, border: `1px solid ${C.gray200}`, padding: "16px 20px", display: "flex", alignItems: "center", gap: 16 }}>
+              <div style={{ width: 44, height: 44, borderRadius: "50%", background: `${C.blue}15`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <span style={{ fontSize: 16, fontWeight: 600, color: C.blue }}>{expert.name.split(" ").map(n => n[0]).join("")}</span>
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 15, fontWeight: 600, color: C.gray900 }}>{expert.name}</div>
+                <div style={{ fontSize: 13, color: C.gray500 }}>{expert.headline}</div>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                <Icon name="star" size={14} color={C.amber} />
+                <span style={{ fontSize: 14, fontWeight: 600, color: C.gray700 }}>{expert.rating}</span>
+              </div>
+              <div style={{ fontSize: 24, fontWeight: 700, color: expert.matchScore >= 90 ? C.green : C.blue }}>{expert.matchScore}</div>
+              {expert.flag && <Badge color={C.amber} icon="flag">{expert.flag}</Badge>}
+              <button style={{ background: "none", border: "none", cursor: "pointer" }}><Icon name="x" size={16} color={C.gray300} /></button>
+            </div>
+          ))}
+        </div>
+
+        {/* Engagement action */}
+        <div style={{ background: C.white, borderRadius: 16, border: `1px solid ${C.gray200}`, padding: 28, boxShadow: "0 2px 12px rgba(0,0,0,0.04)" }}>
+          <h3 style={{ fontSize: 16, fontWeight: 700, color: C.navy, margin: "0 0 4px" }}>Engage these experts</h3>
+          <p style={{ fontSize: 13, color: C.gray500, margin: "0 0 20px" }}>Your account type: <strong>Pro Subscriber</strong> — Direct Booking available</p>
+
+          {/* Pre-populated summary */}
+          <div style={{ background: C.gray50, borderRadius: 10, padding: 20, marginBottom: 20 }}>
+            <div style={{ fontSize: 12, fontWeight: 600, color: C.gray500, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 12 }}>Auto-generated engagement summary</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <div><span style={{ fontSize: 11, color: C.gray500 }}>Engagement Type</span><div style={{ fontSize: 14, fontWeight: 600, color: C.gray900 }}>Black Hat Review</div></div>
+              <div><span style={{ fontSize: 11, color: C.gray500 }}>Opportunity</span><div style={{ fontSize: 14, fontWeight: 600, color: C.gray900 }}>CAEI / NAVWAR NIWC Atlantic</div></div>
+              <div><span style={{ fontSize: 11, color: C.gray500 }}>Incumbent</span><div style={{ fontSize: 14, fontWeight: 600, color: C.gray900 }}>SAIC (N6523618D8014)</div></div>
+              <div><span style={{ fontSize: 11, color: C.gray500 }}>Pipeline Stage</span><div style={{ fontSize: 14, fontWeight: 600, color: C.gray900 }}>Capture Planning</div></div>
+            </div>
+            <div style={{ marginTop: 12 }}>
+              <span style={{ fontSize: 11, color: C.gray500 }}>Need Description</span>
+              <div style={{ fontSize: 13, color: C.gray700, marginTop: 4, lineHeight: 1.5 }}>
+                Seeking experts to evaluate SAIC's likely approach to the CAEI recompete at NIWC Atlantic
+                and identify competitive differentiators. This $1B+ IDIQ covers C5ISR production and integration
+                support for naval tactical systems. Experts with direct NIWC Atlantic program experience or
+                knowledge of SAIC's CAEI operations are ideal.
+              </div>
+            </div>
+          </div>
+
+          {/* Tier-specific action */}
+          <div style={{ display: "flex", gap: 12 }}>
+            <Button variant="primary" size="lg" icon="zap" style={{ flex: 1 }}>
+              Book All ({shortlisted.length} experts)
+            </Button>
+            <Button variant="secondary" size="lg">
+              Customize message first
+            </Button>
+          </div>
+          <p style={{ fontSize: 12, color: C.gray500, marginTop: 12, textAlign: "center" }}>
+            Pro subscribers: experts confirm by accepting. By booking, you confirm this engagement aligns with OnFrontiers terms of service.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ─── MAIN APP ───
+function SearchUXPrototype() {
+  const [screen, setScreen] = useState("omnibox");
+
+  return (
+    <div style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', WebkitFontSmoothing: "antialiased" }}>
+      {screen === "omnibox" && <OmniboxScreen onSubmit={() => setScreen("enrichment")} />}
+      {screen === "enrichment" && <EnrichmentScreen onContinue={() => setScreen("results")} />}
+      {screen === "results" && <ResultsScreen onViewShortlist={() => setScreen("shortlist")} />}
+      {screen === "shortlist" && <ShortlistScreen onBack={() => setScreen("results")} />}
+    </div>
+  );
+}
+
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(React.createElement(SearchUXPrototype));
+  </script>
+</body>
+</html>
