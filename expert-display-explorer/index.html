@@ -1,0 +1,2491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expert Display Explorer — OnFrontiers</title>
+
+  <!-- Open Graph / sharing meta -->
+  <meta property="og:title" content="Expert Display Explorer — OnFrontiers">
+  <meta property="og:description" content="Interactive prototype exploring expert card and profile display across 5 dimensions, 12 personas, self-vetting, and tiered data gating (25,920 combinations).">
+  <meta property="og:type" content="website">
+  <meta name="description" content="OnFrontiers Expert Display Explorer — interactive prototype for expert card and profile UX across viewer types, match contexts, personas, and self-vetting states.">
+
+  <!-- Favicon (OF brand) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23005755'/><text x='50' y='68' font-family='system-ui' font-size='50' font-weight='800' fill='white' text-anchor='middle'>OF</text></svg>">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    #root { min-height: 100vh; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+
+  <script type="text/babel" data-type="module">
+    const { useState, useEffect, useRef, useCallback, useMemo, Fragment } = React;
+
+// ─── Brand tokens ───
+const TEAL = "#005755";
+const TEAL_LIGHT = "#28BEAF";
+const TEAL_DARK = "#003C3D";
+const GRAY_50 = "#F9FAFB";
+const GRAY_100 = "#F3F4F6";
+const GRAY_200 = "#E5E7EB";
+const GRAY_300 = "#D1D5DB";
+const GRAY_400 = "#9CA3AF";
+const GRAY_500 = "#6B7280";
+const GRAY_600 = "#4B5563";
+const GRAY_700 = "#374151";
+const GRAY_800 = "#1F2937";
+const GRAY_900 = "#111827";
+const GREEN = "#22C55E";
+const AMBER = "#F59E0B";
+const BLUE = "#3B82F6";
+const PURPLE = "#7C3AED";
+const RED = "#EF4444";
+const ORANGE = "#F97316";
+
+// ─── Expert mock data ───
+const EXPERT = {
+  firstName: "Patricia",
+  lastInitial: "M",
+  fullName: "Patricia M.",
+  initials: "PM",
+  photoColor: "#7C3AED",
+  genericTitle: "R&D Portfolio Management Expert",
+  profileHeadline: "Former AFRL division chief with deep R&D portfolio management and S&T strategy experience.",
+  matchHeadlines: {
+    solicitation: "Former AFRL Division Chief who led S&T programs across air, space, and cyber domains",
+    expert_request: "Senior R&D strategist with 15+ years managing AFRL technology portfolios and transition programs",
+  },
+  matchBullets: {
+    solicitation: [
+      "15+ years leading AFRL science and technology programs spanning air, space, and cyber domains with direct relevance to the MAC IDIQ scope.",
+      "Expert knowledge of AFRL organizational structure, evaluation processes, and Areas of Interest prioritization.",
+      "Hands-on experience managing multi-domain R&D portfolios and technology transition activities from basic research through manufacturing.",
+    ],
+    expert_request: [
+      "Deep experience managing large-scale R&D portfolios with direct AFRL organizational knowledge and technology transition oversight.",
+      "Strong track record of aligning S&T investments with strategic priorities across multiple Air Force mission areas.",
+      "Practical insight into evaluation criteria, proposal review processes, and competitive positioning for government R&D contracts.",
+    ],
+  },
+  tags: ["AFRL", "S&T Strategy", "R&D", "Tech Transition"],
+  alignment: { solicitation: 92, expert_request: 87 },
+  bio: "With over 15 years of experience at the Air Force Research Laboratory, Patricia led science and technology programs spanning air, space, and cyber domains. As a former division chief, she managed multi-domain R&D portfolios and oversaw technology transition activities from basic research through manufacturing readiness.",
+  experience: [
+    {
+      role: "Division Chief, Applied Research",
+      org: "AFRL",
+      years: "2016–2023",
+      description: [
+        "Led a 120-person division spanning air, space, and cyber applied research portfolios with an annual budget of $180M across basic research (6.1) through advanced technology development (6.3).",
+        "Oversaw technology transition planning for 40+ programs, establishing milestone-based transition agreements with acquisition program offices and operational commands.",
+        "Directed multi-domain S&T portfolio reviews and Areas of Interest prioritization, briefing senior Air Force leadership on investment strategy and research outcomes.",
+        "Managed industry and academic partnerships including CRADAs, OTAs, and BAA processes, coordinating with DARPA and service labs on joint research initiatives.",
+        "Championed organizational transformation to integrate modeling & simulation with experimental test programs, reducing technology maturation timelines by 18 months on average.",
+      ],
+    },
+    {
+      role: "Senior Program Manager, S&T Portfolio",
+      org: "AFRL",
+      years: "2012–2016",
+      description: [
+        "Managed a $45M annual portfolio of applied research programs in advanced materials, propulsion, and directed energy technologies.",
+        "Developed and executed technology roadmaps aligned with Air Force strategic priorities, coordinating across multiple AFRL technology directorates.",
+        "Led competitive source selection processes for research contracts, including technical evaluation boards and cost-benefit analyses for BAA awards.",
+        "Established metrics-driven portfolio management practices that improved on-time milestone delivery from 68% to 91% across managed programs.",
+      ],
+    },
+    {
+      role: "Research Engineer",
+      org: "AFRL",
+      years: "2008–2012",
+      description: [
+        "Conducted computational and experimental research in hypersonic aerodynamics, publishing 8 peer-reviewed papers and presenting at AIAA conferences.",
+        "Supported technology readiness assessments for multiple acquisition programs, providing independent technical evaluations of contractor deliverables.",
+      ],
+    },
+  ],
+  consultations: 34,
+  rating: 4.8,
+  reviewCount: 28,
+  availability: "Available this week",
+  hourlyRate: "$350/hr",
+  responseTime: "Usually responds within 4 hours",
+  location: "Dayton, OH",
+  timezone: "EST (UTC−5)",
+  calendarConnected: true,
+  calendarProvider: "google",
+  availableSlots: [
+    { date: "Mon, Mar 9", slots: [
+      { time: "9:00 AM", endTime: "10:00 AM", tz: "EST" },
+      { time: "11:00 AM", endTime: "12:00 PM", tz: "EST" },
+      { time: "2:00 PM", endTime: "3:00 PM", tz: "EST" },
+    ]},
+    { date: "Tue, Mar 10", slots: [
+      { time: "10:00 AM", endTime: "11:00 AM", tz: "EST" },
+      { time: "1:00 PM", endTime: "2:00 PM", tz: "EST" },
+      { time: "3:30 PM", endTime: "4:30 PM", tz: "EST" },
+    ]},
+    { date: "Wed, Mar 11", slots: [
+      { time: "9:00 AM", endTime: "10:00 AM", tz: "EST" },
+      { time: "4:00 PM", endTime: "5:00 PM", tz: "EST" },
+    ]},
+    { date: "Thu, Mar 12", slots: [
+      { time: "11:00 AM", endTime: "12:00 PM", tz: "EST" },
+    ]},
+  ],
+  workingHours: { start: "9:00 AM", end: "5:00 PM", days: "Mon–Fri" },
+  bufferMinutes: 15,
+  minNoticeHours: 24,
+  languages: ["English"],
+  education: [
+    { credential: "Master of Science", field: "Aerospace Engineering", institution: "MIT", years: "2006–2008" },
+    { credential: "Certificate", field: "Executive Leadership", institution: "Cornell University", years: "2020–2021" },
+    { credential: "Bachelor of Science", field: "Mechanical Engineering", institution: "University of Dayton", years: "2002–2006" },
+  ],
+  lastConsultation: "Jan 14, 2026",
+  testimonials: [
+    {
+      quote: "Patricia gave us a masterclass on how AFRL evaluates proposals. She pinpointed gaps in our technical approach that we completely missed — saved us from a fatal weakness.",
+      author: "Capture Manager",
+      company: "Mid-tier Defense Contractor",
+      date: "Dec 2025",
+    },
+    {
+      quote: "Incredibly knowledgeable about the S&T portfolio process. Patricia helped us understand exactly which Areas of Interest align with our capabilities and how to frame our past performance.",
+      author: "VP of Business Development",
+      company: "Aerospace Firm",
+      date: "Oct 2025",
+    },
+    {
+      quote: "Her insider perspective on tech transition pathways from 6.1 through 6.3 was exactly what we needed. Clear, specific, and actionable advice.",
+      author: "Program Director",
+      company: "Research Organization",
+      date: "Aug 2025",
+    },
+  ],
+  // Keyword search snippet — fragments from bio/experience matching hypothetical search "directed energy AFRL"
+  keywordSnippet: {
+    query: "directed energy AFRL",
+    fragments: [
+      { text: "Led ", highlight: false },
+      { text: "directed energy", highlight: true },
+      { text: " research programs at ", highlight: false },
+      { text: "AFRL", highlight: true },
+      { text: " spanning high-power microwave and laser systems", highlight: false },
+    ],
+    source: "Experience",
+  },
+
+  // ─── Services / Offerings ───
+  services: [
+    {
+      id: "svc1",
+      customName: "Federal R&D Strategy Assessment",
+      category: "Market Research",
+      description: "Comprehensive analysis of your technology's alignment with AFRL and DoD S&T investment priorities, including Areas of Interest mapping and budget cycle positioning.",
+      stages: ["Building Foundation", "Self-Performing"],
+      deliveryModel: "one-time",
+      engagements: 12,
+      rating: 4.9,
+    },
+    {
+      id: "svc2",
+      customName: "Capture Intelligence Briefing",
+      category: "Capture Support",
+      description: "Program-level intelligence on incumbent landscape, evaluation criteria patterns, and competitive positioning for specific AFRL and DoD opportunities.",
+      stages: ["Active Execution"],
+      deliveryModel: "one-time",
+      engagements: 8,
+      rating: 5.0,
+    },
+    {
+      id: "svc3",
+      customName: "Orals Coaching & Mock Evaluations",
+      category: "Proposal Support",
+      description: "Structured oral presentation prep with mock evaluation panels replicating AFRL review board dynamics, scoring rubrics, and Q&A patterns.",
+      stages: ["Active Execution"],
+      deliveryModel: "one-time",
+      engagements: 5,
+      rating: 4.8,
+    },
+  ],
+
+  // ─── GovCon structured data (Cerca-enriched) ───
+  govcon: {
+    primaryRole: "Program SME",
+    currentRoleType: "Consultant",  // government | contractor | consultant | academia | industry | other
+    yearsInPublicSector: 18,
+    yearsSinceLeftGov: 3,
+    mostRecentGovRole: "Division Chief, Applied Research",
+    mostRecentGovOrg: "AFRL",
+    highestRank: "GS-15",
+    clearances: [{ type: "TS/SCI", status: "Inactive" }],
+    agencyExperience: [
+      { name: "AFRL", years: 15, category: "DoD" },
+      { name: "DARPA", years: 2, category: "DoD" },
+      { name: "NASA", years: 1, category: "Fed Civ" },
+      { name: "DHS S&T", years: 1, category: "Fed Civ" },
+      { name: "ONR", years: 1, category: "DoD" },
+    ],
+    agencyBreakdown: { DoD: 85, FedCiv: 10, Intel: 5 },
+    domainExperience: [
+      { name: "Systems Engineering & Integration", years: 12 },
+      { name: "Advanced Materials & Additive Mfg", years: 8 },
+      { name: "Robotics & Autonomous Systems", years: 5 },
+      { name: "Modeling, Simulation & Training", years: 4 },
+      { name: "AI / Machine Learning", years: 3 },
+    ],
+    programExperience: [
+      { name: "MAC IDIQ", years: 4, role: "Division Chief" },
+      { name: "AFRL 6.1/6.2/6.3 Portfolio", years: 10, role: "Portfolio Lead" },
+      { name: "Joint Strike Technology", years: 3, role: "Program Manager" },
+      { name: "Directed Energy Weapons", years: 5, role: "Technical Lead" },
+      { name: "Hypersonics Materials", years: 3, role: "Research Lead" },
+    ],
+    certifications: ["PMP", "DAWIA Level III — Program Management"],
+    // BD-specific fields (more relevant for BD personas)
+    vendorExperience: ["Large (1000+)", "Mid-tier (100–999)"],
+    bdSkills: ["Black hat reviews", "Competitive analysis", "Strategic pricing", "Price-to-win"],
+    bdTools: ["GovWin", "HigherGov", "SAM.gov", "FPDS"],
+    winHighlights: [
+      { title: "AFRL MAC IDIQ Task Order", value: "$45M", role: "Capture Lead", year: 2024 },
+      { title: "DHS Cybersecurity Modernization", value: "$22M", role: "Solution Architect", year: 2023 },
+      { title: "NASA EOS Data Pipeline", value: "$12M", role: "Technical Lead", year: 2022 },
+    ],
+    dealExperience: {
+      totalProposals: 28,
+      winRate: "64%",
+      topVehicles: ["OASIS", "SEWP V", "Alliant II"],
+      dealTypes: ["CPFF", "T&M", "FFP"],
+      setAsideExp: ["Small Business", "8(a)", "Full & Open"],
+    },
+    satOnReviewPanels: true,
+    hasWorkedOnProposals: true,
+  },
+};
+
+// ─── Self-vetting data (per-opportunity, only relevant in solicitation/expert_request context) ───
+const SELF_VETTING = {
+  fitStatus: "verified",  // "verified" | "not_fit" | "unreviewed"
+  complianceStatus: "unrestricted",  // "unrestricted" | "restricted" | "case_by_case"
+  exclusivitySignal: "no_conflicts",  // "no_conflicts" | "in_discussions" | "engaged"
+  vettingAnswers: [
+    {
+      question: "Can you discuss why a generic pharmaceutical product might be removed from TRICARE distribution without supplier notification?",
+      answerType: "boolean",
+      answer: true,
+    },
+    {
+      question: "Are you familiar with how AFRL evaluates and prioritizes Areas of Interest for applied research investment?",
+      answerType: "boolean",
+      answer: true,
+    },
+    {
+      question: "Describe your direct experience managing multi-domain R&D portfolios within AFRL or comparable DoD labs.",
+      answerType: "freeform",
+      answer: "15 years leading AFRL applied research portfolios spanning air, space, and cyber domains. Managed $180M annual budget across 6.1-6.3 programs with direct oversight of technology transition planning for 40+ programs.",
+    },
+  ],
+  expertNote: "I led the division that managed several of the programs directly referenced in this MAC IDIQ scope. I can speak to the evaluation criteria, incumbent landscape, and Areas of Interest prioritization from the government side. Happy to discuss competitive positioning strategies based on what I've seen work in past evaluations.",
+  respondedAt: "Mar 12, 2026",
+};
+
+// ─── Expert maturity overlays ───
+// These override EXPERT fields to simulate different levels of platform history
+const MATURITY_PROFILES = {
+  established: {
+    label: "Established",
+    desc: "34 consultations, strong ratings & testimonials",
+    overrides: {},  // Use EXPERT defaults
+  },
+  growing: {
+    label: "Growing",
+    desc: "3 consultations, 1 rating, 1 testimonial",
+    overrides: {
+      consultations: 3,
+      rating: 5.0,
+      reviewCount: 1,
+      testimonials: [EXPERT.testimonials?.[0]].filter(Boolean),
+      lastConsultation: "Feb 8, 2026",
+    },
+  },
+  new_expert: {
+    label: "New",
+    desc: "0 consultations, no ratings or testimonials",
+    overrides: {
+      consultations: 0,
+      rating: null,
+      reviewCount: 0,
+      testimonials: [],
+      availability: "Available this week",
+      lastConsultation: null,
+    },
+  },
+};
+
+// ─── Calendar connection overlays ───
+const CALENDAR_PROFILES = {
+  connected: {
+    label: "Connected",
+    desc: "Google Calendar linked, real-time slots",
+    overrides: { calendarConnected: true, calendarProvider: "google" },
+  },
+  connected_outlook: {
+    label: "Outlook",
+    desc: "Outlook Calendar linked",
+    overrides: { calendarConnected: true, calendarProvider: "outlook" },
+  },
+  not_connected: {
+    label: "Not Connected",
+    desc: "No calendar — request-based flow",
+    overrides: { calendarConnected: false, calendarProvider: null, availableSlots: [] },
+  },
+};
+
+// ─── Cerca persona roles ───
+const PERSONA_ROLES = {
+  // Competitive Intelligence roles
+  program_sme: { label: "Program SME", short: "Prog SME", type: "ci", desc: "Program-level leader" },
+  technical_sme: { label: "Technical SME", short: "Tech SME", type: "ci", desc: "Gov technologist" },
+  contractor_sme: { label: "Contractor SME", short: "Contr SME", type: "ci", desc: "Contractor program/tech" },
+  agency_sme: { label: "Agency SME", short: "Agency SME", type: "ci", desc: "Senior fed leader" },
+  acquisition_sme: { label: "Acquisition SME", short: "Acq SME", type: "ci", desc: "Contracting officer" },
+  // BD Resources roles
+  capture_mgr: { label: "Capture Manager", short: "Capture", type: "bd", desc: "Full pursuit lifecycle" },
+  solution_arch: { label: "Solution Architect", short: "Sol Arch", type: "bd", desc: "Technical solutions" },
+  bd_recruiter: { label: "BD Recruiter", short: "Recruiter", type: "bd", desc: "Key personnel sourcing" },
+  pricing_expert: { label: "Pricing Expert", short: "Pricing", type: "bd", desc: "Cost volumes & strategy" },
+  proposal_mgr: { label: "Proposal Manager", short: "Prop Mgr", type: "bd", desc: "Proposal lifecycle" },
+  proposal_writer: { label: "Proposal Writer", short: "Prop Writer", type: "bd", desc: "Narrative sections" },
+  tech_reviewer: { label: "Technical Reviewer", short: "Tech Rev", type: "bd", desc: "Domain evaluation" },
+};
+
+// Persona-based display gating: which GovCon sections show per role
+function getPersonaGating(personaKey) {
+  const p = PERSONA_ROLES[personaKey];
+  if (!p) return {};
+  const isCI = p.type === "ci";
+  const isBD = p.type === "bd";
+  // Per-role overrides for BD fields
+  const showWins = ["capture_mgr", "proposal_mgr", "proposal_writer", "solution_arch"].includes(personaKey);
+  const showDeals = ["capture_mgr", "pricing_expert", "proposal_mgr"].includes(personaKey);
+  const showBDSkills = ["capture_mgr", "pricing_expert", "proposal_writer"].includes(personaKey);
+  const showBDTools = ["capture_mgr", "proposal_mgr"].includes(personaKey);
+  const showVendorExp = ["capture_mgr", "bd_recruiter", "pricing_expert"].includes(personaKey);
+  const showCerts = isBD || personaKey === "acquisition_sme";
+  const showReviewPanels = isCI;
+  return {
+    showAgencyProminent: isCI,
+    showDomainProminent: isCI || personaKey === "solution_arch" || personaKey === "tech_reviewer",
+    showProgramsProminent: isCI,
+    showProgramsCollapsed: isBD,
+    showClearanceProminent: true,  // always shown
+    showCertifications: showCerts,
+    showWinHighlights: showWins,
+    showDealExperience: showDeals,
+    showBDSkills: showBDSkills,
+    showBDTools: showBDTools,
+    showVendorExperience: showVendorExp,
+    showReviewPanels: showReviewPanels,
+    isCI,
+    isBD,
+  };
+}
+
+// Thresholds — the minimums before social proof becomes visible
+const THRESHOLDS = {
+  consultationsToShow: 5,    // Don't display count below this
+  reviewsToShowRating: 3,    // Don't display star average below this
+  reviewsToShowSection: 1,   // Need at least 1 review to show "Reviews" section
+};
+
+// ─── Display rules engine ───
+function getDisplayRules(userType, expertVisibility, matchContext, consultationStatus, rateStrategy, expertData) {
+  // Hidden experts never appear (except for admin)
+  if (expertVisibility === "hidden" && userType !== "admin") {
+    return { visible: false };
+  }
+
+  const isAnonymous = expertVisibility === "anonymous";
+  const hasMatch = matchContext === "solicitation" || matchContext === "expert_request";
+  const isBrowse = matchContext === "browse";
+  const isKeyword = matchContext === "keyword";
+  const isVisitor = userType === "visitor";
+  const isFree = userType === "free";
+  const isPro = userType === "pro";
+  const isCredits = userType === "credits";
+  const isAdmin = userType === "admin";
+  const isPaid = isPro || isCredits || isAdmin;
+  const hasConsulted = consultationStatus === "post";
+
+  // Post-consultation only meaningful for paid users
+  // Once consulted, anonymous veil lifts for THIS viewer
+  const identityRevealed = hasConsulted && isPaid;
+
+  // Expert maturity — threshold-based social proof gating
+  const ed = expertData || EXPERT;
+  const meetsConsultationThreshold = ed.consultations >= THRESHOLDS.consultationsToShow;
+  const meetsRatingThreshold = ed.reviewCount >= THRESHOLDS.reviewsToShowRating;
+  const hasAnyReviews = ed.reviewCount >= THRESHOLDS.reviewsToShowSection;
+  const hasTestimonials = ed.testimonials && ed.testimonials.length > 0;
+  const isNewExpert = ed.consultations === 0;
+
+  return {
+    visible: true,
+
+    // Card rules
+    card: {
+      showPhoto: !isAnonymous || identityRevealed,
+      showName: (!isAnonymous && !isVisitor) || identityRevealed,
+      headline: hasMatch ? "match" : "profile",
+      showTags: true,
+      tagsStyle: isVisitor ? "dimmed" : "full",
+      firstBulletVisible: hasMatch,
+      restBulletsVisible: hasMatch && (isPaid || isFree),
+      allBulletsBlurred: hasMatch && isVisitor,
+      showAlignment: hasMatch,
+      showRelevanceSnippet: isKeyword,
+      showMatchPrompt: isBrowse && !isVisitor,
+      showRating: !isVisitor && meetsRatingThreshold,
+      showConsultationCount: !isVisitor && meetsConsultationThreshold,
+      showNewBadge: !isVisitor && isNewExpert,
+      showLocation: isPaid && (!isAnonymous || identityRevealed),
+      showAvailability: !isVisitor && isPaid,
+      showAvailabilitySlots: !isVisitor && isPaid && ed.calendarConnected,
+      showConsultationBadge: identityRevealed,
+      cta: identityRevealed
+        ? (ed.calendarConnected ? "Book Again" : "Schedule Again")
+        : isVisitor
+          ? "Sign Up to Connect"
+          : isPaid && ed.calendarConnected
+            ? "Book Consultation"
+            : isFree ? "Request Consultation" : "Request Consultation",
+      ctaStyle: identityRevealed ? "filled" : isVisitor ? "outlined" : isFree ? "outlined" : "filled",
+      ctaPricingHint: isFree && !identityRevealed ? "Pro plan required" : null,
+    },
+
+    // Profile rules
+    profile: {
+      accessible: !isVisitor,
+      showPhoto: !isAnonymous || identityRevealed,
+      showFullName: (!isAnonymous && isPaid) || identityRevealed,
+      showFirstName: !isAnonymous && isFree && !identityRevealed,
+      showBio: true,
+      bioBlurred: false,
+      showExperience: true,
+      experienceBlurred: (isVisitor || isFree) && !identityRevealed,
+      showConsultationCount: !isVisitor && meetsConsultationThreshold,
+      showRating: !isVisitor && meetsRatingThreshold,
+      showNewBadge: !isVisitor && isNewExpert,
+      showReviews: (isPaid || identityRevealed) && hasAnyReviews,
+      showLocation: isPaid && (!isAnonymous || identityRevealed),
+      showAvailability: isPaid,
+      showAvailabilityPicker: isPaid && ed.calendarConnected,
+      showAvailabilityFallback: isPaid && !ed.calendarConnected,
+      showRate: rateStrategy === "profile" ? !isVisitor : isPaid,
+      showResponseTime: isPaid,
+      showEducation: isPaid,
+      headline: hasMatch ? "match" : "profile",
+      showMatchSection: hasMatch,
+      matchFirstBulletVisible: hasMatch,
+      matchRestBulletsVisible: hasMatch && (isPaid || isFree),
+      matchBulletsBlurred: hasMatch && isVisitor,
+      showConsultationHistory: identityRevealed,
+      showTestimonials: !isVisitor,
+      testimonialLimit: isPaid || identityRevealed ? 3 : 1,  // Free sees 1, paid sees all
+      showContextBar: hasMatch && !isVisitor,
+      showShortlistAction: hasMatch && !isVisitor,
+      ctaLabel: identityRevealed
+        ? (ed.calendarConnected ? "Book Again" : "Schedule Again")
+        : isFree ? "Request Consultation"
+        : isPaid ? (ed.calendarConnected ? "Book Consultation" : "Request Consultation")
+        : null,
+      ctaPricingHint: isFree && !identityRevealed ? "Pro plan required" : null,
+
+      // Profile export / download (Credits/Admin viewers)
+      showExportButton: isCredits || isAdmin,
+
+      // GovCon data gating by viewer tier
+      // Tier 1 identity (persona, role type, years, years since left) — all logged-in users
+      govconTier1: !isVisitor,
+      // Tier 2 summary (agency/domain names visible, no year counts or breakdowns) — Pro+
+      govconTier2Summary: isPro || isCredits || isAdmin,
+      // Tier 2 full (year counts, breakdowns, programs, certs) — Credits/Admin
+      govconTier2Full: isCredits || isAdmin,
+      // Clearances — Credits/Admin
+      govconClearances: isCredits || isAdmin,
+      // BD Depth section — Credits/Admin
+      govconBDDepth: isCredits || isAdmin,
+      // Services: names+categories visible Pro+, full detail Credits/Admin
+      servicesVisible: isPro || isCredits || isAdmin,
+      servicesFull: isCredits || isAdmin,
+      // Blurred overlay for Free users seeing GovCon sections
+      govconBlurred: isFree && !isAdmin,
+
+      // Self-vetting (only in match context — solicitation or expert_request)
+      showVettingBadge: hasMatch && !isVisitor,                    // "Verified Fit" badge — all logged-in
+      showVettingAnswersSummary: hasMatch && isPro && !isCredits && !isAdmin,  // yes/no only for Pro
+      showVettingAnswers: hasMatch && (isCredits || isAdmin),      // full Q&A for Credits/Admin
+      showExpertNote: hasMatch && (isCredits || isAdmin),          // expert's own words
+      showComplianceStatus: hasMatch && isAdmin,                   // compliance — admin only
+      showExclusivitySignal: hasMatch && (isCredits || isAdmin),   // "No conflicts" / "In discussions"
+      showRestrictedExperts: isAdmin,                              // admin can see restricted experts
+      vettingBlurred: hasMatch && isFree,                          // Free: blurred vetting section
+    },
+  };
+}
+
+// ─── Shared small components ───
+const Avatar = ({ initials, color, size = 56 }) => (
+  <div style={{ width: size, height: size, borderRadius: "50%", background: `linear-gradient(135deg, ${color}, ${color}CC)`, display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontSize: size * 0.34, fontWeight: 700, flexShrink: 0 }}>
+    {initials}
+  </div>
+);
+
+const Silhouette = ({ size = 56 }) => (
+  <div style={{ width: size, height: size, borderRadius: "50%", background: GRAY_100, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: `2px dashed ${GRAY_300}` }}>
+    <svg width={size * 0.4} height={size * 0.4} viewBox="0 0 24 24" fill="none" stroke={GRAY_400} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </svg>
+  </div>
+);
+
+const Tag = ({ children, dimmed }) => (
+  <span style={{
+    display: "inline-block", padding: "2px 8px", borderRadius: 4, fontSize: 11, fontWeight: 500,
+    background: dimmed ? GRAY_50 : `${TEAL}0A`,
+    color: dimmed ? GRAY_400 : TEAL,
+    marginRight: 4, marginBottom: 3,
+    border: `1px solid ${dimmed ? GRAY_200 : `${TEAL}18`}`,
+  }}>{children}</span>
+);
+
+const AlignmentBar = ({ score }) => (
+  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+    <div style={{ width: 48, height: 5, borderRadius: 3, background: GRAY_100, overflow: "hidden" }}>
+      <div style={{ width: `${score}%`, height: "100%", borderRadius: 3, background: GREEN }} />
+    </div>
+    <span style={{ fontSize: 11, fontWeight: 600, color: GREEN }}>{score}% Alignment</span>
+  </div>
+);
+
+const StarRating = ({ rating, count }) => (
+  <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+    <span style={{ color: AMBER, fontSize: 13 }}>★</span>
+    <span style={{ fontSize: 12, fontWeight: 600, color: GRAY_700 }}>{rating}</span>
+    {count && <span style={{ fontSize: 11, color: GRAY_400 }}>({count})</span>}
+  </div>
+);
+
+const BlurredBlock = ({ children, height, message }) => (
+  <div style={{ position: "relative" }}>
+    <div style={{ filter: "blur(4px)", opacity: 0.2, userSelect: "none", overflow: "hidden", maxHeight: height || "auto" }}>
+      {children}
+    </div>
+    {message && (
+      <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, color: TEAL, fontWeight: 500, background: "white", padding: "4px 12px", borderRadius: 6, border: `1px solid ${TEAL}30`, boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
+          <svg width="11" height="11" viewBox="0 0 20 20" fill={TEAL}><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" /></svg>
+          {message}
+        </div>
+      </div>
+    )}
+  </div>
+);
+
+const LockIcon = () => (
+  <svg width="11" height="11" viewBox="0 0 20 20" fill={TEAL} style={{ flexShrink: 0 }}>
+    <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+  </svg>
+);
+
+// ─── EDUCATION (Option F — primary + expandable) ───
+function EducationExpandable({ education }) {
+  const [expanded, setExpanded] = useState(false);
+  const primary = education[0];
+  const rest = education.slice(1);
+  const abbrev = (cred) => cred.replace("Bachelor of Science", "B.S.").replace("Master of Science", "M.S.").replace("Certificate", "Cert.");
+
+  return (
+    <div>
+      <span style={{ color: GRAY_700, fontWeight: 500 }}>
+        {abbrev(primary.credential)}, {primary.field}, {primary.institution}
+      </span>
+      {rest.length > 0 && !expanded && (
+        <button
+          onClick={() => setExpanded(true)}
+          style={{ marginLeft: 6, fontSize: 10, color: TEAL, fontWeight: 600, background: "none", border: "none", cursor: "pointer", padding: 0 }}
+        >
+          +{rest.length} more
+        </button>
+      )}
+      {rest.length > 0 && expanded && (
+        <button
+          onClick={() => setExpanded(false)}
+          style={{ marginLeft: 6, fontSize: 10, color: TEAL, fontWeight: 600, background: "none", border: "none", cursor: "pointer", padding: 0 }}
+        >
+          show less
+        </button>
+      )}
+      {expanded && rest.map((ed, i) => (
+        <div key={i} style={{ fontSize: 11, color: GRAY_500, marginTop: 3 }}>
+          {abbrev(ed.credential)}, {ed.field}, {ed.institution}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ─── CALENDAR ICON ───
+const CalendarIcon = ({ size = 14, color = TEAL }) => (
+  <svg width={size} height={size} viewBox="0 0 20 20" fill={color}>
+    <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
+  </svg>
+);
+
+const ClockIcon = ({ size = 12, color = GRAY_400 }) => (
+  <svg width={size} height={size} viewBox="0 0 20 20" fill={color}>
+    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+  </svg>
+);
+
+// ─── AVAILABILITY SLOT PICKER (profile) ───
+function AvailabilitySlotPicker({ expert, onBook }) {
+  const [selectedDay, setSelectedDay] = useState(0);
+  const [selectedSlot, setSelectedSlot] = useState(null);
+  const [duration, setDuration] = useState(60);
+  const days = expert.availableSlots || [];
+  const currentDay = days[selectedDay];
+
+  return (
+    <div>
+      {/* Duration selector */}
+      <div style={{ display: "flex", gap: 6, marginBottom: 12 }}>
+        <span style={{ fontSize: 11, color: GRAY_500, fontWeight: 500, display: "flex", alignItems: "center", marginRight: 4 }}>Duration:</span>
+        {[30, 60, 90].map(d => (
+          <button
+            key={d}
+            onClick={() => { setDuration(d); setSelectedSlot(null); }}
+            style={{
+              padding: "4px 12px", borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: "pointer",
+              border: `1.5px solid ${duration === d ? TEAL : GRAY_200}`,
+              background: duration === d ? `${TEAL}08` : "white",
+              color: duration === d ? TEAL : GRAY_500,
+            }}
+          >
+            {d} min
+          </button>
+        ))}
+      </div>
+
+      {/* Day tabs */}
+      <div style={{ display: "flex", gap: 4, marginBottom: 10, overflowX: "auto" }}>
+        {days.map((day, i) => (
+          <button
+            key={i}
+            onClick={() => { setSelectedDay(i); setSelectedSlot(null); }}
+            style={{
+              padding: "6px 12px", borderRadius: 8, fontSize: 11, fontWeight: 600, cursor: "pointer",
+              whiteSpace: "nowrap", transition: "all .12s",
+              border: `1.5px solid ${selectedDay === i ? TEAL : GRAY_200}`,
+              background: selectedDay === i ? `${TEAL}10` : "white",
+              color: selectedDay === i ? TEAL : GRAY_600,
+            }}
+          >
+            {day.date}
+            <span style={{ display: "block", fontSize: 10, fontWeight: 400, color: selectedDay === i ? `${TEAL}99` : GRAY_400, marginTop: 1 }}>
+              {day.slots.length} slot{day.slots.length !== 1 ? "s" : ""}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      {/* Time slots grid */}
+      {currentDay && (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+          {currentDay.slots.map((slot, i) => {
+            const isSelected = selectedSlot === `${selectedDay}-${i}`;
+            return (
+              <button
+                key={i}
+                onClick={() => setSelectedSlot(isSelected ? null : `${selectedDay}-${i}`)}
+                style={{
+                  padding: "8px 14px", borderRadius: 8, cursor: "pointer", transition: "all .12s",
+                  border: `2px solid ${isSelected ? TEAL : GRAY_200}`,
+                  background: isSelected ? TEAL : "white",
+                  color: isSelected ? "white" : GRAY_700,
+                  fontSize: 13, fontWeight: 600,
+                  boxShadow: isSelected ? `0 2px 8px ${TEAL}30` : "none",
+                }}
+              >
+                {slot.time}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Selected slot confirmation */}
+      {selectedSlot && currentDay && (
+        <div style={{
+          marginTop: 12, padding: "12px 14px", background: `${TEAL}06`, borderRadius: 10,
+          border: `1px solid ${TEAL}20`, display: "flex", alignItems: "center", justifyContent: "space-between",
+        }}>
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: GRAY_800 }}>
+              {currentDay.date} at {currentDay.slots[parseInt(selectedSlot.split("-")[1])].time}
+            </div>
+            <div style={{ fontSize: 11, color: GRAY_500, marginTop: 2 }}>
+              {duration} min · {expert.timezone} · {expert.hourlyRate}
+            </div>
+          </div>
+          <button
+            onClick={onBook}
+            style={{
+              background: TEAL, color: "white", border: "none", borderRadius: 8,
+              padding: "8px 20px", fontSize: 13, fontWeight: 700, cursor: "pointer",
+              boxShadow: `0 2px 8px ${TEAL}30`,
+            }}
+          >
+            Book Now
+          </button>
+        </div>
+      )}
+
+      {/* Timezone notice */}
+      <div style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 5, fontSize: 10, color: GRAY_400 }}>
+        <ClockIcon size={10} color={GRAY_300} />
+        Times shown in {expert.timezone} · {expert.bufferMinutes}min buffer between sessions · {expert.minNoticeHours}hr minimum notice
+      </div>
+    </div>
+  );
+}
+
+// ─── AVAILABILITY CARD BADGE (compact for card view) ───
+function AvailabilityCardBadge({ expert }) {
+  if (!expert.calendarConnected) {
+    return (
+      <div style={{ marginTop: 6, fontSize: 11, color: GREEN, fontWeight: 500 }}>● {expert.availability}</div>
+    );
+  }
+
+  // Connected: show next available slot count
+  const totalSlots = (expert.availableSlots || []).reduce((sum, d) => sum + d.slots.length, 0);
+  const nextDay = expert.availableSlots?.[0];
+  const nextSlot = nextDay?.slots?.[0];
+
+  return (
+    <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 8 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 11, color: TEAL, fontWeight: 600 }}>
+        <CalendarIcon size={12} color={TEAL} />
+        {totalSlots} slots this week
+      </div>
+      {nextSlot && (
+        <span style={{ fontSize: 10, color: GRAY_400 }}>
+          Next: {nextDay.date} at {nextSlot.time}
+        </span>
+      )}
+    </div>
+  );
+}
+
+// ─── AVAILABILITY FALLBACK (unconnected expert, profile view) ───
+function AvailabilityFallback({ expert }) {
+  return (
+    <div style={{ padding: "14px 16px", background: GRAY_50, borderRadius: 10, border: `1px solid ${GRAY_200}` }}>
+      <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
+        <div style={{ width: 36, height: 36, borderRadius: 8, background: `${GREEN}10`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+          <CalendarIcon size={18} color={GREEN} />
+        </div>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: GRAY_700 }}>Request available times</div>
+          <div style={{ fontSize: 12, color: GRAY_500, marginTop: 2, lineHeight: 1.4 }}>
+            This expert hasn't connected their calendar yet. Submit a consultation request and they'll propose available times.
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 8 }}>
+            <span style={{ fontSize: 11, color: GREEN, fontWeight: 500 }}>● {expert.availability}</span>
+            {expert.responseTime && (
+              <>
+                <span style={{ color: GRAY_300 }}>·</span>
+                <span style={{ fontSize: 11, color: GRAY_500 }}>{expert.responseTime}</span>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── SEARCH RESULT CARD ───
+function ExpertCard({ expert, rules, matchContext, persona, personaGating, selfVetting }) {
+  const c = rules.card;
+  const p = rules.profile;
+  const sv = selfVetting || {};
+  const matchKey = (matchContext === "solicitation" || matchContext === "expert_request") ? matchContext : null;
+  const headline = c.headline === "match" && matchKey ? expert.matchHeadlines[matchKey] : expert.profileHeadline;
+  const bullets = matchKey ? expert.matchBullets[matchKey] : [];
+  const alignment = matchKey ? expert.alignment[matchKey] : 0;
+
+  return (
+    <div style={{ background: "white", borderRadius: 12, border: `1px solid ${GRAY_200}`, padding: "18px 20px" }}>
+      <div style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
+        {c.showPhoto ? <Avatar initials={expert.initials} color={expert.photoColor} /> : <Silhouette />}
+
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
+            <div style={{ flex: 1 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: GRAY_900 }}>
+                  {c.showName ? expert.fullName : expert.genericTitle}
+                </h3>
+                {c.showRating && <StarRating rating={expert.rating} count={expert.reviewCount} />}
+                {c.showNewBadge && (
+                  <span style={{ fontSize: 10, fontWeight: 600, color: TEAL, background: `${TEAL}12`, padding: "2px 8px", borderRadius: 4, whiteSpace: "nowrap" }}>New on OnFrontiers</span>
+                )}
+              </div>
+              <p style={{ margin: "2px 0 0", fontSize: 13, color: c.headline === "match" ? GRAY_700 : GRAY_500, lineHeight: 1.4, fontWeight: c.headline === "match" ? 500 : 400 }}>
+                {headline}
+              </p>
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 3, flexShrink: 0 }}>
+              <button style={{
+                display: "flex", alignItems: "center", gap: 6,
+                background: c.ctaStyle === "filled" ? TEAL : "white",
+                border: `1.5px solid ${TEAL}`,
+                color: c.ctaStyle === "filled" ? "white" : TEAL,
+                borderRadius: 8, padding: "8px 16px",
+                fontSize: 13, fontWeight: 600, cursor: "pointer",
+                whiteSpace: "nowrap",
+              }}>
+                {c.cta}
+              </button>
+              {c.ctaPricingHint && (
+                <span style={{ fontSize: 10, color: GRAY_400, fontWeight: 500 }}>{c.ctaPricingHint}</span>
+              )}
+            </div>
+          </div>
+
+          {/* Tags + location row — Cerca-derived when GovCon data present */}
+          <div style={{ display: "flex", flexWrap: "wrap", marginTop: 8, alignItems: "center", gap: 4 }}>
+            {expert.govcon && rules.profile.govconTier2Summary
+              ? expert.govcon.agencyExperience.slice(0, 3).map(a => <Tag key={a.name}>{a.name}</Tag>)
+              : !expert.govcon || !rules.profile.govconTier1
+                ? expert.tags.map(t => <Tag key={t} dimmed={c.tagsStyle === "dimmed"}>{t}</Tag>)
+                : expert.tags.map(t => <Tag key={t} dimmed={c.tagsStyle === "dimmed"}>{t}</Tag>)
+            }
+            {c.showLocation && expert.location && (
+              <span style={{ fontSize: 11, color: GRAY_400, fontWeight: 500, marginLeft: 4, display: "inline-flex", alignItems: "center", gap: 3 }}>
+                <svg width="10" height="10" viewBox="0 0 20 20" fill={GRAY_400}><path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" /></svg>
+                {expert.location}
+              </span>
+            )}
+          </div>
+
+          {/* GovCon Tier 1 signals — visible to all logged-in users */}
+          {expert.govcon && persona && rules.profile.govconTier1 && (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 8 }}>
+              {/* Persona badge */}
+              <span style={{
+                fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 4, whiteSpace: "nowrap",
+                color: personaGating.isCI ? ORANGE : BLUE,
+                background: personaGating.isCI ? `${ORANGE}12` : `${BLUE}12`,
+                border: `1px solid ${personaGating.isCI ? `${ORANGE}25` : `${BLUE}25`}`,
+              }}>
+                {PERSONA_ROLES[persona]?.label}
+              </span>
+              {/* Current role type */}
+              <span style={{ fontSize: 10, fontWeight: 600, color: GRAY_600, background: GRAY_100, padding: "2px 8px", borderRadius: 4, whiteSpace: "nowrap" }}>
+                {expert.govcon.currentRoleType}
+              </span>
+              {/* Years in public sector */}
+              <span style={{ fontSize: 10, fontWeight: 500, color: GRAY_500, padding: "2px 8px", borderRadius: 4, background: GRAY_50, whiteSpace: "nowrap" }}>
+                {expert.govcon.yearsInPublicSector}yr public sector
+              </span>
+              {/* Years since left gov */}
+              {expert.govcon.yearsSinceLeftGov > 0 && (
+                <span style={{ fontSize: 10, fontWeight: 500, color: GRAY_500, padding: "2px 8px", borderRadius: 4, background: GRAY_50, whiteSpace: "nowrap" }}>
+                  Left gov {expert.govcon.yearsSinceLeftGov}yr ago
+                </span>
+              )}
+              {/* Clearance — Credits viewers only */}
+              {rules.profile.govconClearances && expert.govcon.clearances?.[0] && (
+                <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 4, whiteSpace: "nowrap",
+                  color: expert.govcon.clearances[0].type.includes("TS") ? "#B45309" : GRAY_600,
+                  background: expert.govcon.clearances[0].type.includes("TS") ? "#FEF3C7" : GRAY_100,
+                }}>
+                  {expert.govcon.clearances[0].type} {expert.govcon.clearances[0].status !== "Active" ? `(${expert.govcon.clearances[0].status})` : ""}
+                </span>
+              )}
+            </div>
+          )}
+
+          {/* Self-vetting signals (solicitation/expert_request context only) */}
+          {p.showVettingBadge && sv.fitStatus && (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 8, alignItems: "center" }}>
+              {/* Verified Fit badge */}
+              {sv.fitStatus === "verified" && (
+                <span style={{
+                  display: "inline-flex", alignItems: "center", gap: 4,
+                  fontSize: 10, fontWeight: 700, padding: "3px 10px", borderRadius: 5,
+                  color: "#15803D", background: "#F0FDF4", border: "1px solid #BBF7D0",
+                }}>
+                  <svg width="10" height="10" viewBox="0 0 20 20" fill="#15803D"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                  Verified Fit
+                </span>
+              )}
+              {sv.fitStatus === "unreviewed" && (
+                <span style={{ fontSize: 10, fontWeight: 600, color: GRAY_400, background: GRAY_50, padding: "3px 10px", borderRadius: 5, border: `1px solid ${GRAY_200}` }}>
+                  Pending review
+                </span>
+              )}
+              {/* Compliance dot — admin only */}
+              {p.showComplianceStatus && sv.complianceStatus && (
+                <span style={{
+                  display: "inline-flex", alignItems: "center", gap: 4,
+                  fontSize: 10, fontWeight: 600, padding: "3px 10px", borderRadius: 5,
+                  color: sv.complianceStatus === "unrestricted" ? "#15803D" : sv.complianceStatus === "restricted" ? RED : AMBER,
+                  background: sv.complianceStatus === "unrestricted" ? "#F0FDF4" : sv.complianceStatus === "restricted" ? "#FEF2F2" : "#FFFBEB",
+                  border: `1px solid ${sv.complianceStatus === "unrestricted" ? "#BBF7D0" : sv.complianceStatus === "restricted" ? "#FECACA" : "#FDE68A"}`,
+                }}>
+                  <span style={{
+                    width: 6, height: 6, borderRadius: "50%",
+                    background: sv.complianceStatus === "unrestricted" ? "#15803D" : sv.complianceStatus === "restricted" ? RED : AMBER,
+                  }} />
+                  {sv.complianceStatus === "unrestricted" ? "Unrestricted" : sv.complianceStatus === "restricted" ? "Restricted" : "Case-by-case"}
+                </span>
+              )}
+              {/* Exclusivity signal — Credits/Admin */}
+              {p.showExclusivitySignal && sv.exclusivitySignal && (
+                <span style={{
+                  fontSize: 10, fontWeight: 500, color: sv.exclusivitySignal === "no_conflicts" ? TEAL : sv.exclusivitySignal === "in_discussions" ? AMBER : RED,
+                  display: "inline-flex", alignItems: "center", gap: 4,
+                }}>
+                  <span style={{
+                    width: 5, height: 5, borderRadius: "50%",
+                    background: sv.exclusivitySignal === "no_conflicts" ? TEAL : sv.exclusivitySignal === "in_discussions" ? AMBER : RED,
+                  }} />
+                  {sv.exclusivitySignal === "no_conflicts" ? "No conflicts" : sv.exclusivitySignal === "in_discussions" ? "In discussions with 1 team" : "Engaged by another team"}
+                </span>
+              )}
+            </div>
+          )}
+
+          {/* Consultation badge */}
+          {c.showConsultationBadge && expert.lastConsultation && (
+            <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 5, fontSize: 11, fontWeight: 600, color: TEAL }}>
+              <svg width="12" height="12" viewBox="0 0 20 20" fill={TEAL}><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+              Previous consultation · {expert.lastConsultation}
+            </div>
+          )}
+
+          {/* Consultation count (social proof) */}
+          {c.showConsultationCount && !c.showConsultationBadge && (
+            <div style={{ marginTop: 6, fontSize: 11, color: GRAY_500, fontWeight: 500 }}>
+              {expert.consultations} consultations on OnFrontiers
+            </div>
+          )}
+
+          {/* Availability */}
+          {c.showAvailability && (
+            c.showAvailabilitySlots
+              ? <AvailabilityCardBadge expert={expert} />
+              : <div style={{ marginTop: 6, fontSize: 11, color: GREEN, fontWeight: 500 }}>● {expert.availability}</div>
+          )}
+
+          {/* Services indicator — visible Pro+ */}
+          {expert.services && expert.services.length > 0 && rules.profile.servicesVisible && (
+            <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 5, fontSize: 11, color: GRAY_500, fontWeight: 500 }}>
+              <svg width="11" height="11" viewBox="0 0 20 20" fill={GRAY_400}>
+                <path fillRule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V8z" clipRule="evenodd" />
+              </svg>
+              Offers {expert.services.length} services
+            </div>
+          )}
+
+          {/* Match bullets */}
+          {matchKey && c.firstBulletVisible && (
+            <div style={{ marginTop: 10 }}>
+              <div style={{ fontSize: 13, color: GRAY_700, lineHeight: 1.6, display: "flex", gap: 8 }}>
+                <span style={{ color: TEAL, flexShrink: 0, fontWeight: 700 }}>•</span>
+                <span>{bullets[0]}</span>
+              </div>
+              {c.restBulletsVisible ? (
+                // Pro/Credits: show all bullets
+                bullets.slice(1).map((b, i) => (
+                  <div key={i} style={{ fontSize: 13, color: GRAY_700, lineHeight: 1.6, display: "flex", gap: 8, marginTop: 3 }}>
+                    <span style={{ color: TEAL, flexShrink: 0, fontWeight: 700 }}>•</span>
+                    <span>{b}</span>
+                  </div>
+                ))
+              ) : (
+                // Visitor/Free: blur the rest
+                <div style={{ position: "relative", marginTop: 4 }}>
+                  <div style={{ fontSize: 13, color: GRAY_700, lineHeight: 1.6, opacity: 0.18, filter: "blur(3px)", userSelect: "none" }}>
+                    {bullets.slice(1).map((b, i) => (
+                      <div key={i} style={{ display: "flex", gap: 8, marginBottom: 3 }}>
+                        <span style={{ flexShrink: 0 }}>•</span><span>{b}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 32, background: "linear-gradient(transparent, white)" }} />
+                </div>
+              )}
+              {c.allBulletsBlurred && (
+                <div style={{ display: "flex", alignItems: "center", gap: 5, marginTop: 4, fontSize: 12, color: TEAL, fontWeight: 500, cursor: "pointer" }}>
+                  <LockIcon />
+                  {rules.card.cta === "Sign Up to Connect" ? "Create a free account to see full match details" : "Upgrade to see full match details"}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Keyword search — relevance snippet */}
+          {c.showRelevanceSnippet && (
+            <div style={{ marginTop: 10, padding: "10px 12px", background: `${BLUE}06`, borderRadius: 8, border: `1px solid ${BLUE}15` }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: BLUE, textTransform: "uppercase", letterSpacing: ".5px", marginBottom: 5 }}>
+                Matching "{expert.keywordSnippet.query}" · {expert.keywordSnippet.source}
+              </div>
+              <div style={{ fontSize: 13, color: GRAY_600, lineHeight: 1.5 }}>
+                "…{expert.keywordSnippet.fragments.map((f, i) => (
+                  <span key={i} style={f.highlight ? { background: `${BLUE}18`, color: GRAY_900, fontWeight: 600, padding: "1px 2px", borderRadius: 2 } : {}}>
+                    {f.text}
+                  </span>
+                ))}…"
+              </div>
+              <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 5, fontSize: 11, color: TEAL, fontWeight: 500, cursor: "pointer" }}>
+                <svg width="12" height="12" viewBox="0 0 20 20" fill={TEAL}><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z" clipRule="evenodd" /></svg>
+                Search by solicitation or requirement for full match analysis
+              </div>
+            </div>
+          )}
+
+          {/* Browse mode — match intelligence prompt */}
+          {c.showMatchPrompt && (
+            <div style={{ marginTop: 10, padding: "12px 14px", background: GRAY_50, borderRadius: 8, border: `1px dashed ${GRAY_300}` }}>
+              <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+                <div style={{ width: 32, height: 32, borderRadius: 8, background: `${TEAL}08`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <svg width="16" height="16" viewBox="0 0 20 20" fill={TEAL}>
+                    <path fillRule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: GRAY_700, marginBottom: 3 }}>See how this expert matches your opportunity</div>
+                  <div style={{ fontSize: 11, color: GRAY_400, lineHeight: 1.4 }}>Search by solicitation, NAICS code, or expert request to see alignment score and detailed match reasons.</div>
+                  <button style={{
+                    marginTop: 8, display: "inline-flex", alignItems: "center", gap: 5,
+                    background: "white", border: `1.5px solid ${TEAL}40`, borderRadius: 6,
+                    padding: "5px 12px", fontSize: 11, fontWeight: 600, color: TEAL, cursor: "pointer",
+                  }}>
+                    <svg width="12" height="12" viewBox="0 0 20 20" fill={TEAL}><path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" /></svg>
+                    Match to opportunity
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* No match, no special mode — minimal prompt */}
+          {!matchKey && !c.showRelevanceSnippet && !c.showMatchPrompt && (
+            <div style={{ marginTop: 6 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, color: TEAL, fontWeight: 500, cursor: "pointer" }}>
+                <LockIcon />
+                {rules.card.cta === "Sign Up to Connect" ? "Create a free account to view full profile" : "View full profile"}
+              </div>
+            </div>
+          )}
+
+          {/* Alignment */}
+          {c.showAlignment && <div style={{ marginTop: 8 }}><AlignmentBar score={alignment} /></div>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── CONTEXT BAR (profile navigation + shortlist) ───
+function ContextBar({ matchContext, isShortlisted, shortlistCount, onToggleShortlist }) {
+  const isSolicitation = matchContext === "solicitation";
+  const contextLabel = isSolicitation ? "AFRL MAC IDIQ results" : "R&D Portfolio Strategy results";
+  const accentColor = isSolicitation ? TEAL : PURPLE;
+  const totalExperts = 8;
+  const currentPosition = 2;
+
+  return (
+    <div style={{
+      display: "flex", alignItems: "center", justifyContent: "space-between",
+      padding: "8px 14px", background: "white", borderRadius: 10,
+      border: `1px solid ${GRAY_200}`, marginBottom: 10, gap: 10,
+    }}>
+      {/* Left: back link + context */}
+      <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
+        <button style={{
+          display: "flex", alignItems: "center", gap: 5, background: "none",
+          border: "none", cursor: "pointer", padding: "4px 0", fontSize: 12,
+          fontWeight: 600, color: accentColor, whiteSpace: "nowrap",
+        }}>
+          <svg width="14" height="14" viewBox="0 0 20 20" fill={accentColor}>
+            <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+          </svg>
+          {contextLabel}
+        </button>
+        <div style={{ width: 1, height: 16, background: GRAY_200, flexShrink: 0 }} />
+        <span style={{ fontSize: 11, color: GRAY_400, fontWeight: 500, whiteSpace: "nowrap" }}>
+          Expert {currentPosition} of {totalExperts}
+        </span>
+      </div>
+
+      {/* Center: prev/next */}
+      <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+        <button style={{
+          display: "flex", alignItems: "center", justifyContent: "center",
+          width: 28, height: 28, borderRadius: 6, background: GRAY_50,
+          border: `1px solid ${GRAY_200}`, cursor: "pointer",
+        }} title="Previous expert">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill={GRAY_500}>
+            <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
+          </svg>
+        </button>
+        <button style={{
+          display: "flex", alignItems: "center", justifyContent: "center",
+          width: 28, height: 28, borderRadius: 6, background: GRAY_50,
+          border: `1px solid ${GRAY_200}`, cursor: "pointer",
+        }} title="Next expert">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill={GRAY_500}>
+            <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Right: shortlist action */}
+      <button
+        onClick={onToggleShortlist}
+        style={{
+          display: "flex", alignItems: "center", gap: 6, padding: "5px 12px",
+          borderRadius: 7, cursor: "pointer", transition: "all .15s", whiteSpace: "nowrap",
+          background: isShortlisted ? `${AMBER}12` : "white",
+          border: `1.5px solid ${isShortlisted ? AMBER : GRAY_300}`,
+          color: isShortlisted ? AMBER : GRAY_600,
+          fontSize: 12, fontWeight: 600,
+        }}
+      >
+        <span style={{ fontSize: 14 }}>{isShortlisted ? "★" : "☆"}</span>
+        {isShortlisted ? `Saved` : "Save to shortlist"}
+        {shortlistCount > 0 && (
+          <span style={{
+            display: "inline-flex", alignItems: "center", justifyContent: "center",
+            minWidth: 18, height: 18, borderRadius: 9, fontSize: 10, fontWeight: 700,
+            background: isShortlisted ? AMBER : GRAY_200,
+            color: isShortlisted ? "white" : GRAY_600,
+            padding: "0 5px",
+          }}>
+            {shortlistCount}
+          </span>
+        )}
+      </button>
+    </div>
+  );
+}
+
+// ─── PROFILE PAGE ───
+// ─── PROFILE EXPORT BUTTON (Credits viewers only) ───
+function ProfileExportButton({ show }) {
+  if (!show) return null;
+  return (
+    <button style={{
+      display: "inline-flex", alignItems: "center", gap: 6,
+      background: "white", border: `1.5px solid ${GRAY_200}`, borderRadius: 8,
+      padding: "8px 14px", fontSize: 12, fontWeight: 600, color: GRAY_600,
+      cursor: "pointer", whiteSpace: "nowrap",
+    }}>
+      <svg width="14" height="14" viewBox="0 0 20 20" fill={GRAY_500}>
+        <path d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" />
+      </svg>
+      Download Profile
+    </button>
+  );
+}
+
+function ProfilePage({ expert, rules, matchContext, persona, personaGating, selfVetting }) {
+  const p = rules.profile;
+  const g = expert.govcon || {};
+  const pg = personaGating || {};
+  const sv = selfVetting || {};
+  const matchKey = (matchContext === "solicitation" || matchContext === "expert_request") ? matchContext : null;
+  const [expandedExp, setExpandedExp] = useState(new Set());
+
+  // Visitor: signup wall
+  if (!p.accessible) {
+    return (
+      <div style={{ background: "white", borderRadius: 12, border: `1px solid ${GRAY_200}`, overflow: "hidden" }}>
+        <div style={{ padding: "24px 20px", textAlign: "center" }}>
+          {/* Blurred preview header */}
+          <div style={{ filter: "blur(6px)", opacity: 0.15, userSelect: "none", marginBottom: 16 }}>
+            <div style={{ width: 80, height: 80, borderRadius: "50%", background: expert.photoColor, margin: "0 auto 12px" }} />
+            <div style={{ fontSize: 20, fontWeight: 700, color: GRAY_900 }}>Patricia M.</div>
+            <div style={{ fontSize: 14, color: GRAY_500 }}>{expert.profileHeadline}</div>
+          </div>
+
+          {/* Signup wall overlay */}
+          <div style={{ padding: "20px 16px", background: `${TEAL}04`, borderRadius: 10, border: `1px solid ${TEAL}15` }}>
+            <div style={{ width: 48, height: 48, borderRadius: "50%", background: `${TEAL}10`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px" }}>
+              <svg width="24" height="24" viewBox="0 0 20 20" fill={TEAL}><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" /></svg>
+            </div>
+            <div style={{ fontSize: 16, fontWeight: 700, color: GRAY_900, marginBottom: 4 }}>Create a free account to view this profile</div>
+            <div style={{ fontSize: 13, color: GRAY_500, marginBottom: 14, lineHeight: 1.4 }}>See full expert details, ratings, availability, and request consultations.</div>
+            <button style={{ background: TEAL, color: "white", border: "none", borderRadius: 8, padding: "10px 28px", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>Create Free Account</button>
+            <div style={{ fontSize: 12, color: GRAY_400, marginTop: 8 }}>Already have an account? <span style={{ color: TEAL, fontWeight: 500, cursor: "pointer" }}>Sign in</span></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Determine name display
+  const displayName = p.showFullName ? expert.fullName : p.showFirstName ? expert.firstName : expert.genericTitle;
+  const headerHeadline = p.headline === "match" && matchKey ? expert.matchHeadlines[matchKey] : expert.profileHeadline;
+  const bullets = matchKey ? expert.matchBullets[matchKey] : [];
+  const alignment = matchKey ? expert.alignment[matchKey] : 0;
+
+  return (
+    <div style={{ background: "white", borderRadius: 12, border: `1px solid ${GRAY_200}`, overflow: "hidden" }}>
+      {/* Profile header */}
+      <div style={{ padding: "20px 20px 16px", borderBottom: `1px solid ${GRAY_100}` }}>
+        <div style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
+          {p.showPhoto ? <Avatar initials={expert.initials} color={expert.photoColor} size={72} /> : <Silhouette size={72} />}
+          <div style={{ flex: 1 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+              <div>
+                <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: GRAY_900 }}>{displayName}</h2>
+                <p style={{ margin: "3px 0 0", fontSize: 14, color: p.headline === "match" ? GRAY_700 : GRAY_600, lineHeight: 1.4, fontWeight: p.headline === "match" ? 500 : 400 }}>{headerHeadline}</p>
+              </div>
+              {p.ctaLabel && (
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 3, flexShrink: 0 }}>
+                  <button style={{
+                    background: p.ctaLabel === "Request Consultation" ? TEAL : "white",
+                    border: `1.5px solid ${TEAL}`,
+                    color: p.ctaLabel === "Request Consultation" ? "white" : TEAL,
+                    borderRadius: 8, padding: "10px 20px", fontSize: 13, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap",
+                  }}>
+                    {p.ctaLabel}
+                  </button>
+                  {p.ctaPricingHint && (
+                    <span style={{ fontSize: 10, color: GRAY_400, fontWeight: 500 }}>{p.ctaPricingHint}</span>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Quick stats row */}
+            <div style={{ display: "flex", gap: 16, marginTop: 10, flexWrap: "wrap", alignItems: "center" }}>
+              {p.showRating && <StarRating rating={expert.rating} count={p.showReviews ? expert.reviewCount : null} />}
+              {p.showConsultationCount && (
+                <span style={{ fontSize: 12, color: GRAY_500 }}>{expert.consultations} consultations</span>
+              )}
+              {p.showNewBadge && (
+                <span style={{ fontSize: 11, fontWeight: 600, color: TEAL, background: `${TEAL}12`, padding: "3px 10px", borderRadius: 4 }}>New on OnFrontiers</span>
+              )}
+              {p.showLocation && expert.location && (
+                <span style={{ fontSize: 12, color: GRAY_500, display: "inline-flex", alignItems: "center", gap: 4 }}>
+                  <svg width="11" height="11" viewBox="0 0 20 20" fill={GRAY_400}><path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" /></svg>
+                  {expert.location}
+                </span>
+              )}
+              {p.showAvailability && (
+                <span style={{ fontSize: 12, color: GREEN, fontWeight: 500 }}>● {expert.availability}</span>
+              )}
+              {p.showRate && (
+                <span style={{ fontSize: 12, color: GRAY_700, fontWeight: 600 }}>{expert.hourlyRate}</span>
+              )}
+            </div>
+
+            {/* User tags — only when no GovCon structured data */}
+            {!expert.govcon && (
+              <div style={{ display: "flex", flexWrap: "wrap", marginTop: 8 }}>
+                {expert.tags.map(t => <Tag key={t}>{t}</Tag>)}
+              </div>
+            )}
+
+            {/* Download button — Credits viewers only */}
+            {p.showExportButton && (
+              <div style={{ marginTop: 10 }}>
+                <ProfileExportButton show={true} />
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* ── GovCon Identity (Tier 1 — all logged-in users) ── */}
+      {g.primaryRole && persona && p.govconTier1 && (
+        <div style={{ padding: "14px 20px", borderBottom: `1px solid ${GRAY_100}`, background: `${pg.isCI ? ORANGE : BLUE}04` }}>
+          {/* Row 1: Persona + role type + rank */}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center", marginBottom: 8 }}>
+            <span style={{
+              fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 5,
+              color: pg.isCI ? ORANGE : BLUE,
+              background: pg.isCI ? `${ORANGE}14` : `${BLUE}14`,
+              border: `1px solid ${pg.isCI ? `${ORANGE}30` : `${BLUE}30`}`,
+            }}>
+              {PERSONA_ROLES[persona]?.label}
+            </span>
+            <span style={{ fontSize: 11, fontWeight: 600, color: GRAY_600, background: GRAY_100, padding: "3px 10px", borderRadius: 5 }}>
+              {g.currentRoleType}
+            </span>
+            {g.mostRecentGovRole && (
+              <span style={{ fontSize: 11, color: GRAY_600 }}>
+                {g.mostRecentGovRole}, {g.mostRecentGovOrg}
+              </span>
+            )}
+            {g.highestRank && (
+              <span style={{ fontSize: 11, fontWeight: 600, color: GRAY_700, background: GRAY_50, padding: "2px 8px", borderRadius: 4 }}>
+                {g.highestRank}
+              </span>
+            )}
+          </div>
+          {/* Row 2: Key stats */}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 12, alignItems: "center" }}>
+            <span style={{ fontSize: 12, color: GRAY_700, fontWeight: 500 }}>
+              <strong>{g.yearsInPublicSector}</strong> years in public sector
+            </span>
+            {g.yearsSinceLeftGov > 0 && (
+              <span style={{ fontSize: 12, color: GRAY_500 }}>
+                Left government {g.yearsSinceLeftGov} years ago
+              </span>
+            )}
+            {p.govconClearances && g.clearances?.map((cl, i) => (
+              <span key={i} style={{
+                fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 4,
+                color: cl.type.includes("TS") ? "#92400E" : GRAY_600,
+                background: cl.type.includes("TS") ? "#FEF3C7" : GRAY_100,
+              }}>
+                {cl.type} {cl.status !== "Active" ? `(${cl.status})` : ""}
+              </span>
+            ))}
+            {pg.showReviewPanels && g.satOnReviewPanels && (
+              <span style={{ fontSize: 11, color: TEAL, fontWeight: 600 }}>Sat on review panels</span>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ── GovCon Credentials (Tier 2) ── */}
+      {g.primaryRole && persona && p.govconTier1 && (p.govconTier2Summary || p.govconBlurred) && (
+        p.govconBlurred ? (
+          /* Free users: blurred overlay with upgrade prompt */
+          <div style={{ padding: "14px 20px", borderBottom: `1px solid ${GRAY_100}` }}>
+            <BlurredBlock height={120} message="Upgrade to Pro to see credentials">
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: GRAY_500, textTransform: "uppercase", letterSpacing: ".5px", marginBottom: 6 }}>Agency Experience</div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginBottom: 12 }}>
+                  {g.agencyExperience?.slice(0, 5).map((a, i) => (
+                    <span key={i} style={{ fontSize: 11, fontWeight: 500, padding: "3px 10px", borderRadius: 5, background: `${TEAL}08`, color: TEAL }}>
+                      {a.name} {a.years}yr
+                    </span>
+                  ))}
+                </div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: GRAY_500, textTransform: "uppercase", letterSpacing: ".5px", marginBottom: 6 }}>Domain Experience</div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                  {g.domainExperience?.slice(0, 5).map((d, i) => (
+                    <span key={i} style={{ fontSize: 11, fontWeight: 500, padding: "3px 10px", borderRadius: 5, background: `${PURPLE}08`, color: PURPLE }}>
+                      {d.name} {d.years}yr
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </BlurredBlock>
+          </div>
+        ) : (
+          /* Pro (summary — names only, no year counts) or Credits (full detail) */
+          <div style={{ padding: "14px 20px", borderBottom: `1px solid ${GRAY_100}` }}>
+            {/* Agency experience */}
+            {(pg.showAgencyProminent || pg.isBD) && g.agencyExperience && (
+              <div style={{ marginBottom: 12 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: GRAY_500, textTransform: "uppercase", letterSpacing: ".5px" }}>Agency Experience</div>
+                  {p.govconTier2Full && g.agencyBreakdown && (
+                    <div style={{ display: "flex", gap: 2, alignItems: "center" }}>
+                      {Object.entries(g.agencyBreakdown).map(([cat, pct]) => (
+                        <span key={cat} style={{ fontSize: 9, fontWeight: 600, color: GRAY_500, background: GRAY_100, padding: "1px 6px", borderRadius: 3 }}>
+                          {cat} {pct}%
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                  {g.agencyExperience.slice(0, 5).map((a, i) => (
+                    <span key={i} style={{
+                      fontSize: 11, fontWeight: 500, padding: "3px 10px", borderRadius: 5,
+                      background: `${TEAL}08`, color: TEAL, border: `1px solid ${TEAL}18`,
+                    }}>
+                      {a.name}{p.govconTier2Full && <span style={{ fontWeight: 700 }}> {a.years}yr</span>}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Domain experience */}
+            {(pg.showDomainProminent || pg.isBD) && g.domainExperience && (
+              <div style={{ marginBottom: 12 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: GRAY_500, textTransform: "uppercase", letterSpacing: ".5px", marginBottom: 6 }}>Domain Experience</div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                  {g.domainExperience.slice(0, 5).map((d, i) => (
+                    <span key={i} style={{
+                      fontSize: 11, fontWeight: 500, padding: "3px 10px", borderRadius: 5,
+                      background: `${PURPLE}08`, color: PURPLE, border: `1px solid ${PURPLE}18`,
+                    }}>
+                      {d.name}{p.govconTier2Full && <span style={{ fontWeight: 700 }}> {d.years}yr</span>}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Program experience — Credits only */}
+            {p.govconTier2Full && (pg.showProgramsProminent) && g.programExperience && (
+              <div style={{ marginBottom: 12 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: GRAY_500, textTransform: "uppercase", letterSpacing: ".5px", marginBottom: 6 }}>Program Experience</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                  {g.programExperience.slice(0, 5).map((pr, i) => (
+                    <div key={i} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <span style={{ fontSize: 12, fontWeight: 600, color: GRAY_800 }}>{pr.name}</span>
+                      <span style={{ fontSize: 11, color: GRAY_500 }}>{pr.role} · {pr.years}yr</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Certifications — Credits only */}
+            {p.govconTier2Full && pg.showCertifications && g.certifications && g.certifications.length > 0 && (
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: GRAY_500, textTransform: "uppercase", letterSpacing: ".5px", marginBottom: 6 }}>Certifications</div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                  {g.certifications.map((cert, i) => (
+                    <span key={i} style={{ fontSize: 11, fontWeight: 500, color: GRAY_700, background: GRAY_50, padding: "3px 10px", borderRadius: 5, border: `1px solid ${GRAY_200}` }}>
+                      {cert}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )
+      )}
+
+      {/* ── BD Depth (persona-gated + Credits only) ── */}
+      {persona && pg.isBD && p.govconBDDepth && (
+        <div style={{ padding: "14px 20px", borderBottom: `1px solid ${GRAY_100}`, background: `${BLUE}03` }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: BLUE, textTransform: "uppercase", letterSpacing: ".5px", marginBottom: 10 }}>
+            BD Experience
+          </div>
+
+          {/* Win highlights */}
+          {pg.showWinHighlights && g.winHighlights && (
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: GRAY_600, marginBottom: 6 }}>Win Highlights</div>
+              {g.winHighlights.map((w, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                  <span style={{ fontSize: 11, color: GREEN, fontWeight: 700 }}>W</span>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: GRAY_800 }}>{w.title}</span>
+                  <span style={{ fontSize: 11, color: GRAY_500 }}>{w.value} · {w.role} · {w.year}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Deal experience */}
+          {pg.showDealExperience && g.dealExperience && (
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: GRAY_600, marginBottom: 6 }}>Deal Experience</div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
+                <span style={{ fontSize: 12, fontWeight: 600, color: GRAY_800 }}>{g.dealExperience.totalProposals} proposals</span>
+                <span style={{ fontSize: 12, fontWeight: 700, color: GREEN }}>{g.dealExperience.winRate} win rate</span>
+              </div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginTop: 6 }}>
+                {g.dealExperience.topVehicles.map((v, i) => (
+                  <span key={i} style={{ fontSize: 10, fontWeight: 600, color: GRAY_600, background: GRAY_100, padding: "2px 8px", borderRadius: 4 }}>{v}</span>
+                ))}
+                {g.dealExperience.dealTypes.map((dt, i) => (
+                  <span key={i} style={{ fontSize: 10, fontWeight: 500, color: GRAY_500, background: GRAY_50, padding: "2px 8px", borderRadius: 4 }}>{dt}</span>
+                ))}
+                {g.dealExperience.setAsideExp.map((sa, i) => (
+                  <span key={i} style={{ fontSize: 10, fontWeight: 500, color: AMBER, background: `${AMBER}10`, padding: "2px 8px", borderRadius: 4 }}>{sa}</span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* BD Skills + Tools */}
+          {pg.showBDSkills && g.bdSkills && (
+            <div style={{ marginBottom: pg.showBDTools ? 8 : 0 }}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: GRAY_600, marginBottom: 4 }}>BD Skills</div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                {g.bdSkills.map((s, i) => (
+                  <span key={i} style={{ fontSize: 11, fontWeight: 500, color: BLUE, background: `${BLUE}08`, padding: "2px 8px", borderRadius: 4, border: `1px solid ${BLUE}18` }}>{s}</span>
+                ))}
+              </div>
+            </div>
+          )}
+          {pg.showBDTools && g.bdTools && (
+            <div style={{ marginBottom: pg.showVendorExperience ? 8 : 0 }}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: GRAY_600, marginBottom: 4 }}>Tools</div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                {g.bdTools.map((t, i) => (
+                  <span key={i} style={{ fontSize: 11, fontWeight: 500, color: GRAY_600, background: GRAY_50, padding: "2px 8px", borderRadius: 4, border: `1px solid ${GRAY_200}` }}>{t}</span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Vendor experience */}
+          {pg.showVendorExperience && g.vendorExperience && (
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 600, color: GRAY_600, marginBottom: 4 }}>Vendor Experience</div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                {g.vendorExperience.map((v, i) => (
+                  <span key={i} style={{ fontSize: 11, fontWeight: 500, color: GRAY_700, background: GRAY_50, padding: "2px 8px", borderRadius: 4, border: `1px solid ${GRAY_200}` }}>{v}</span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Programs (collapsed for BD) */}
+          {pg.showProgramsCollapsed && g.programExperience && (
+            <div style={{ marginTop: 10, paddingTop: 8, borderTop: `1px solid ${GRAY_100}` }}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: GRAY_500, marginBottom: 4 }}>Related Programs</div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                {g.programExperience.slice(0, 3).map((pr, i) => (
+                  <span key={i} style={{ fontSize: 10, fontWeight: 500, color: GRAY_600, background: GRAY_50, padding: "2px 8px", borderRadius: 4 }}>{pr.name}</span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Availability & Booking section */}
+      {(p.showAvailabilityPicker || p.showAvailabilityFallback) && (
+        <div style={{ padding: "16px 20px", borderBottom: `1px solid ${GRAY_100}` }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: GRAY_500, textTransform: "uppercase", letterSpacing: ".5px" }}>Availability</div>
+            {expert.calendarConnected && (
+              <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 10, color: TEAL, fontWeight: 500, background: `${TEAL}08`, padding: "2px 8px", borderRadius: 4 }}>
+                <CalendarIcon size={10} color={TEAL} />
+                {expert.calendarProvider === "google" ? "Google Calendar" : "Outlook"} synced
+              </div>
+            )}
+          </div>
+          {p.showAvailabilityPicker ? (
+            <AvailabilitySlotPicker expert={expert} onBook={() => alert("Booking flow would open here")} />
+          ) : (
+            <AvailabilityFallback expert={expert} />
+          )}
+        </div>
+      )}
+
+      {/* Services / Offerings — Pro: names+categories only, Credits: full detail */}
+      {expert.services && expert.services.length > 0 && p.servicesVisible && (
+        <div style={{ padding: "16px 20px", borderBottom: `1px solid ${GRAY_100}` }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: GRAY_500, textTransform: "uppercase", letterSpacing: ".5px" }}>Services</div>
+            <span style={{ fontSize: 10, color: GRAY_400 }}>{expert.services.length} offerings</span>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {expert.services.map(svc => (
+              <div key={svc.id} style={{
+                padding: "12px 14px", borderRadius: 10,
+                border: `1px solid ${GRAY_200}`, background: GRAY_50,
+                transition: "border-color 0.12s",
+              }}>
+                {/* Row 1: Name + category (always visible for Pro+) */}
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: p.servicesFull ? 6 : 0, flexWrap: "wrap" }}>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: GRAY_900 }}>{svc.customName}</span>
+                  <span style={{ fontSize: 9, fontWeight: 700, color: TEAL, background: `${TEAL}10`, padding: "2px 7px", borderRadius: 4, textTransform: "uppercase", letterSpacing: ".3px" }}>
+                    {svc.category}
+                  </span>
+                  {p.servicesFull && (
+                    <span style={{ fontSize: 10, color: GRAY_400, fontWeight: 500 }}>
+                      {svc.deliveryModel === "ongoing" ? "Ongoing" : "One-time"}
+                    </span>
+                  )}
+                </div>
+                {/* Description — Credits only */}
+                {p.servicesFull && (
+                  <div style={{ fontSize: 12, color: GRAY_600, lineHeight: 1.5, marginBottom: 8 }}>
+                    {svc.description}
+                  </div>
+                )}
+                {/* Row 3: Stages + reviews + CTA — Credits only */}
+                {p.servicesFull && (
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap", flex: 1, minWidth: 0 }}>
+                      {svc.stages.map((st, i) => (
+                        <span key={i} style={{
+                          fontSize: 10, fontWeight: 600, color: PURPLE, background: `${PURPLE}08`,
+                          padding: "2px 8px", borderRadius: 4, border: `1px solid ${PURPLE}15`,
+                        }}>
+                          {st}
+                        </span>
+                      ))}
+                      {svc.engagements > 0 && (
+                        <span style={{ fontSize: 11, color: GRAY_500, display: "inline-flex", alignItems: "center", gap: 4 }}>
+                          <span style={{ color: AMBER, fontSize: 11 }}>★</span>
+                          <span style={{ fontWeight: 600, color: GRAY_700 }}>{svc.rating}</span>
+                          <span>· {svc.engagements} engagements</span>
+                        </span>
+                      )}
+                    </div>
+                    <button style={{
+                      fontSize: 11, fontWeight: 600, color: TEAL, background: "white",
+                      border: `1.5px solid ${TEAL}`, borderRadius: 6, padding: "5px 12px",
+                      cursor: "pointer", whiteSpace: "nowrap",
+                    }}>
+                      Book a Consultation
+                    </button>
+                  </div>
+                )}
+                {/* Pro users: upgrade hint instead of full details */}
+                {!p.servicesFull && (
+                  <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 5, fontSize: 11, color: TEAL, fontWeight: 500 }}>
+                    <LockIcon />
+                    Upgrade to Credits to see full service details
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Match section — if match context exists */}
+      {p.showMatchSection && matchKey && (
+        <div style={{ padding: "16px 20px", borderBottom: `1px solid ${GRAY_100}`, background: `${TEAL}03` }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: TEAL, textTransform: "uppercase", letterSpacing: ".5px" }}>
+              {matchKey === "solicitation" ? "Matched to solicitation" : "Matched to expert request"}
+            </div>
+            <div style={{ fontSize: 12, fontWeight: 600, color: GRAY_600 }}>
+              {matchKey === "solicitation" ? "AFRL MAC IDIQ · FA8652-26-R-0001" : "R&D Portfolio Strategy Advisor"}
+            </div>
+          </div>
+          <AlignmentBar score={alignment} />
+
+          {p.matchFirstBulletVisible && (
+            <div style={{ marginTop: 10 }}>
+              {/* First bullet always visible when match context exists */}
+              <div style={{ fontSize: 13, color: GRAY_700, lineHeight: 1.6, display: "flex", gap: 8, marginBottom: 4 }}>
+                <span style={{ color: TEAL, flexShrink: 0, fontWeight: 700 }}>•</span>
+                <span>{bullets[0]}</span>
+              </div>
+
+              {p.matchRestBulletsVisible ? (
+                // Paid users: show remaining bullets
+                bullets.slice(1).map((b, i) => (
+                  <div key={i} style={{ fontSize: 13, color: GRAY_700, lineHeight: 1.6, display: "flex", gap: 8, marginBottom: 4 }}>
+                    <span style={{ color: TEAL, flexShrink: 0, fontWeight: 700 }}>•</span>
+                    <span>{b}</span>
+                  </div>
+                ))
+              ) : (
+                // Free users: blur the rest
+                <BlurredBlock height={60} message="Upgrade to see full match analysis">
+                  <div>
+                    {bullets.slice(1).map((b, i) => (
+                      <div key={i} style={{ fontSize: 13, color: GRAY_700, lineHeight: 1.6, marginBottom: 4 }}>• {b}</div>
+                    ))}
+                  </div>
+                </BlurredBlock>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Expert Self-Vetting (match context only) ── */}
+      {matchKey && sv.fitStatus && (p.showVettingBadge || p.vettingBlurred) && (
+        <div style={{ padding: "16px 20px", borderBottom: `1px solid ${GRAY_100}` }}>
+          {p.vettingBlurred ? (
+            /* Free users: blurred vetting with upgrade prompt */
+            <BlurredBlock height={100} message="Upgrade to Pro to see expert vetting details">
+              <div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: GRAY_500, marginBottom: 8 }}>EXPERT SELF-ASSESSMENT</div>
+                <div style={{ display: "flex", gap: 6, marginBottom: 10 }}>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: "#15803D", background: "#F0FDF4", padding: "3px 10px", borderRadius: 5 }}>Verified Fit</span>
+                </div>
+                <div style={{ fontSize: 12, color: GRAY_600 }}>This expert has confirmed their fit and answered vetting questions for this opportunity.</div>
+              </div>
+            </BlurredBlock>
+          ) : (
+            <>
+              {/* Section header — distinguish AI vs Expert content */}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: GRAY_500, textTransform: "uppercase", letterSpacing: ".5px" }}>Expert Self-Assessment</div>
+                  <span style={{ fontSize: 9, fontWeight: 600, color: GRAY_400, background: GRAY_50, padding: "2px 8px", borderRadius: 4, border: `1px solid ${GRAY_200}` }}>
+                    Expert-provided
+                  </span>
+                </div>
+                {sv.respondedAt && (
+                  <span style={{ fontSize: 10, color: GRAY_400 }}>Responded {sv.respondedAt}</span>
+                )}
+              </div>
+
+              {/* Status row: fit badge + compliance + exclusivity */}
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center", marginBottom: 14 }}>
+                {sv.fitStatus === "verified" && (
+                  <span style={{
+                    display: "inline-flex", alignItems: "center", gap: 5,
+                    fontSize: 11, fontWeight: 700, padding: "4px 12px", borderRadius: 6,
+                    color: "#15803D", background: "#F0FDF4", border: "1px solid #BBF7D0",
+                  }}>
+                    <svg width="12" height="12" viewBox="0 0 20 20" fill="#15803D"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                    Verified Fit
+                  </span>
+                )}
+                {sv.fitStatus === "unreviewed" && (
+                  <span style={{ fontSize: 11, fontWeight: 600, color: GRAY_400, background: GRAY_50, padding: "4px 12px", borderRadius: 6, border: `1px solid ${GRAY_200}` }}>
+                    Pending expert review
+                  </span>
+                )}
+                {sv.fitStatus === "not_fit" && (
+                  <span style={{
+                    display: "inline-flex", alignItems: "center", gap: 5,
+                    fontSize: 11, fontWeight: 600, padding: "4px 12px", borderRadius: 6,
+                    color: RED, background: "#FEF2F2", border: "1px solid #FECACA",
+                  }}>
+                    Not a Fit
+                  </span>
+                )}
+                {/* Compliance — admin only */}
+                {p.showComplianceStatus && sv.complianceStatus && (
+                  <span style={{
+                    display: "inline-flex", alignItems: "center", gap: 5,
+                    fontSize: 11, fontWeight: 600, padding: "4px 12px", borderRadius: 6,
+                    color: sv.complianceStatus === "unrestricted" ? "#15803D" : sv.complianceStatus === "restricted" ? RED : AMBER,
+                    background: sv.complianceStatus === "unrestricted" ? "#F0FDF4" : sv.complianceStatus === "restricted" ? "#FEF2F2" : "#FFFBEB",
+                    border: `1px solid ${sv.complianceStatus === "unrestricted" ? "#BBF7D0" : sv.complianceStatus === "restricted" ? "#FECACA" : "#FDE68A"}`,
+                  }}>
+                    <span style={{
+                      width: 7, height: 7, borderRadius: "50%",
+                      background: sv.complianceStatus === "unrestricted" ? "#15803D" : sv.complianceStatus === "restricted" ? RED : AMBER,
+                    }} />
+                    {sv.complianceStatus === "unrestricted" ? "No compliance restrictions" : sv.complianceStatus === "restricted" ? "Compliance restriction — cannot engage" : "Compliance: evaluate case-by-case"}
+                  </span>
+                )}
+                {/* Exclusivity — Credits/Admin */}
+                {p.showExclusivitySignal && sv.exclusivitySignal && (
+                  <span style={{
+                    display: "inline-flex", alignItems: "center", gap: 5,
+                    fontSize: 11, fontWeight: 500, padding: "4px 12px", borderRadius: 6,
+                    color: sv.exclusivitySignal === "no_conflicts" ? TEAL : sv.exclusivitySignal === "in_discussions" ? AMBER : RED,
+                    background: sv.exclusivitySignal === "no_conflicts" ? `${TEAL}08` : sv.exclusivitySignal === "in_discussions" ? "#FFFBEB" : "#FEF2F2",
+                    border: `1px solid ${sv.exclusivitySignal === "no_conflicts" ? `${TEAL}20` : sv.exclusivitySignal === "in_discussions" ? "#FDE68A" : "#FECACA"}`,
+                  }}>
+                    <span style={{
+                      width: 6, height: 6, borderRadius: "50%",
+                      background: sv.exclusivitySignal === "no_conflicts" ? TEAL : sv.exclusivitySignal === "in_discussions" ? AMBER : RED,
+                    }} />
+                    {sv.exclusivitySignal === "no_conflicts" ? "No conflicts" : sv.exclusivitySignal === "in_discussions" ? "In discussions with 1 team" : "Engaged by another team"}
+                  </span>
+                )}
+              </div>
+
+              {/* Vetting Q&A */}
+              {(p.showVettingAnswers || p.showVettingAnswersSummary) && sv.vettingAnswers && sv.vettingAnswers.length > 0 && (
+                <div style={{ marginBottom: 14 }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: GRAY_500, textTransform: "uppercase", letterSpacing: ".5px", marginBottom: 8 }}>Vetting Questions</div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                    {sv.vettingAnswers.map((qa, i) => (
+                      <div key={i} style={{
+                        padding: "10px 12px", borderRadius: 8,
+                        background: GRAY_50, border: `1px solid ${GRAY_100}`,
+                      }}>
+                        <div style={{ fontSize: 12, color: GRAY_700, fontWeight: 500, marginBottom: 6, lineHeight: 1.4 }}>
+                          {i + 1}. {qa.question}
+                        </div>
+                        {qa.answerType === "boolean" ? (
+                          <div style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+                            <span style={{
+                              width: 16, height: 16, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center",
+                              background: qa.answer ? "#F0FDF4" : "#FEF2F2",
+                              border: `1.5px solid ${qa.answer ? "#BBF7D0" : "#FECACA"}`,
+                            }}>
+                              {qa.answer
+                                ? <svg width="8" height="8" viewBox="0 0 20 20" fill="#15803D"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                                : <svg width="8" height="8" viewBox="0 0 20 20" fill={RED}><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+                              }
+                            </span>
+                            <span style={{ fontSize: 12, fontWeight: 600, color: qa.answer ? "#15803D" : RED }}>
+                              {qa.answer ? "Yes" : "No"}
+                            </span>
+                          </div>
+                        ) : p.showVettingAnswers ? (
+                          /* Free-form answer — Credits/Admin only */
+                          <div style={{ fontSize: 12, color: GRAY_600, lineHeight: 1.5, fontStyle: "italic", paddingLeft: 8, borderLeft: `2px solid ${GRAY_200}` }}>
+                            {qa.answer}
+                          </div>
+                        ) : (
+                          /* Pro: show that a free-form answer exists but is gated */
+                          <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, color: TEAL, fontWeight: 500 }}>
+                            <LockIcon />
+                            Detailed response available — upgrade to Credits
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Expert note — distinct "from the expert" styling */}
+              {p.showExpertNote && sv.expertNote && (
+                <div style={{
+                  padding: "14px 16px", borderRadius: 10,
+                  background: "#FFFBEB", border: "1px solid #FDE68A",
+                  position: "relative",
+                }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                    <Avatar initials={expert.initials} color={expert.photoColor} size={28} />
+                    <div>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: GRAY_800 }}>{expert.fullName || expert.firstName}</span>
+                      <span style={{ fontSize: 10, color: GRAY_400, marginLeft: 6 }}>Expert note for this opportunity</span>
+                    </div>
+                  </div>
+                  <div style={{ fontSize: 13, color: GRAY_700, lineHeight: 1.6, fontStyle: "italic" }}>
+                    &ldquo;{sv.expertNote}&rdquo;
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      )}
+
+      {/* Consultation history — post-consultation only */}
+      {p.showConsultationHistory && expert.lastConsultation && (
+        <div style={{ padding: "14px 20px", borderBottom: `1px solid ${GRAY_100}`, background: `${TEAL}04` }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <svg width="14" height="14" viewBox="0 0 20 20" fill={TEAL}><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+            <span style={{ fontSize: 13, fontWeight: 600, color: TEAL }}>Previous consultation</span>
+            <span style={{ fontSize: 12, color: GRAY_500 }}>· {expert.lastConsultation}</span>
+            <span style={{ fontSize: 12, color: GRAY_400, marginLeft: "auto" }}>1 session · 45 min</span>
+          </div>
+        </div>
+      )}
+
+      {/* Bio */}
+      <div style={{ padding: "16px 20px", borderBottom: `1px solid ${GRAY_100}` }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: GRAY_500, textTransform: "uppercase", letterSpacing: ".5px", marginBottom: 8 }}>About</div>
+        {p.bioBlurred ? (
+          <BlurredBlock height={60} message="Upgrade to read full bio">
+            <div style={{ fontSize: 13, color: GRAY_700, lineHeight: 1.6 }}>{expert.bio}</div>
+          </BlurredBlock>
+        ) : (
+          <div style={{ fontSize: 13, color: GRAY_700, lineHeight: 1.6 }}>{expert.bio}</div>
+        )}
+      </div>
+
+      {/* Experience */}
+      <div style={{ padding: "16px 20px", borderBottom: `1px solid ${GRAY_100}` }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: GRAY_500, textTransform: "uppercase", letterSpacing: ".5px", marginBottom: 8 }}>Experience</div>
+        {p.experienceBlurred ? (
+          <BlurredBlock height={70} message="Upgrade to see experience">
+            {expert.experience.map((e, i) => (
+              <div key={i} style={{ marginBottom: 8 }}>
+                <div style={{ fontSize: 13, fontWeight: 600, color: GRAY_800 }}>{e.role}</div>
+                <div style={{ fontSize: 12, color: GRAY_500 }}>{e.org} · {e.years}</div>
+              </div>
+            ))}
+          </BlurredBlock>
+        ) : (
+          expert.experience.map((e, i) => {
+            const isExpanded = expandedExp.has(i);
+            const hasDesc = e.description && e.description.length > 0;
+            return (
+              <div
+                key={i}
+                onClick={hasDesc ? () => setExpandedExp(prev => {
+                  const next = new Set(prev);
+                  next.has(i) ? next.delete(i) : next.add(i);
+                  return next;
+                }) : undefined}
+                style={{
+                  marginBottom: i < expert.experience.length - 1 ? 10 : 0,
+                  padding: "8px 10px",
+                  borderRadius: 8,
+                  cursor: hasDesc ? "pointer" : "default",
+                  background: isExpanded ? `${TEAL}06` : "transparent",
+                  border: `1px solid ${isExpanded ? `${TEAL}20` : "transparent"}`,
+                  transition: "all 0.15s ease",
+                }}
+              >
+                {/* Header row */}
+                <div style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: GRAY_800 }}>{e.role}</div>
+                    <div style={{ fontSize: 12, color: GRAY_500 }}>{e.org} · {e.years}</div>
+                  </div>
+                  {hasDesc && (
+                    <div style={{
+                      marginTop: 2,
+                      color: isExpanded ? TEAL : GRAY_400,
+                      fontSize: 11,
+                      transition: "transform 0.15s ease",
+                      transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
+                      flexShrink: 0,
+                    }}>
+                      <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+                {/* Expanded description */}
+                {isExpanded && hasDesc && (
+                  <div style={{
+                    marginTop: 10,
+                    paddingTop: 10,
+                    borderTop: `1px solid ${GRAY_100}`,
+                  }}>
+                    {e.description.map((bullet, bi) => (
+                      <div key={bi} style={{
+                        display: "flex",
+                        gap: 8,
+                        marginBottom: bi < e.description.length - 1 ? 6 : 0,
+                        fontSize: 12,
+                        lineHeight: 1.55,
+                        color: GRAY_600,
+                      }}>
+                        <span style={{ color: TEAL, flexShrink: 0, marginTop: 1 }}>&#8226;</span>
+                        <span>{bullet}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Testimonials */}
+      {p.showTestimonials && expert.testimonials && expert.testimonials.length > 0 && (
+        <div style={{ padding: "16px 20px", borderBottom: `1px solid ${GRAY_100}` }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 10 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: GRAY_500, textTransform: "uppercase", letterSpacing: ".5px" }}>Testimonials</div>
+            <div style={{ fontSize: 11, color: GRAY_400 }}>({expert.testimonials.length})</div>
+          </div>
+          {expert.testimonials.slice(0, p.testimonialLimit).map((t, i) => (
+            <div key={i} style={{
+              padding: "12px 14px",
+              background: GRAY_50,
+              borderRadius: 8,
+              borderLeft: `3px solid ${TEAL}40`,
+              marginBottom: i < Math.min(expert.testimonials.length, p.testimonialLimit) - 1 ? 8 : 0,
+            }}>
+              <div style={{ fontSize: 12, lineHeight: 1.6, color: GRAY_700, fontStyle: "italic", marginBottom: 8 }}>
+                &ldquo;{t.quote}&rdquo;
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <div style={{ width: 4, height: 4, borderRadius: "50%", background: TEAL, opacity: 0.4 }} />
+                <span style={{ fontSize: 11, fontWeight: 600, color: GRAY_600 }}>{t.author}</span>
+                <span style={{ fontSize: 11, color: GRAY_400 }}>{t.company}</span>
+                <span style={{ fontSize: 10, color: GRAY_300, marginLeft: "auto" }}>{t.date}</span>
+              </div>
+            </div>
+          ))}
+          {expert.testimonials.length > p.testimonialLimit && (
+            <div style={{
+              marginTop: 8,
+              fontSize: 12,
+              color: TEAL,
+              fontWeight: 500,
+              cursor: "pointer",
+            }}>
+              + {expert.testimonials.length - p.testimonialLimit} more testimonial{expert.testimonials.length - p.testimonialLimit > 1 ? "s" : ""} · Upgrade to view
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Additional details */}
+      <div style={{ padding: "16px 20px" }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: GRAY_500, textTransform: "uppercase", letterSpacing: ".5px", marginBottom: 8 }}>Details</div>
+        <div style={{ display: "grid", gridTemplateColumns: "auto 1fr", columnGap: 12, rowGap: 6, fontSize: 12, alignItems: "baseline" }}>
+          {p.showLocation && expert.location && (
+            <><span style={{ color: GRAY_400 }}>Location</span><span style={{ color: GRAY_700, fontWeight: 500 }}>{expert.location}{expert.timezone ? ` · ${expert.timezone}` : ""}</span></>
+          )}
+          {p.showResponseTime && (
+            <><span style={{ color: GRAY_400 }}>Responds</span><span style={{ color: GRAY_700, fontWeight: 500 }}>{expert.responseTime}</span></>
+          )}
+          <><span style={{ color: GRAY_400 }}>Languages</span><span style={{ color: GRAY_700, fontWeight: 500 }}>{expert.languages.join(", ")}</span></>
+          {p.showEducation && Array.isArray(expert.education) && expert.education.length > 0 && (
+            <><span style={{ color: GRAY_400, alignSelf: "start", paddingTop: 1 }}>Education</span><EducationExpandable education={expert.education} /></>
+          )}
+          {!p.showResponseTime && !p.showEducation && (
+            <><span /><span style={{ color: GRAY_300, fontStyle: "italic" }}>Upgrade to see more details</span></>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── HIDDEN EXPERT STATE ───
+function HiddenExpertMessage() {
+  return (
+    <div style={{ padding: 40, textAlign: "center", color: GRAY_400 }}>
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke={GRAY_300} strokeWidth="1.5" style={{ marginBottom: 12 }}>
+        <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24" strokeLinecap="round" strokeLinejoin="round" />
+        <line x1="1" y1="1" x2="23" y2="23" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+      <div style={{ fontSize: 15, fontWeight: 600, color: GRAY_500 }}>Expert not visible</div>
+      <div style={{ fontSize: 13, color: GRAY_400, marginTop: 4, lineHeight: 1.4, maxWidth: 280, margin: "4px auto 0" }}>
+        This expert has chosen to be hidden from all discovery surfaces. They will not appear in search results, match lists, or partner feeds.
+      </div>
+    </div>
+  );
+}
+
+// ─── CONTEXT HEADER ───
+function ContextHeader({ matchContext }) {
+  if (matchContext === "solicitation") {
+    return (
+      <div style={{ background: `linear-gradient(135deg, ${TEAL_DARK}, ${TEAL})`, borderRadius: 10, padding: "12px 16px", marginBottom: 12, color: "white" }}>
+        <div style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: ".8px", opacity: 0.7, marginBottom: 2 }}>Matched to solicitation</div>
+        <div style={{ fontSize: 14, fontWeight: 700, lineHeight: 1.3 }}>AFRL MAC IDIQ</div>
+        <div style={{ fontSize: 11, opacity: 0.6, marginTop: 2 }}>FA8652-26-R-0001</div>
+      </div>
+    );
+  }
+  if (matchContext === "expert_request") {
+    return (
+      <div style={{ background: `linear-gradient(135deg, ${PURPLE}DD, ${PURPLE})`, borderRadius: 10, padding: "12px 16px", marginBottom: 12, color: "white" }}>
+        <div style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: ".8px", opacity: 0.7, marginBottom: 2 }}>Matched to expert request</div>
+        <div style={{ fontSize: 14, fontWeight: 700, lineHeight: 1.3 }}>R&D Portfolio Strategy Advisor</div>
+        <div style={{ fontSize: 11, opacity: 0.6, marginTop: 2 }}>Requested by Northrop Grumman</div>
+      </div>
+    );
+  }
+  if (matchContext === "keyword") {
+    return (
+      <div style={{ background: `linear-gradient(135deg, ${BLUE}DD, ${BLUE})`, borderRadius: 10, padding: "12px 16px", marginBottom: 12, color: "white" }}>
+        <div style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: ".8px", opacity: 0.7, marginBottom: 2 }}>Search results</div>
+        <div style={{ fontSize: 14, fontWeight: 700, lineHeight: 1.3 }}>"directed energy AFRL"</div>
+        <div style={{ fontSize: 11, opacity: 0.6, marginTop: 2 }}>12 experts found</div>
+      </div>
+    );
+  }
+  return (
+    <div style={{ background: `linear-gradient(135deg, ${GRAY_700}, ${GRAY_600})`, borderRadius: 10, padding: "12px 16px", marginBottom: 12, color: "white" }}>
+      <div style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: ".8px", opacity: 0.7, marginBottom: 2 }}>Browse experts</div>
+      <div style={{ fontSize: 14, fontWeight: 700, lineHeight: 1.3 }}>Defense & Intelligence</div>
+      <div style={{ fontSize: 11, opacity: 0.6, marginTop: 2 }}>47 experts in this domain</div>
+    </div>
+  );
+}
+
+// ─── DIMENSION TOGGLE ───
+function DimensionToggle({ label, options, value, onChange, accentColor }) {
+  return (
+    <div style={{ marginBottom: 14 }}>
+      <div style={{ fontSize: 11, fontWeight: 700, color: GRAY_500, textTransform: "uppercase", letterSpacing: ".5px", marginBottom: 6 }}>{label}</div>
+      <div style={{ display: "flex", gap: 4 }}>
+        {options.map(opt => {
+          const active = value === opt.value;
+          return (
+            <button key={opt.value} onClick={() => onChange(opt.value)} style={{
+              flex: 1, padding: "8px 10px", borderRadius: 8, cursor: "pointer", textAlign: "left", transition: "all .12s",
+              border: `2px solid ${active ? accentColor : GRAY_200}`,
+              background: active ? `${accentColor}08` : "white",
+            }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: active ? accentColor : GRAY_600 }}>{opt.label}</div>
+              <div style={{ fontSize: 10, color: GRAY_400, lineHeight: 1.3, marginTop: 2 }}>{opt.desc}</div>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ─── ACTIVE RULES PANEL ───
+function ActiveRulesPanel({ rules, userType, expertVisibility, matchContext, consultationStatus }) {
+  if (!rules.visible) return null;
+
+  const c = rules.card;
+  const p = rules.profile;
+
+  const RuleRow = ({ label, value, color }) => (
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "3px 0", fontSize: 11 }}>
+      <span style={{ color: GRAY_500 }}>{label}</span>
+      <span style={{ fontWeight: 600, color: color || GRAY_700 }}>{value}</span>
+    </div>
+  );
+
+  return (
+    <div style={{ background: "white", borderRadius: 10, border: `1px solid ${GRAY_200}`, padding: "12px 14px", marginTop: 14 }}>
+      <div style={{ fontSize: 11, fontWeight: 700, color: GRAY_600, marginBottom: 8 }}>Active Display Rules</div>
+
+      <div style={{ fontSize: 10, fontWeight: 700, color: TEAL, textTransform: "uppercase", letterSpacing: ".5px", marginBottom: 4, marginTop: 6 }}>Card</div>
+      <RuleRow label="Photo" value={c.showPhoto ? "Shown" : "Silhouette"} color={c.showPhoto ? GREEN : GRAY_400} />
+      <RuleRow label="Name" value={c.showName ? "Shown" : "Generic title"} color={c.showName ? GREEN : GRAY_400} />
+      <RuleRow label="Headline" value={c.headline === "match" ? "Match HL" : "Profile HL"} color={c.headline === "match" ? PURPLE : BLUE} />
+      <RuleRow label="1st bullet" value={c.firstBulletVisible ? "Visible" : "N/A"} color={c.firstBulletVisible ? GREEN : GRAY_400} />
+      <RuleRow label="Rest bullets" value={c.restBulletsVisible ? "Visible" : c.allBulletsBlurred ? "Blurred" : "N/A"} color={c.restBulletsVisible ? GREEN : GRAY_400} />
+      <RuleRow label="Relevance snippet" value={c.showRelevanceSnippet ? "Shown" : "N/A"} color={c.showRelevanceSnippet ? BLUE : GRAY_400} />
+      <RuleRow label="Match prompt" value={c.showMatchPrompt ? "Shown" : "N/A"} color={c.showMatchPrompt ? TEAL : GRAY_400} />
+      <RuleRow label="Rating" value={c.showRating ? "Shown" : "Below threshold"} color={c.showRating ? GREEN : GRAY_400} />
+      <RuleRow label="Consult count" value={c.showConsultationCount ? "Shown" : "Below threshold"} color={c.showConsultationCount ? GREEN : GRAY_400} />
+      <RuleRow label="New badge" value={c.showNewBadge ? "Shown" : "N/A"} color={c.showNewBadge ? TEAL : GRAY_400} />
+      <RuleRow label="Location" value={c.showLocation ? "Shown" : "Hidden"} color={c.showLocation ? GREEN : GRAY_400} />
+      <RuleRow label="Availability" value={c.showAvailability ? (c.showAvailabilitySlots ? "Slots" : "Text") : "Hidden"} color={c.showAvailability ? (c.showAvailabilitySlots ? TEAL : GREEN) : GRAY_400} />
+      <RuleRow label="Education" value="Not on card" color={GRAY_300} />
+      <RuleRow label="Consult badge" value={c.showConsultationBadge ? "Shown" : "Hidden"} color={c.showConsultationBadge ? GREEN : GRAY_400} />
+      <RuleRow label="CTA" value={c.cta} />
+      {c.ctaPricingHint && <RuleRow label="Pricing hint" value={c.ctaPricingHint} color={AMBER} />}
+
+      <div style={{ fontSize: 10, fontWeight: 700, color: TEAL, textTransform: "uppercase", letterSpacing: ".5px", marginBottom: 4, marginTop: 10 }}>Profile</div>
+      <RuleRow label="Accessible" value={p.accessible ? "Yes" : "Signup wall"} color={p.accessible ? GREEN : RED} />
+      {p.accessible && (
+        <>
+          <RuleRow label="Name" value={p.showFullName ? "Full name" : p.showFirstName ? "First only" : "Generic title"} color={p.showFullName ? GREEN : AMBER} />
+          <RuleRow label="Bio" value={p.bioBlurred ? "Blurred" : "Visible"} color={p.bioBlurred ? AMBER : GREEN} />
+          <RuleRow label="Experience" value={p.experienceBlurred ? "Blurred" : "Visible"} color={p.experienceBlurred ? AMBER : GREEN} />
+          <RuleRow label="Testimonials" value={p.showTestimonials ? `${p.testimonialLimit} of 3` : "Hidden"} color={p.showTestimonials ? (p.testimonialLimit >= 3 ? GREEN : AMBER) : GRAY_400} />
+          <RuleRow label="Rating" value={p.showRating ? "Shown" : "Below threshold"} color={p.showRating ? GREEN : GRAY_400} />
+          <RuleRow label="Consult count" value={p.showConsultationCount ? "Shown" : "Below threshold"} color={p.showConsultationCount ? GREEN : GRAY_400} />
+          <RuleRow label="New badge" value={p.showNewBadge ? "Shown" : "N/A"} color={p.showNewBadge ? TEAL : GRAY_400} />
+          <RuleRow label="Location" value={p.showLocation ? "Shown + timezone" : "Hidden"} color={p.showLocation ? GREEN : GRAY_400} />
+          <RuleRow label="Education" value={p.showEducation ? "Primary + expandable" : "Paid only"} color={p.showEducation ? GREEN : GRAY_400} />
+          <RuleRow label="Reviews" value={p.showReviews ? "Shown" : "Hidden"} color={p.showReviews ? GREEN : GRAY_400} />
+          <RuleRow label="Rate" value={p.showRate ? "On profile" : "Booking only"} color={p.showRate ? GREEN : GRAY_400} />
+          <RuleRow label="Availability" value={p.showAvailabilityPicker ? "Slot picker" : p.showAvailabilityFallback ? "Request flow" : p.showAvailability ? "Text" : "Hidden"} color={p.showAvailabilityPicker ? TEAL : p.showAvailabilityFallback ? AMBER : p.showAvailability ? GREEN : GRAY_400} />
+          <RuleRow label="Headline" value={p.headline === "match" ? "Match HL" : "Profile HL"} color={p.headline === "match" ? PURPLE : BLUE} />
+          <RuleRow label="Match 1st bullet" value={p.matchFirstBulletVisible ? "Visible" : "N/A"} color={p.matchFirstBulletVisible ? GREEN : GRAY_400} />
+          <RuleRow label="Match rest" value={p.matchRestBulletsVisible ? "Visible" : p.matchBulletsBlurred ? "Blurred" : "N/A"} color={p.matchRestBulletsVisible ? GREEN : p.matchBulletsBlurred ? AMBER : GRAY_400} />
+          <RuleRow label="Context bar" value={p.showContextBar ? "Shown" : "Hidden"} color={p.showContextBar ? TEAL : GRAY_400} />
+          <RuleRow label="Shortlist action" value={p.showShortlistAction ? "Available" : "Hidden"} color={p.showShortlistAction ? AMBER : GRAY_400} />
+          <RuleRow label="Consult history" value={p.showConsultationHistory ? "Shown" : "Hidden"} color={p.showConsultationHistory ? GREEN : GRAY_400} />
+        </>
+      )}
+    </div>
+  );
+}
+
+// ─── MAIN APP ───
+function ExpertDisplayExplorer() {
+  const [userType, setUserType] = useState("visitor");
+  const [expertVisibility, setExpertVisibility] = useState("visible");
+  const [matchContext, setMatchContext] = useState("solicitation");
+  const [consultationStatus, setConsultationStatus] = useState("pre");
+  const [rateStrategy, setRateStrategy] = useState("profile");
+  const [expertMaturity, setExpertMaturity] = useState("established");
+  const [calendarStatus, setCalendarStatus] = useState("connected");
+  const [persona, setPersona] = useState("program_sme");
+  // Shortlist: keyed by context (solicitation/expert_request), stores set of expert IDs
+  const [shortlists, setShortlists] = useState({ solicitation: new Set(), expert_request: new Set() });
+
+  // Merge maturity + calendar overrides onto base expert data
+  const maturityProfile = MATURITY_PROFILES[expertMaturity];
+  const calendarProfile = CALENDAR_PROFILES[calendarStatus];
+  const effectiveExpert = { ...EXPERT, ...maturityProfile.overrides, ...calendarProfile.overrides };
+
+  const personaGating = getPersonaGating(persona);
+  const rules = getDisplayRules(userType, expertVisibility, matchContext, consultationStatus, rateStrategy, effectiveExpert);
+
+  // Shortlist helpers
+  const activeShortlistKey = (matchContext === "solicitation" || matchContext === "expert_request") ? matchContext : null;
+  const currentShortlist = activeShortlistKey ? shortlists[activeShortlistKey] : new Set();
+  const isCurrentExpertShortlisted = currentShortlist.has("patricia-m");
+  const toggleShortlist = () => {
+    if (!activeShortlistKey) return;
+    setShortlists(prev => {
+      const next = { ...prev, [activeShortlistKey]: new Set(prev[activeShortlistKey]) };
+      if (next[activeShortlistKey].has("patricia-m")) {
+        next[activeShortlistKey].delete("patricia-m");
+      } else {
+        next[activeShortlistKey].add("patricia-m");
+      }
+      return next;
+    });
+  };
+
+  return (
+    <div style={{ minHeight: "100vh", background: GRAY_50, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
+
+      {/* Top bar */}
+      <div style={{ background: TEAL_DARK, padding: "10px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ background: TEAL_LIGHT, borderRadius: 6, width: 28, height: 28, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, color: "white" }}>OF</div>
+          <span style={{ color: "white", fontWeight: 700, fontSize: 14 }}>OnFrontiers</span>
+          <span style={{ color: TEAL_LIGHT, fontSize: 12, marginLeft: 8, fontWeight: 500, opacity: 0.7 }}>Expert Display Explorer</span>
+        </div>
+        <span style={{ color: TEAL_LIGHT, fontSize: 12, opacity: 0.6 }}>Card + Profile &middot; 5 dimensions + persona + strategy toggles + self-vetting</span>
+      </div>
+
+      <div style={{ maxWidth: 1120, margin: "0 auto", padding: "20px 24px 48px" }}>
+
+        {/* Dimension controls */}
+        <div style={{ display: "flex", gap: 16, marginBottom: 20 }}>
+          <div style={{ flex: 1 }}>
+            <DimensionToggle
+              label="Expert visibility setting"
+              value={expertVisibility}
+              onChange={setExpertVisibility}
+              accentColor={ORANGE}
+              options={[
+                { value: "visible", label: "Visible", desc: "Photo & name available" },
+                { value: "anonymous", label: "Anonymous", desc: "Hidden until engaged" },
+                { value: "hidden", label: "Hidden", desc: "Not discoverable" },
+              ]}
+            />
+          </div>
+          <div style={{ flex: 1 }}>
+            <DimensionToggle
+              label="Discovery context"
+              value={matchContext}
+              onChange={setMatchContext}
+              accentColor={PURPLE}
+              options={[
+                { value: "solicitation", label: "Solicitation", desc: "Matched to opportunity" },
+                { value: "expert_request", label: "Expert Request", desc: "Matched to request" },
+                { value: "keyword", label: "Keyword", desc: "Text search results" },
+                { value: "browse", label: "Browse", desc: "Category browsing" },
+              ]}
+            />
+          </div>
+          <div style={{ flex: 1 }}>
+            <DimensionToggle
+              label="Viewer type"
+              value={userType}
+              onChange={setUserType}
+              accentColor={BLUE}
+              options={[
+                { value: "visitor", label: "Visitor", desc: "No account" },
+                { value: "free", label: "Free", desc: "Free account" },
+                { value: "pro", label: "Pro", desc: "Pro subscription" },
+                { value: "credits", label: "Credits", desc: "Credit balance" },
+                { value: "admin", label: "Admin", desc: "OF internal" },
+              ]}
+            />
+          </div>
+          <div style={{ flex: 1 }}>
+            <DimensionToggle
+              label="Consultation status"
+              value={consultationStatus}
+              onChange={setConsultationStatus}
+              accentColor={GREEN}
+              options={[
+                { value: "pre", label: "Pre", desc: "No prior consultation" },
+                { value: "post", label: "Post", desc: "Consultation accepted" },
+              ]}
+            />
+          </div>
+        </div>
+
+        {/* Persona role toggle */}
+        <div style={{ marginBottom: 20, padding: "12px 16px", background: "white", borderRadius: 10, border: `1px solid ${GRAY_200}` }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: GRAY_500, textTransform: "uppercase", letterSpacing: ".5px" }}>Expert Persona</div>
+            <span style={{ fontSize: 10, color: GRAY_400 }}>Controls which GovCon profile sections are visible</span>
+          </div>
+          <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+            {/* CI roles */}
+            <div style={{ fontSize: 9, fontWeight: 700, color: ORANGE, textTransform: "uppercase", letterSpacing: ".5px", display: "flex", alignItems: "center", marginRight: 2 }}>CI</div>
+            {Object.entries(PERSONA_ROLES).filter(([,r]) => r.type === "ci").map(([key, role]) => {
+              const active = persona === key;
+              return (
+                <button key={key} onClick={() => setPersona(key)} style={{
+                  padding: "5px 10px", borderRadius: 6, cursor: "pointer", textAlign: "left", transition: "all .12s",
+                  border: `2px solid ${active ? ORANGE : GRAY_200}`,
+                  background: active ? `${ORANGE}10` : "white",
+                }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: active ? ORANGE : GRAY_600 }}>{role.short}</div>
+                  <div style={{ fontSize: 9, color: GRAY_400, lineHeight: 1.2, marginTop: 1 }}>{role.desc}</div>
+                </button>
+              );
+            })}
+            <div style={{ width: 1, background: GRAY_200, margin: "0 6px" }} />
+            {/* BD roles */}
+            <div style={{ fontSize: 9, fontWeight: 700, color: BLUE, textTransform: "uppercase", letterSpacing: ".5px", display: "flex", alignItems: "center", marginRight: 2 }}>BD</div>
+            {Object.entries(PERSONA_ROLES).filter(([,r]) => r.type === "bd").map(([key, role]) => {
+              const active = persona === key;
+              return (
+                <button key={key} onClick={() => setPersona(key)} style={{
+                  padding: "5px 10px", borderRadius: 6, cursor: "pointer", textAlign: "left", transition: "all .12s",
+                  border: `2px solid ${active ? BLUE : GRAY_200}`,
+                  background: active ? `${BLUE}10` : "white",
+                }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: active ? BLUE : GRAY_600 }}>{role.short}</div>
+                  <div style={{ fontSize: 9, color: GRAY_400, lineHeight: 1.2, marginTop: 1 }}>{role.desc}</div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Strategy toggles */}
+        <div style={{ display: "flex", gap: 16, marginBottom: 20, padding: "12px 16px", background: "white", borderRadius: 10, border: `1px solid ${GRAY_200}` }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: GRAY_500, textTransform: "uppercase", letterSpacing: ".5px", display: "flex", alignItems: "center", marginRight: 4 }}>Strategy toggles</div>
+          <div style={{ display: "flex", gap: 4 }}>
+            {[
+              { value: "profile", label: "Rate on profile", desc: "All logged-in users see rate" },
+              { value: "booking-only", label: "Rate in booking only", desc: "Rate hidden until booking modal" },
+            ].map(opt => {
+              const active = rateStrategy === opt.value;
+              return (
+                <button key={opt.value} onClick={() => setRateStrategy(opt.value)} style={{
+                  padding: "6px 14px", borderRadius: 8, cursor: "pointer", textAlign: "left", transition: "all .12s",
+                  border: `2px solid ${active ? TEAL : GRAY_200}`,
+                  background: active ? `${TEAL}08` : "white",
+                }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: active ? TEAL : GRAY_600 }}>{opt.label}</div>
+                  <div style={{ fontSize: 10, color: GRAY_400, lineHeight: 1.3, marginTop: 1 }}>{opt.desc}</div>
+                </button>
+              );
+            })}
+          </div>
+
+          <div style={{ width: 1, background: GRAY_200, margin: "0 8px" }} />
+
+          <div style={{ fontSize: 11, fontWeight: 700, color: GRAY_500, textTransform: "uppercase", letterSpacing: ".5px", display: "flex", alignItems: "center", marginRight: 4 }}>Expert maturity</div>
+          <div style={{ display: "flex", gap: 4 }}>
+            {Object.entries(MATURITY_PROFILES).map(([key, profile]) => {
+              const active = expertMaturity === key;
+              const accentColor = key === "new_expert" ? ORANGE : key === "growing" ? AMBER : GREEN;
+              return (
+                <button key={key} onClick={() => setExpertMaturity(key)} style={{
+                  padding: "6px 14px", borderRadius: 8, cursor: "pointer", textAlign: "left", transition: "all .12s",
+                  border: `2px solid ${active ? accentColor : GRAY_200}`,
+                  background: active ? `${accentColor}10` : "white",
+                }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: active ? accentColor : GRAY_600 }}>{profile.label}</div>
+                  <div style={{ fontSize: 10, color: GRAY_400, lineHeight: 1.3, marginTop: 1 }}>{profile.desc}</div>
+                </button>
+              );
+            })}
+          </div>
+
+          <div style={{ width: 1, background: GRAY_200, margin: "0 8px" }} />
+
+          <div style={{ fontSize: 11, fontWeight: 700, color: GRAY_500, textTransform: "uppercase", letterSpacing: ".5px", display: "flex", alignItems: "center", marginRight: 4 }}>Calendar</div>
+          <div style={{ display: "flex", gap: 4 }}>
+            {Object.entries(CALENDAR_PROFILES).map(([key, profile]) => {
+              const active = calendarStatus === key;
+              const accentColor = key === "not_connected" ? GRAY_500 : TEAL;
+              return (
+                <button key={key} onClick={() => setCalendarStatus(key)} style={{
+                  padding: "6px 14px", borderRadius: 8, cursor: "pointer", textAlign: "left", transition: "all .12s",
+                  border: `2px solid ${active ? accentColor : GRAY_200}`,
+                  background: active ? `${accentColor}10` : "white",
+                }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: active ? accentColor : GRAY_600 }}>{profile.label}</div>
+                  <div style={{ fontSize: 10, color: GRAY_400, lineHeight: 1.3, marginTop: 1 }}>{profile.desc}</div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Hidden expert state */}
+        {!rules.visible && (
+          <div style={{ display: "flex", gap: 20 }}>
+            <div style={{ flex: 1, background: "white", borderRadius: 12, border: `1px dashed ${GRAY_300}` }}>
+              <HiddenExpertMessage />
+            </div>
+            <div style={{ flex: 1, background: "white", borderRadius: 12, border: `1px dashed ${GRAY_300}` }}>
+              <HiddenExpertMessage />
+            </div>
+          </div>
+        )}
+
+        {/* Card + Profile side by side */}
+        {rules.visible && (
+          <div style={{ display: "flex", gap: 20, alignItems: "flex-start" }}>
+
+            {/* Left column: Search result card */}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: GRAY_400, textTransform: "uppercase", letterSpacing: ".5px", marginBottom: 8 }}>
+                Search result card
+              </div>
+              <ContextHeader matchContext={matchContext} />
+              <ExpertCard expert={effectiveExpert} rules={rules} matchContext={matchContext} persona={persona} personaGating={personaGating} selfVetting={SELF_VETTING} />
+
+              <ActiveRulesPanel rules={rules} userType={userType} expertVisibility={expertVisibility} matchContext={matchContext} consultationStatus={consultationStatus} />
+            </div>
+
+            {/* Right column: Profile page */}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: GRAY_400, textTransform: "uppercase", letterSpacing: ".5px", marginBottom: 8 }}>
+                Profile page {userType === "visitor" && <span style={{ color: RED, fontWeight: 700 }}>(signup wall)</span>}
+              </div>
+              {rules.profile.showContextBar && (
+                <ContextBar
+                  matchContext={matchContext}
+                  isShortlisted={isCurrentExpertShortlisted}
+                  shortlistCount={currentShortlist.size}
+                  onToggleShortlist={toggleShortlist}
+                />
+              )}
+              <ProfilePage expert={effectiveExpert} rules={rules} matchContext={matchContext} persona={persona} personaGating={personaGating} selfVetting={SELF_VETTING} />
+            </div>
+          </div>
+        )}
+
+        {/* Current config summary */}
+        <div style={{ marginTop: 20, padding: "12px 16px", background: "white", borderRadius: 10, border: `1px solid ${GRAY_200}`, display: "flex", gap: 12, alignItems: "center" }}>
+          <div style={{ fontSize: 11, color: GRAY_400, fontWeight: 500 }}>Current config:</div>
+          <span style={{ fontSize: 11, fontWeight: 700, color: ORANGE, background: `${ORANGE}10`, padding: "2px 8px", borderRadius: 4 }}>
+            {expertVisibility === "visible" ? "Visible expert" : expertVisibility === "anonymous" ? "Anonymous expert" : "Hidden expert"}
+          </span>
+          <span style={{ fontSize: 11, fontWeight: 700, color: PURPLE, background: `${PURPLE}10`, padding: "2px 8px", borderRadius: 4 }}>
+            {matchContext === "solicitation" ? "Solicitation match" : matchContext === "expert_request" ? "Expert request match" : matchContext === "keyword" ? "Keyword search" : "Category browse"}
+          </span>
+          <span style={{ fontSize: 11, fontWeight: 700, color: BLUE, background: `${BLUE}10`, padding: "2px 8px", borderRadius: 4 }}>
+            {userType === "visitor" ? "Visitor" : userType === "free" ? "Free account" : userType === "pro" ? "Pro account" : userType === "admin" ? "OF Admin" : "Credits account"}
+          </span>
+          <span style={{ fontSize: 11, fontWeight: 700, color: GREEN, background: `${GREEN}10`, padding: "2px 8px", borderRadius: 4 }}>
+            {consultationStatus === "pre" ? "Pre-consultation" : "Post-consultation"}
+          </span>
+          <span style={{ fontSize: 11, fontWeight: 700, color: TEAL, background: `${TEAL}10`, padding: "2px 8px", borderRadius: 4 }}>
+            {rateStrategy === "profile" ? "Rate on profile" : "Rate in booking only"}
+          </span>
+          <span style={{ fontSize: 11, fontWeight: 700, color: expertMaturity === "established" ? GREEN : expertMaturity === "growing" ? AMBER : ORANGE, background: `${expertMaturity === "established" ? GREEN : expertMaturity === "growing" ? AMBER : ORANGE}10`, padding: "2px 8px", borderRadius: 4 }}>
+            {maturityProfile.label} expert
+          </span>
+          <span style={{ fontSize: 11, fontWeight: 700, color: calendarStatus === "not_connected" ? GRAY_500 : TEAL, background: `${calendarStatus === "not_connected" ? GRAY_500 : TEAL}10`, padding: "2px 8px", borderRadius: 4 }}>
+            {calendarProfile.label} calendar
+          </span>
+          <span style={{ fontSize: 11, fontWeight: 700, color: personaGating.isCI ? ORANGE : BLUE, background: `${personaGating.isCI ? ORANGE : BLUE}10`, padding: "2px 8px", borderRadius: 4 }}>
+            {PERSONA_ROLES[persona]?.label}
+          </span>
+          <span style={{ fontSize: 11, color: GRAY_400, marginLeft: "auto" }}>
+            {3} vis × {4} ctx × {5} viewer × {2} status × {12} persona × {2} rate × {3} maturity × {3} cal = 25,920 combos
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(React.createElement(ExpertDisplayExplorer));
+  </script>
+</body>
+</html>
