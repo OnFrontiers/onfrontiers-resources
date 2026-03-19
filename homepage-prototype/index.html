@@ -13,6 +13,7 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-font-smoothing: antialiased; }
     input[type="checkbox"] { accent-color: #005755; }
+    textarea { font-family: inherit; }
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #D0D5DD; border-radius: 3px; }
@@ -109,7 +110,7 @@ const OFLogo = ({ color = C.white, height = 22 }) => (
 
 const EXPERTS = [
   {
-    id: 1, initials: "PM", color: "#7C3AED",
+    id: 1, initials: "PM", color: "#7C3AED", anonymous: false,
     genericTitle: "R&D Portfolio Management Expert",
     matchHeadline: "Former AFRL Division Chief who led S&T programs across air, space, and cyber domains",
     profileHeadline: "Former AFRL division chief with deep R&D portfolio management and S&T strategy experience.",
@@ -132,7 +133,7 @@ const EXPERTS = [
     education: [{ credential: "M.S. Aerospace Engineering", institution: "MIT" }, { credential: "B.S. Mechanical Engineering", institution: "Georgia Tech" }],
   },
   {
-    id: 2, initials: "RK", color: "#2563EB",
+    id: 2, initials: "RK", color: "#2563EB", anonymous: true,
     genericTitle: "C4ISR Systems Integration Expert",
     matchHeadline: "NAVWAR systems engineer with hands-on C5ISR integration experience across Navy tactical networks",
     profileHeadline: "Systems engineer specializing in Navy C4ISR integration across shipboard and expeditionary platforms.",
@@ -154,7 +155,7 @@ const EXPERTS = [
     education: [{ credential: "M.S. Electrical Engineering", institution: "Naval Postgraduate School" }],
   },
   {
-    id: 3, initials: "JL", color: "#059669",
+    id: 3, initials: "JL", color: "#059669", anonymous: false,
     genericTitle: "Navy Acquisition & Contracting Specialist",
     matchHeadline: "Senior contracting officer with NAVWAR procurement authority and IDIQ administration experience",
     profileHeadline: "Former Navy contracting officer with unlimited warrant authority across complex contract types.",
@@ -176,7 +177,7 @@ const EXPERTS = [
     education: [{ credential: "M.B.A.", institution: "George Washington University" }],
   },
   {
-    id: 4, initials: "DT", color: "#DC2626",
+    id: 4, initials: "DT", color: "#DC2626", anonymous: true,
     genericTitle: "Cybersecurity & Zero Trust Architecture Expert",
     matchHeadline: "Led DoD Zero Trust implementation across multiple Navy networks and tactical systems",
     profileHeadline: "Cybersecurity architect specializing in DoD Zero Trust and RMF across Navy networks.",
@@ -198,7 +199,7 @@ const EXPERTS = [
     education: [{ credential: "CISSP, CISM" }],
   },
   {
-    id: 5, initials: "AS", color: "#B45309",
+    id: 5, initials: "AS", color: "#B45309", anonymous: false,
     genericTitle: "Proposal & Capture Management Professional",
     matchHeadline: "Won $2B+ in Navy IT and C4ISR contracts including multiple NAVWAR competitive recompetes",
     profileHeadline: "Capture manager with $2B+ in Navy IT/C4ISR wins and 65%+ competitive win rate.",
@@ -220,7 +221,7 @@ const EXPERTS = [
     education: [{ credential: "PMP, APMP Professional" }],
   },
   {
-    id: 6, initials: "MH", color: "#7C3AED",
+    id: 6, initials: "MH", color: "#7C3AED", anonymous: false,
     genericTitle: "SEWP & Government IT Contract Vehicle Expert",
     matchHeadline: "SEWP program office veteran with deep knowledge of ordering procedures and competitive positioning",
     profileHeadline: "Former SEWP program office staff with broad IT contract vehicle expertise.",
@@ -250,6 +251,15 @@ const ENRICHED_OPP = {
   status: "Pre-RFP", naics: "335999", value: "~$1B+",
   incumbent: "Leidos (Prime), SAIC, Booz Allen Hamilton (Key Subs)",
   setAside: "Full and Open", stage: "Capture / Pre-Proposal",
+  contractType: "IDIQ — Multiple Award",
+  popStart: "Q2 FY2027 (est.)",
+  solicitationNum: "N00039-26-R-CAEI",
+  source: "govtribe", // "govtribe" | "sam" | "user-input" | "generated"
+  aiSummary: "This is a major NAVWAR recompete for C5ISR architecture, engineering, and integration services supporting the full lifecycle of Command, Control, Communications, Computers, Combat Systems, Intelligence, Surveillance, and Reconnaissance systems. The scope includes systems engineering, software development, cybersecurity, test & evaluation, and fleet support. The current contract (held by Leidos as prime) is valued at $1B+ and expected to transition to a multiple-award IDIQ vehicle. Key technical areas include tactical data links, shipboard combat systems integration, and JADC2 interoperability. NAVWAR is signaling interest in increased small business participation on subcontracting plans.",
+  // User-contributed fields (empty by default, filled by user)
+  userCompetitors: [],
+  userNotes: "",
+  userTeammates: [],
 };
 
 const QUICK_PILLS = [
@@ -288,9 +298,15 @@ function SignupModal({ onClose, onSignup, expertContext }) {
         {/* Expert context header (if coming from a profile/card) */}
         {expertContext && (
           <div style={{ padding: "14px 24px", background: C.gray50, borderBottom: `1px solid ${C.gray200}`, display: "flex", alignItems: "center", gap: 12 }}>
-            <div style={{ width: 36, height: 36, borderRadius: "50%", background: C.gray100, display: "flex", alignItems: "center", justifyContent: "center", border: `2px dashed ${C.gray300}` }}>
-              <Icon name="user" size={16} color={C.gray400} />
-            </div>
+            {expertContext.anonymous ? (
+              <div style={{ width: 36, height: 36, borderRadius: "50%", background: C.gray100, display: "flex", alignItems: "center", justifyContent: "center", border: `2px dashed ${C.gray300}` }}>
+                <Icon name="user" size={16} color={C.gray400} />
+              </div>
+            ) : (
+              <div style={{ width: 36, height: 36, borderRadius: "50%", background: `linear-gradient(135deg, ${expertContext.color}, ${expertContext.color}CC)`, display: "flex", alignItems: "center", justifyContent: "center", color: C.white, fontSize: 13, fontWeight: 700 }}>
+                {expertContext.initials}
+              </div>
+            )}
             <div>
               <div style={{ fontSize: 12, color: C.gray500 }}>Viewing</div>
               <div style={{ fontSize: 13, fontWeight: 600, color: C.gray800 }}>{expertContext.genericTitle}</div>
@@ -405,10 +421,16 @@ function ExpertProfilePage({ expert, onBack, onSignup, resultPosition, totalResu
           {/* Header section — partially visible */}
           <div style={{ padding: "24px 28px", borderBottom: `1px solid ${C.gray100}` }}>
             <div style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
-              {/* Silhouette */}
-              <div style={{ width: 72, height: 72, borderRadius: "50%", background: C.gray100, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: `2px dashed ${C.gray300}` }}>
-                <Icon name="user" size={32} color={C.gray400} />
-              </div>
+              {/* showPhoto: !isAnonymous (per Display Explorer) */}
+              {expert.anonymous ? (
+                <div style={{ width: 72, height: 72, borderRadius: "50%", background: C.gray100, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: `2px dashed ${C.gray300}` }}>
+                  <Icon name="user" size={32} color={C.gray400} />
+                </div>
+              ) : (
+                <div style={{ width: 72, height: 72, borderRadius: "50%", background: `linear-gradient(135deg, ${expert.color}, ${expert.color}CC)`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, color: C.white, fontSize: 26, fontWeight: 700 }}>
+                  {expert.initials}
+                </div>
+              )}
               <div style={{ flex: 1 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                   <div>
@@ -501,13 +523,47 @@ function QueryConfirmationCard({ query, onConfirm, onBack }) {
   const [selectedRoles, setSelectedRoles] = useState(["Agency SME"]);
   const [selectedServices, setSelectedServices] = useState(["Intelligence Briefing"]);
   const [urgency, setUrgency] = useState("standard");
+  const [loadPhase, setLoadPhase] = useState(0);
+  const [editingField, setEditingField] = useState(null);
+  const [showSummary, setShowSummary] = useState(false);
+  const [additionalContext, setAdditionalContext] = useState("");
 
-  // AI-inferred parameters from free text
-  const inferred = {
-    topic: query.length > 30 ? query.substring(0, 60) + "..." : query,
-    agency: query.toLowerCase().includes("va") ? "Department of Veterans Affairs" : query.toLowerCase().includes("dhs") ? "Department of Homeland Security" : query.toLowerCase().includes("dod") ? "Department of Defense" : "Not specified",
-    domain: query.toLowerCase().includes("cyber") ? "Cybersecurity" : query.toLowerCase().includes("health") ? "Health IT" : query.toLowerCase().includes("proposal") ? "Proposal Support" : "General",
+  // Progressive reveal: phase 0=header, 1=inferred context, 2=selectors, 3=CTA
+  useEffect(() => {
+    const t1 = setTimeout(() => setLoadPhase(1), 300);
+    const t2 = setTimeout(() => setLoadPhase(2), 700);
+    const t3 = setTimeout(() => setLoadPhase(3), 1000);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+  }, []);
+
+  // AI-inferred parameters from free text — all editable
+  const inferAgency = () => {
+    const l = query.toLowerCase();
+    if (l.includes("va") || l.includes("veteran")) return "Department of Veterans Affairs";
+    if (l.includes("dhs")) return "Department of Homeland Security";
+    if (l.includes("dod") || l.includes("defense")) return "Department of Defense";
+    if (l.includes("navy") || l.includes("navwar")) return "Department of the Navy";
+    return "Not specified — click to set";
   };
+  const inferDomain = () => {
+    const l = query.toLowerCase();
+    if (l.includes("cyber")) return "Cybersecurity";
+    if (l.includes("health")) return "Health IT";
+    if (l.includes("proposal")) return "Proposal Support";
+    if (l.includes("cloud")) return "Cloud & Infrastructure";
+    if (l.includes("data")) return "Data Analytics";
+    return "General";
+  };
+
+  const [inferredValues, setInferredValues] = useState({
+    topic: query.length > 60 ? query.substring(0, 60) + "..." : query,
+    agency: inferAgency(),
+    domain: inferDomain(),
+    naics: "Not specified — click to set",
+  });
+
+  // Generated AI summary for non-opportunity queries
+  const generatedSummary = `Based on your query, you appear to be looking for expertise related to ${inferredValues.domain.toLowerCase()} within the ${inferredValues.agency !== "Not specified — click to set" ? inferredValues.agency : "federal government"}. This type of engagement typically involves subject matter experts who can provide strategic guidance, technical reviews, or intelligence briefings on ${inferredValues.topic.toLowerCase().replace("...", "")}. We'll match experts based on relevant agency experience, domain expertise, and the specific service types you select below.`;
 
   const roles = ["Agency SME", "Program SME", "Technical SME", "Contractor SME", "Acquisition SME", "Capture Manager", "Proposal Manager", "Proposal Writer", "Solution Architect", "Pricing Expert"];
   const services = ["Intelligence Briefing", "Black Hat Review", "Technical Review", "Proposal Review", "Strategy Session", "Capture Planning", "Price-to-Win Analysis", "Customer Engagement Prep"];
@@ -516,91 +572,202 @@ function QueryConfirmationCard({ query, onConfirm, onBack }) {
     setter(prev => prev.includes(item) ? prev.filter(x => x !== item) : [...prev, item]);
   };
 
+  // Skeleton placeholder
+  const Skeleton = ({ width, height = 14, style: sx }) => (
+    <div style={{ width, height, borderRadius: 4, background: `linear-gradient(90deg, ${C.gray100} 25%, ${C.gray200} 50%, ${C.gray100} 75%)`, backgroundSize: "200% 100%", animation: "shimmer 1.5s infinite", ...sx }} />
+  );
+
+  // Inline editable inferred field
+  const InferredField = ({ fieldKey, label }) => {
+    const isEditing = editingField === fieldKey;
+    const val = inferredValues[fieldKey];
+    const isPlaceholder = val.includes("click to set");
+    return (
+      <div>
+        <div style={{ fontSize: 11, color: C.gray400 }}>{label}</div>
+        {isEditing ? (
+          <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 2 }}>
+            <input autoFocus value={isPlaceholder ? "" : val}
+              onChange={e => setInferredValues(prev => ({ ...prev, [fieldKey]: e.target.value }))}
+              onKeyDown={e => { if (e.key === "Enter") setEditingField(null); if (e.key === "Escape") setEditingField(null); }}
+              onBlur={() => setEditingField(null)}
+              placeholder={`Enter ${label.toLowerCase()}...`}
+              style={{ fontSize: 13, fontWeight: 500, color: C.gray700, border: `1.5px solid ${C.teal}`, borderRadius: 4, padding: "2px 6px", outline: "none", width: "100%", fontFamily: "inherit" }}
+            />
+          </div>
+        ) : (
+          <div onClick={() => setEditingField(fieldKey)}
+            style={{ fontSize: 13, fontWeight: 500, color: isPlaceholder ? C.gray400 : C.gray700, marginTop: 2, cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}
+            onMouseEnter={e => e.currentTarget.style.color = C.teal}
+            onMouseLeave={e => e.currentTarget.style.color = isPlaceholder ? C.gray400 : C.gray700}
+          >
+            {val}
+            <Icon name="edit" size={10} color={C.gray300} style={{ opacity: 0.5, flexShrink: 0 }} />
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div style={{ background: C.white, borderRadius: 16, border: `1px solid ${C.gray200}`, padding: "28px 32px", maxWidth: 720, width: "100%", boxShadow: "0 4px 24px rgba(0,0,0,0.06)" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
-        <Icon name="zap" size={18} color={C.purple} />
-        <span style={{ fontSize: 13, fontWeight: 600, color: C.purple }}>Query understood — confirm your search parameters</span>
+      <style>{`@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }`}</style>
+
+      {/* Header with provenance */}
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
+        <Icon name="zap" size={18} color={C.orange} />
+        <span style={{ fontSize: 13, fontWeight: 600, color: C.gray700 }}>Here's what we understood — adjust anything that's off</span>
+        <div style={{ padding: "2px 8px", borderRadius: 4, background: `${C.orange}10`, fontSize: 11, fontWeight: 600, color: C.orange, marginLeft: "auto" }}>
+          AI-inferred
+        </div>
       </div>
 
       <h2 style={{ fontSize: 20, fontWeight: 700, color: C.gray900, margin: "0 0 16px" }}>Refine Your Expert Search</h2>
 
-      {/* Inferred context */}
-      <div style={{ background: C.gray50, borderRadius: 10, padding: "14px 16px", marginBottom: 20, border: `1px solid ${C.gray200}` }}>
-        <div style={{ fontSize: 11, fontWeight: 600, color: C.gray400, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>Interpreted from your query</div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px 24px" }}>
-          <div>
-            <div style={{ fontSize: 11, color: C.gray400 }}>Topic</div>
-            <div style={{ fontSize: 13, fontWeight: 500, color: C.gray700 }}>{inferred.topic}</div>
-          </div>
-          <div>
-            <div style={{ fontSize: 11, color: C.gray400 }}>Agency</div>
-            <div style={{ fontSize: 13, fontWeight: 500, color: C.gray700 }}>{inferred.agency}</div>
-          </div>
-          <div>
-            <div style={{ fontSize: 11, color: C.gray400 }}>Domain</div>
-            <div style={{ fontSize: 13, fontWeight: 500, color: C.gray700 }}>{inferred.domain}</div>
-          </div>
+      {/* Inferred context — phase 1, editable fields */}
+      <div style={{ background: C.gray50, borderRadius: 10, padding: "14px 16px", marginBottom: 16, border: `1px solid ${C.gray200}`, transition: "opacity 0.4s ease", opacity: loadPhase >= 1 ? 1 : 0.3 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: C.gray400, textTransform: "uppercase", letterSpacing: 0.5 }}>Interpreted from your query</div>
+          <span style={{ fontSize: 10, color: C.gray400 }}>Click any field to edit</span>
         </div>
+        {loadPhase >= 1 ? (
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px 24px" }}>
+            <InferredField fieldKey="topic" label="Topic" />
+            <InferredField fieldKey="agency" label="Agency" />
+            <InferredField fieldKey="domain" label="Domain" />
+            <InferredField fieldKey="naics" label="NAICS Code" />
+          </div>
+        ) : (
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px 24px" }}>
+            {[1, 2, 3, 4].map(i => (
+              <div key={i}>
+                <Skeleton width="40%" height={10} style={{ marginBottom: 4 }} />
+                <Skeleton width="80%" />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Expert roles */}
-      <div style={{ marginBottom: 20 }}>
+      {/* AI-generated analysis — collapsible, phase 1 */}
+      {loadPhase >= 1 && (
+        <div style={{ marginBottom: 16 }}>
+          <button onClick={() => setShowSummary(!showSummary)} style={{
+            display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "10px 14px",
+            background: showSummary ? `${C.orange}06` : C.gray50, borderRadius: showSummary ? "8px 8px 0 0" : 8,
+            border: `1px solid ${showSummary ? `${C.orange}20` : C.gray200}`, cursor: "pointer",
+          }}>
+            <Icon name="zap" size={14} color={C.orange} />
+            <span style={{ fontSize: 12, fontWeight: 600, color: C.gray600, flex: 1, textAlign: "left" }}>AI Search Analysis</span>
+            <span style={{ fontSize: 10, color: C.gray400 }}>Generated from your input</span>
+            <Icon name={showSummary ? "chevDown" : "chevRight"} size={12} color={C.gray400} />
+          </button>
+          {showSummary && (
+            <div style={{ padding: "14px", background: C.gray50, borderRadius: "0 0 8px 8px", border: `1px solid ${C.gray200}`, borderTop: "none" }}>
+              <p style={{ fontSize: 13, color: C.gray600, lineHeight: 1.6, margin: 0 }}>{generatedSummary}</p>
+              <div style={{ marginTop: 8, fontSize: 10, color: C.gray400 }}>
+                This analysis is generated from your query text. Add more context below to improve accuracy.
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Expert roles — phase 2 */}
+      <div style={{ marginBottom: 20, transition: "opacity 0.4s ease", opacity: loadPhase >= 2 ? 1 : 0.3 }}>
         <div style={{ fontSize: 11, fontWeight: 600, color: C.gray400, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>What type of expert do you need?</div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-          {roles.map(role => (
-            <button key={role} onClick={() => toggleItem(role, selectedRoles, setSelectedRoles)} style={{
-              padding: "5px 12px", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer",
-              border: `1.5px solid ${selectedRoles.includes(role) ? C.teal : C.gray200}`,
-              background: selectedRoles.includes(role) ? `${C.teal}08` : "white",
-              color: selectedRoles.includes(role) ? C.teal : C.gray500,
-            }}>{role}</button>
-          ))}
-        </div>
+        {loadPhase >= 2 ? (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+            {roles.map(role => (
+              <button key={role} onClick={() => toggleItem(role, selectedRoles, setSelectedRoles)} style={{
+                padding: "5px 12px", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer",
+                border: `1.5px solid ${selectedRoles.includes(role) ? C.teal : C.gray200}`,
+                background: selectedRoles.includes(role) ? `${C.teal}08` : "white",
+                color: selectedRoles.includes(role) ? C.teal : C.gray500,
+              }}>{role}</button>
+            ))}
+          </div>
+        ) : (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+            {[70, 85, 95, 100, 90, 80].map((w, i) => <Skeleton key={i} width={w} height={28} style={{ borderRadius: 6 }} />)}
+          </div>
+        )}
       </div>
 
-      {/* Service type */}
-      <div style={{ marginBottom: 20 }}>
+      {/* Service type — phase 2 */}
+      <div style={{ marginBottom: 20, transition: "opacity 0.4s ease", opacity: loadPhase >= 2 ? 1 : 0.3 }}>
         <div style={{ fontSize: 11, fontWeight: 600, color: C.gray400, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>What service are you looking for?</div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-          {services.map(svc => (
-            <button key={svc} onClick={() => toggleItem(svc, selectedServices, setSelectedServices)} style={{
-              padding: "5px 12px", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer",
-              border: `1.5px solid ${selectedServices.includes(svc) ? C.blue : C.gray200}`,
-              background: selectedServices.includes(svc) ? `${C.blue}08` : "white",
-              color: selectedServices.includes(svc) ? C.blue : C.gray500,
-            }}>{svc}</button>
-          ))}
-        </div>
+        {loadPhase >= 2 ? (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+            {services.map(svc => (
+              <button key={svc} onClick={() => toggleItem(svc, selectedServices, setSelectedServices)} style={{
+                padding: "5px 12px", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer",
+                border: `1.5px solid ${selectedServices.includes(svc) ? C.blue : C.gray200}`,
+                background: selectedServices.includes(svc) ? `${C.blue}08` : "white",
+                color: selectedServices.includes(svc) ? C.blue : C.gray500,
+              }}>{svc}</button>
+            ))}
+          </div>
+        ) : (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+            {[110, 90, 100, 85, 95].map((w, i) => <Skeleton key={i} width={w} height={28} style={{ borderRadius: 6 }} />)}
+          </div>
+        )}
       </div>
 
-      {/* Urgency */}
-      <div style={{ marginBottom: 24 }}>
+      {/* Urgency — phase 2 */}
+      <div style={{ marginBottom: 20, transition: "opacity 0.4s ease", opacity: loadPhase >= 2 ? 1 : 0.3 }}>
         <div style={{ fontSize: 11, fontWeight: 600, color: C.gray400, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>Timeline</div>
-        <div style={{ display: "flex", gap: 8 }}>
-          {[
-            { key: "urgent", label: "Urgent (48hrs)", color: C.red },
-            { key: "standard", label: "Standard (1 week)", color: C.teal },
-            { key: "flexible", label: "Flexible", color: C.gray500 },
-          ].map(t => (
-            <button key={t.key} onClick={() => setUrgency(t.key)} style={{
-              padding: "8px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer",
-              border: `1.5px solid ${urgency === t.key ? t.color : C.gray200}`,
-              background: urgency === t.key ? `${t.color}08` : "white",
-              color: urgency === t.key ? t.color : C.gray500,
-            }}>{t.label}</button>
-          ))}
-        </div>
+        {loadPhase >= 2 ? (
+          <div style={{ display: "flex", gap: 8 }}>
+            {[
+              { key: "urgent", label: "Urgent (48hrs)", color: C.red },
+              { key: "standard", label: "Standard (1 week)", color: C.teal },
+              { key: "flexible", label: "Flexible", color: C.gray500 },
+            ].map(t => (
+              <button key={t.key} onClick={() => setUrgency(t.key)} style={{
+                padding: "8px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer",
+                border: `1.5px solid ${urgency === t.key ? t.color : C.gray200}`,
+                background: urgency === t.key ? `${t.color}08` : "white",
+                color: urgency === t.key ? t.color : C.gray500,
+              }}>{t.label}</button>
+            ))}
+          </div>
+        ) : (
+          <div style={{ display: "flex", gap: 8 }}>
+            {[120, 130, 80].map((w, i) => <Skeleton key={i} width={w} height={36} style={{ borderRadius: 8 }} />)}
+          </div>
+        )}
       </div>
 
-      <div style={{ display: "flex", gap: 12 }}>
-        <button onClick={onBack} style={{ flex: 0, padding: "12px 20px", background: C.white, color: C.gray600, border: `1px solid ${C.gray200}`, borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: "pointer" }}>
-          Back
-        </button>
-        <button onClick={onConfirm} style={{ flex: 1, padding: "12px", background: C.teal, color: C.white, border: "none", borderRadius: 10, fontSize: 15, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
-          Find Experts
-          <Icon name="arrowRight" size={18} color={C.white} />
-        </button>
+      {/* Additional context — phase 3 */}
+      <div style={{ transition: "opacity 0.4s ease, transform 0.4s ease", opacity: loadPhase >= 3 ? 1 : 0, transform: loadPhase >= 3 ? "translateY(0)" : "translateY(8px)" }}>
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: C.gray400, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}>Additional context <span style={{ fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>(optional)</span></div>
+          <textarea
+            placeholder="Add any details that would help us find the right experts — specific technologies, contract context, team needs, competitive landscape..."
+            value={additionalContext}
+            onChange={e => setAdditionalContext(e.target.value)}
+            rows={2}
+            style={{ width: "100%", fontSize: 13, color: C.gray700, border: `1px solid ${C.gray200}`, borderRadius: 8, padding: "10px 12px", outline: "none", fontFamily: "inherit", resize: "vertical", background: C.gray50, boxSizing: "border-box" }}
+            onFocus={e => e.target.style.borderColor = C.teal}
+            onBlur={e => e.target.style.borderColor = C.gray200}
+          />
+          <div style={{ fontSize: 10, color: C.gray400, marginTop: 4 }}>
+            This context will be saved to your search record and can drive future expert recommendations.
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div style={{ display: "flex", gap: 12 }}>
+          <button onClick={onBack} style={{ flex: 0, padding: "12px 20px", background: C.white, color: C.gray600, border: `1px solid ${C.gray200}`, borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: "pointer" }}>
+            Back
+          </button>
+          <button onClick={onConfirm} style={{ flex: 1, padding: "12px", background: C.teal, color: C.white, border: "none", borderRadius: 10, fontSize: 15, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+            Find Experts
+            <Icon name="arrowRight" size={18} color={C.white} />
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -612,7 +779,27 @@ function QueryConfirmationCard({ query, onConfirm, onBack }) {
 
 function EnrichmentCard({ onViewResults }) {
   const opp = ENRICHED_OPP;
-  const [stage, setStage] = useState("Capture / Pre-Proposal");
+  const [stage, setStage] = useState(opp.stage);
+  const [loadPhase, setLoadPhase] = useState(0);
+  const [editingField, setEditingField] = useState(null);
+  const [showSummary, setShowSummary] = useState(false);
+  const [showIntelSection, setShowIntelSection] = useState(false);
+  const [competitors, setCompetitors] = useState([""]); // start with one empty row
+  const [userNotes, setUserNotes] = useState("");
+  const [editValues, setEditValues] = useState({
+    title: opp.title, agency: opp.agency, subAgency: opp.subAgency,
+    status: opp.status, value: opp.value, naics: opp.naics,
+    setAside: opp.setAside, incumbent: opp.incumbent,
+    contractType: opp.contractType, popStart: opp.popStart,
+  });
+
+  // Progressive reveal: phase 0=header, 1=details grid, 2=summary+pipeline+services, 3=intel+CTA
+  useEffect(() => {
+    const t1 = setTimeout(() => setLoadPhase(1), 300);
+    const t2 = setTimeout(() => setLoadPhase(2), 800);
+    const t3 = setTimeout(() => setLoadPhase(3), 1200);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+  }, []);
 
   const suggestedServices = [
     { name: "Agency Intelligence Briefing", desc: "60-min deep-dive on NAVWAR priorities and buying patterns", icon: "building" },
@@ -620,69 +807,505 @@ function EnrichmentCard({ onViewResults }) {
     { name: "Technical Review Session", desc: "C5ISR architecture review with domain SME", icon: "zap" },
   ];
 
+  const sourceLabel = { govtribe: "GovTribe", sam: "SAM.gov", "user-input": "Your input", generated: "AI-generated" }[opp.source] || "Unknown";
+  const sourceColor = { govtribe: C.purple, sam: C.blue, "user-input": C.teal, generated: C.orange }[opp.source] || C.gray500;
+
+  // Skeleton placeholder
+  const Skeleton = ({ width, height = 14, style: sx }) => (
+    <div style={{ width, height, borderRadius: 4, background: `linear-gradient(90deg, ${C.gray100} 25%, ${C.gray200} 50%, ${C.gray100} 75%)`, backgroundSize: "200% 100%", animation: "shimmer 1.5s infinite", ...sx }} />
+  );
+
+  // Inline editable field
+  const EditableField = ({ fieldKey, label, value, span2 }) => {
+    const isEditing = editingField === fieldKey;
+    return (
+      <div style={{ gridColumn: span2 ? "1 / -1" : "auto" }}>
+        <div style={{ fontSize: 11, fontWeight: 600, color: C.gray400, textTransform: "uppercase", letterSpacing: 0.5, display: "flex", alignItems: "center", gap: 4 }}>
+          {label}
+        </div>
+        {isEditing ? (
+          <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 2 }}>
+            <input
+              autoFocus
+              value={editValues[fieldKey]}
+              onChange={e => setEditValues(prev => ({ ...prev, [fieldKey]: e.target.value }))}
+              onKeyDown={e => { if (e.key === "Enter") setEditingField(null); if (e.key === "Escape") { setEditValues(prev => ({ ...prev, [fieldKey]: value })); setEditingField(null); } }}
+              style={{ fontSize: 13, fontWeight: 500, color: C.gray700, border: `1.5px solid ${C.teal}`, borderRadius: 4, padding: "2px 6px", outline: "none", width: "100%", fontFamily: "inherit" }}
+            />
+            <button onClick={() => setEditingField(null)} style={{ background: C.teal, border: "none", borderRadius: 4, padding: "2px 6px", cursor: "pointer" }}>
+              <Icon name="check" size={12} color={C.white} />
+            </button>
+          </div>
+        ) : (
+          <div
+            onClick={() => setEditingField(fieldKey)}
+            style={{ fontSize: 13, fontWeight: 500, color: C.gray700, marginTop: 2, cursor: "pointer", padding: "2px 0", borderBottom: `1px dashed transparent`, display: "flex", alignItems: "center", gap: 4 }}
+            onMouseEnter={e => e.currentTarget.style.borderBottomColor = C.gray300}
+            onMouseLeave={e => e.currentTarget.style.borderBottomColor = "transparent"}
+          >
+            {editValues[fieldKey]}
+            <Icon name="edit" size={10} color={C.gray300} style={{ opacity: 0.5, flexShrink: 0 }} />
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div style={{ background: C.white, borderRadius: 16, border: `1px solid ${C.gray200}`, padding: "28px 32px", maxWidth: 720, width: "100%", boxShadow: "0 4px 24px rgba(0,0,0,0.06)" }}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+      <style>{`@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }`}</style>
+
+      {/* Header with provenance */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <Icon name="check" size={18} color={C.green} />
           <span style={{ fontSize: 13, fontWeight: 600, color: C.green }}>Opportunity enriched</span>
-        </div>
-        <button style={{ display: "flex", alignItems: "center", gap: 4, background: "none", border: "none", color: C.teal, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
-          <Icon name="edit" size={14} color={C.teal} /> Edit
-        </button>
-      </div>
-
-      <h2 style={{ fontSize: 20, fontWeight: 700, color: C.gray900, margin: "0 0 4px" }}>{opp.title}</h2>
-      <p style={{ fontSize: 14, color: C.gray500, margin: "0 0 16px" }}>{opp.agency} — {opp.subAgency}</p>
-
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 24px", marginBottom: 20 }}>
-        {[
-          { label: "Status", value: opp.status }, { label: "Est. Value", value: opp.value },
-          { label: "NAICS", value: opp.naics }, { label: "Set-Aside", value: opp.setAside },
-          { label: "Incumbent", value: opp.incumbent },
-        ].map(a => (
-          <div key={a.label}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: C.gray400, textTransform: "uppercase", letterSpacing: 0.5 }}>{a.label}</div>
-            <div style={{ fontSize: 13, fontWeight: 500, color: C.gray700, marginTop: 2 }}>{a.value}</div>
+          <div style={{ padding: "2px 8px", borderRadius: 4, background: `${sourceColor}10`, fontSize: 11, fontWeight: 600, color: sourceColor, marginLeft: 4 }}>
+            {sourceLabel}
           </div>
-        ))}
-      </div>
-
-      <div style={{ marginBottom: 20 }}>
-        <div style={{ fontSize: 11, fontWeight: 600, color: C.gray400, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>Pipeline Stage</div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-          {STAGES.map(s => (
-            <button key={s} onClick={() => setStage(s)} style={{
-              padding: "5px 12px", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer",
-              border: `1.5px solid ${stage === s ? C.teal : C.gray200}`,
-              background: stage === s ? `${C.teal}08` : "white",
-              color: stage === s ? C.teal : C.gray500,
-            }}>{s}</button>
-          ))}
         </div>
+        {opp.solicitationNum && (
+          <span style={{ fontSize: 11, color: C.gray400, fontFamily: "monospace" }}>{opp.solicitationNum}</span>
+        )}
       </div>
 
-      <div style={{ marginBottom: 20 }}>
-        <div style={{ fontSize: 11, fontWeight: 600, color: C.gray400, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>Recommended Services</div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          {suggestedServices.map(svc => (
-            <div key={svc.name} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 14px", background: C.gray50, borderRadius: 8, border: `1px solid ${C.gray200}` }}>
-              <Icon name={svc.icon} size={18} color={C.teal} />
-              <div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: C.gray800 }}>{svc.name}</div>
-                <div style={{ fontSize: 12, color: C.gray500 }}>{svc.desc}</div>
+      {/* Title — editable */}
+      <div style={{ marginBottom: 4 }}>
+        {editingField === "title" ? (
+          <input autoFocus value={editValues.title}
+            onChange={e => setEditValues(prev => ({ ...prev, title: e.target.value }))}
+            onKeyDown={e => { if (e.key === "Enter" || e.key === "Escape") setEditingField(null); }}
+            onBlur={() => setEditingField(null)}
+            style={{ fontSize: 20, fontWeight: 700, color: C.gray900, border: `1.5px solid ${C.teal}`, borderRadius: 6, padding: "4px 8px", outline: "none", width: "100%", fontFamily: "inherit" }}
+          />
+        ) : (
+          <h2 onClick={() => setEditingField("title")} style={{ fontSize: 20, fontWeight: 700, color: C.gray900, margin: 0, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6 }}
+            onMouseEnter={e => e.currentTarget.querySelector('.edit-hint').style.opacity = 0.6}
+            onMouseLeave={e => e.currentTarget.querySelector('.edit-hint').style.opacity = 0}
+          >
+            {editValues.title}
+            <span className="edit-hint" style={{ opacity: 0, transition: "opacity 0.15s" }}><Icon name="edit" size={12} color={C.gray400} /></span>
+          </h2>
+        )}
+      </div>
+      <p style={{ fontSize: 14, color: C.gray500, margin: "0 0 16px" }}>{editValues.agency} — {editValues.subAgency}</p>
+
+      {/* Details grid — phase 1 — all fields editable */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 24px", marginBottom: 20, transition: "opacity 0.4s ease", opacity: loadPhase >= 1 ? 1 : 0.3 }}>
+        {loadPhase >= 1 ? (
+          <>
+            <EditableField fieldKey="status" label="Status" value={opp.status} />
+            <EditableField fieldKey="value" label="Est. Value" value={opp.value} />
+            <EditableField fieldKey="naics" label="NAICS" value={opp.naics} />
+            <EditableField fieldKey="setAside" label="Set-Aside" value={opp.setAside} />
+            <EditableField fieldKey="contractType" label="Contract Type" value={opp.contractType} />
+            <EditableField fieldKey="popStart" label="Period of Performance" value={opp.popStart} />
+            <EditableField fieldKey="incumbent" label="Incumbent" value={opp.incumbent} span2 />
+          </>
+        ) : (
+          <>
+            {[1,2,3,4,5,6].map(i => (
+              <div key={i}>
+                <Skeleton width="40%" height={10} style={{ marginBottom: 4 }} />
+                <Skeleton width="70%" style={{ marginTop: 4 }} />
+              </div>
+            ))}
+            <div style={{ gridColumn: "1 / -1" }}>
+              <Skeleton width="30%" height={10} style={{ marginBottom: 4 }} />
+              <Skeleton width="85%" style={{ marginTop: 4 }} />
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* AI Summary — phase 2, collapsible */}
+      <div style={{ transition: "opacity 0.4s ease", opacity: loadPhase >= 2 ? 1 : 0.3 }}>
+        <div style={{ marginBottom: 16 }}>
+          <button onClick={() => loadPhase >= 2 && setShowSummary(!showSummary)} style={{
+            display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "12px 16px",
+            background: showSummary ? `${C.purple}06` : C.gray50, borderRadius: showSummary ? "10px 10px 0 0" : 10,
+            border: `1px solid ${showSummary ? `${C.purple}20` : C.gray200}`, cursor: loadPhase >= 2 ? "pointer" : "default",
+            transition: "all 0.2s ease",
+          }}>
+            <Icon name="zap" size={16} color={C.purple} />
+            <span style={{ fontSize: 13, fontWeight: 600, color: C.gray700, flex: 1, textAlign: "left" }}>AI Opportunity Analysis</span>
+            <span style={{ fontSize: 11, color: C.gray400, marginRight: 4 }}>
+              {opp.source === "govtribe" ? "Based on GovTribe data" : "Generated from your input"}
+            </span>
+            <Icon name={showSummary ? "chevDown" : "chevRight"} size={14} color={C.gray400} />
+          </button>
+          {showSummary && loadPhase >= 2 && (
+            <div style={{ padding: "16px", background: C.gray50, borderRadius: "0 0 10px 10px", border: `1px solid ${C.gray200}`, borderTop: "none" }}>
+              <p style={{ fontSize: 13, color: C.gray600, lineHeight: 1.65, margin: 0 }}>{opp.aiSummary}</p>
+              <div style={{ marginTop: 12, display: "flex", alignItems: "center", gap: 8 }}>
+                <div style={{ padding: "2px 8px", borderRadius: 4, background: `${sourceColor}10`, fontSize: 10, fontWeight: 600, color: sourceColor }}>
+                  Source: {sourceLabel}
+                </div>
+                <span style={{ fontSize: 10, color: C.gray400 }}>AI summary may contain inaccuracies — verify critical details</span>
               </div>
             </div>
-          ))}
+          )}
+        </div>
+
+        {/* Pipeline Stage */}
+        <div style={{ marginBottom: 20 }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: C.gray400, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>Your Pipeline Stage</div>
+          {loadPhase >= 2 ? (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              {STAGES.map(s => (
+                <button key={s} onClick={() => setStage(s)} style={{
+                  padding: "5px 12px", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer",
+                  border: `1.5px solid ${stage === s ? C.teal : C.gray200}`,
+                  background: stage === s ? `${C.teal}08` : "white",
+                  color: stage === s ? C.teal : C.gray500,
+                }}>{s}</button>
+              ))}
+            </div>
+          ) : (
+            <div style={{ display: "flex", gap: 6 }}>
+              {[80, 120, 100, 90].map((w, i) => <Skeleton key={i} width={w} height={28} style={{ borderRadius: 6 }} />)}
+            </div>
+          )}
+        </div>
+
+        {/* Recommended Services */}
+        <div style={{ marginBottom: 20 }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: C.gray400, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>Recommended Services</div>
+          {loadPhase >= 2 ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {suggestedServices.map(svc => (
+                <div key={svc.name} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 14px", background: C.gray50, borderRadius: 8, border: `1px solid ${C.gray200}` }}>
+                  <Icon name={svc.icon} size={18} color={C.teal} />
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: C.gray800 }}>{svc.name}</div>
+                    <div style={{ fontSize: 12, color: C.gray500 }}>{svc.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {[1, 2, 3].map(i => <Skeleton key={i} width="100%" height={44} style={{ borderRadius: 8 }} />)}
+            </div>
+          )}
         </div>
       </div>
 
-      <button onClick={onViewResults} style={{
-        width: "100%", padding: "12px", background: C.teal, color: C.white, border: "none", borderRadius: 10,
-        fontSize: 15, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-      }}>
-        View Matched Experts <Icon name="arrowRight" size={18} color={C.white} />
-      </button>
+      {/* Your Intelligence section — phase 3 */}
+      <div style={{ transition: "opacity 0.4s ease, transform 0.4s ease", opacity: loadPhase >= 3 ? 1 : 0, transform: loadPhase >= 3 ? "translateY(0)" : "translateY(8px)" }}>
+        {!showIntelSection ? (
+          <button onClick={() => setShowIntelSection(true)} style={{
+            display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "12px 16px",
+            background: C.white, borderRadius: 10, border: `1.5px dashed ${C.teal}40`, cursor: "pointer",
+            marginBottom: 16, transition: "all 0.15s",
+          }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = C.teal; e.currentTarget.style.background = `${C.teal}04`; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = `${C.teal}40`; e.currentTarget.style.background = C.white; }}
+          >
+            <div style={{ width: 28, height: 28, borderRadius: "50%", background: `${C.teal}10`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <span style={{ fontSize: 16, lineHeight: 1 }}>+</span>
+            </div>
+            <div style={{ textAlign: "left" }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: C.gray800 }}>Add what you know</div>
+              <div style={{ fontSize: 11, color: C.gray500 }}>Competitors, teammates, strategy notes — your intel improves matching</div>
+            </div>
+          </button>
+        ) : (
+          <div style={{ padding: "16px 20px", background: `${C.teal}04`, borderRadius: 12, border: `1px solid ${C.teal}20`, marginBottom: 16 }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <Icon name="shield" size={16} color={C.teal} />
+                <span style={{ fontSize: 13, fontWeight: 600, color: C.gray800 }}>Your Intelligence</span>
+              </div>
+              <span style={{ fontSize: 10, color: C.gray400, display: "flex", alignItems: "center", gap: 4 }}>
+                <Icon name="lock" size={10} color={C.gray400} /> Private to your account
+              </span>
+            </div>
+
+            {/* Known competitors */}
+            <div style={{ marginBottom: 14 }}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: C.gray500, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}>Known / Expected Competitors</div>
+              {competitors.map((comp, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                  <input
+                    placeholder={i === 0 ? "e.g., SAIC, Booz Allen Hamilton..." : "Add another competitor..."}
+                    value={comp}
+                    onChange={e => { const n = [...competitors]; n[i] = e.target.value; setCompetitors(n); }}
+                    onKeyDown={e => { if (e.key === "Enter" && comp.trim()) setCompetitors([...competitors, ""]); }}
+                    style={{ flex: 1, fontSize: 13, color: C.gray700, border: `1px solid ${C.gray200}`, borderRadius: 6, padding: "6px 10px", outline: "none", fontFamily: "inherit", background: C.white }}
+                  />
+                  {competitors.length > 1 && (
+                    <button onClick={() => setCompetitors(competitors.filter((_, j) => j !== i))} style={{ background: "none", border: "none", cursor: "pointer", padding: 2 }}>
+                      <Icon name="x" size={14} color={C.gray400} />
+                    </button>
+                  )}
+                </div>
+              ))}
+              {competitors[competitors.length - 1]?.trim() && (
+                <button onClick={() => setCompetitors([...competitors, ""])} style={{ background: "none", border: "none", color: C.teal, fontSize: 12, fontWeight: 600, cursor: "pointer", padding: "4px 0", display: "flex", alignItems: "center", gap: 4 }}>
+                  + Add competitor
+                </button>
+              )}
+            </div>
+
+            {/* Strategy notes */}
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 600, color: C.gray500, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}>Strategy Notes</div>
+              <textarea
+                placeholder="Add insider knowledge, win themes, team strategy, or anything that will help us find the right experts..."
+                value={userNotes}
+                onChange={e => setUserNotes(e.target.value)}
+                rows={3}
+                style={{ width: "100%", fontSize: 13, color: C.gray700, border: `1px solid ${C.gray200}`, borderRadius: 6, padding: "8px 10px", outline: "none", fontFamily: "inherit", resize: "vertical", background: C.white, boxSizing: "border-box" }}
+              />
+            </div>
+
+            <div style={{ marginTop: 10, fontSize: 11, color: C.gray400, lineHeight: 1.4 }}>
+              This information improves expert matching and is saved to your opportunity record for future searches.
+            </div>
+          </div>
+        )}
+
+        {/* CTA */}
+        <button onClick={onViewResults} style={{
+          width: "100%", padding: "12px", background: C.teal, color: C.white, border: "none", borderRadius: 10,
+          fontSize: 15, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+        }}>
+          View Matched Experts <Icon name="arrowRight" size={18} color={C.white} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+// QUERY PROCESSING INTERSTITIAL
+// ═══════════════════════════════════════════════════════════
+
+function QueryProcessingScreen({ query, isOpportunity, onComplete }) {
+  const [phase, setPhase] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const [dots, setDots] = useState("");
+
+  // Define phases based on query type
+  const oppPhases = [
+    { icon: "search", label: "Analyzing your query", detail: "Detecting input type and extracting identifiers..." },
+    { icon: "globe", label: "Recognized as opportunity", detail: "Solicitation pattern detected — checking cache..." },
+    { icon: "building", label: "Enriching from GovTribe", detail: "Pulling opportunity details, agency info, NAICS, incumbents, and contract history..." },
+    { icon: "zap", label: "Generating AI analysis", detail: "Summarizing opportunity scope and identifying expert alignment criteria..." },
+    { icon: "shield", label: "Matching expert profiles", detail: "Cross-referencing 17,000+ SMEs against opportunity requirements..." },
+    { icon: "check", label: "Results ready", detail: "Found matching experts — preparing enrichment view..." },
+  ];
+
+  const genPhases = [
+    { icon: "search", label: "Analyzing your query", detail: "Understanding the intent and domain of your search..." },
+    { icon: "zap", label: "Interpreting parameters", detail: "Inferring agency, topic area, NAICS codes, and expert type from your input..." },
+    { icon: "document", label: "Generating search context", detail: "Building a structured search profile from your query..." },
+    { icon: "shield", label: "Matching expert profiles", detail: "Searching 17,000+ SMEs for domain alignment..." },
+    { icon: "check", label: "Results ready", detail: "Found matching experts — preparing confirmation view..." },
+  ];
+
+  const phases = isOpportunity ? oppPhases : genPhases;
+
+  // Animate dots
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDots(prev => prev.length >= 3 ? "" : prev + ".");
+    }, 400);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Simulate phased processing with realistic timing
+  useEffect(() => {
+    const timings = isOpportunity
+      ? [700, 800, 2200, 1200, 1200, 500]   // Opportunity: ~6.6s total (GovTribe fetch + AI analysis)
+      : [700, 1200, 1000, 1000, 500];        // General: ~4.4s total
+
+    let elapsed = 0;
+    const totalTime = timings.reduce((a, b) => a + b, 0);
+    const timeouts = [];
+
+    timings.forEach((delay, i) => {
+      elapsed += delay;
+      timeouts.push(setTimeout(() => {
+        setPhase(i);
+        setProgress(Math.min(((i + 1) / phases.length) * 100, 100));
+        // Last phase triggers completion after a beat
+        if (i === phases.length - 1) {
+          setTimeout(() => onComplete(), 500);
+        }
+      }, elapsed - delay));
+    });
+
+    // Final completion
+    timeouts.push(setTimeout(() => {
+      setPhase(phases.length - 1);
+      setProgress(100);
+    }, totalTime - 400));
+
+    // Smooth progress bar animation
+    const progressInterval = setInterval(() => {
+      setProgress(prev => {
+        const target = ((phase + 1) / phases.length) * 100;
+        if (prev < target) return Math.min(prev + 0.5, target);
+        return prev;
+      });
+    }, 30);
+
+    return () => {
+      timeouts.forEach(clearTimeout);
+      clearInterval(progressInterval);
+    };
+  }, []);
+
+  const currentPhase = phases[Math.min(phase, phases.length - 1)];
+  const isComplete = phase === phases.length - 1;
+
+  return (
+    <div style={{
+      minHeight: "100vh", background: C.gray50, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      display: "flex", flexDirection: "column",
+    }}>
+      {/* Slim nav that mirrors the results page */}
+      <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 32px", background: C.white, borderBottom: `1px solid ${C.gray200}` }}>
+        <OFLogo color={C.dark} />
+        <div style={{ flex: 1, maxWidth: 480, margin: "0 24px" }}>
+          <div style={{ display: "flex", alignItems: "center", background: C.gray50, borderRadius: 8, border: `1px solid ${C.gray200}`, padding: "0 12px" }}>
+            <Icon name="search" size={16} color={C.gray400} />
+            <div style={{ flex: 1, fontSize: 13, color: C.gray700, padding: "10px 8px", fontFamily: "inherit", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              {query}
+            </div>
+          </div>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <button style={{ padding: "8px 16px", borderRadius: 6, border: `1px solid ${C.gray300}`, background: "transparent", color: C.gray700, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Log In</button>
+          <button style={{ padding: "8px 16px", borderRadius: 6, border: "none", background: C.teal, color: C.white, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Sign Up Free</button>
+        </div>
+      </nav>
+
+      {/* Processing area */}
+      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "40px 32px" }}>
+        <div style={{ maxWidth: 520, width: "100%", textAlign: "center" }}>
+
+          {/* Animated icon */}
+          <div style={{
+            width: 72, height: 72, borderRadius: "50%", margin: "0 auto 24px",
+            background: isComplete ? `${C.green}12` : `${C.teal}10`,
+            border: `2px solid ${isComplete ? C.green : C.teal}30`,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            transition: "all 0.4s ease",
+          }}>
+            <Icon name={currentPhase.icon} size={28} color={isComplete ? C.green : C.teal} />
+          </div>
+
+          {/* Current phase label */}
+          <h2 style={{
+            fontSize: 22, fontWeight: 700, color: C.gray900, margin: "0 0 6px",
+            transition: "opacity 0.3s ease",
+          }}>
+            {currentPhase.label}{!isComplete ? dots : ""}
+          </h2>
+          <p style={{ fontSize: 14, color: C.gray500, margin: "0 0 32px", lineHeight: 1.5 }}>
+            {currentPhase.detail}
+          </p>
+
+          {/* Progress bar */}
+          <div style={{ maxWidth: 400, margin: "0 auto 32px" }}>
+            <div style={{ height: 4, background: C.gray200, borderRadius: 2, overflow: "hidden" }}>
+              <div style={{
+                height: "100%", background: isComplete ? C.green : `linear-gradient(90deg, ${C.teal}, ${C.tealLight})`,
+                borderRadius: 2, transition: "width 0.3s ease",
+                width: `${progress}%`,
+              }} />
+            </div>
+          </div>
+
+          {/* Phase timeline */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 0, textAlign: "left", maxWidth: 380, margin: "0 auto" }}>
+            {phases.map((p, i) => {
+              const isActive = i === phase;
+              const isDone = i < phase;
+              const isFuture = i > phase;
+              return (
+                <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 12, position: "relative" }}>
+                  {/* Timeline connector */}
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
+                    <div style={{
+                      width: 24, height: 24, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center",
+                      background: isDone ? C.green : isActive ? C.teal : C.gray200,
+                      transition: "all 0.3s ease",
+                    }}>
+                      {isDone ? (
+                        <Icon name="check" size={12} color={C.white} />
+                      ) : (
+                        <div style={{
+                          width: 8, height: 8, borderRadius: "50%",
+                          background: isActive ? C.white : C.gray400,
+                          animation: isActive ? "pulse 1.5s infinite" : "none",
+                        }} />
+                      )}
+                    </div>
+                    {i < phases.length - 1 && (
+                      <div style={{
+                        width: 2, height: 24,
+                        background: isDone ? C.green : C.gray200,
+                        transition: "background 0.3s ease",
+                      }} />
+                    )}
+                  </div>
+                  {/* Label */}
+                  <div style={{ paddingTop: 2, paddingBottom: i < phases.length - 1 ? 8 : 0 }}>
+                    <div style={{
+                      fontSize: 13, fontWeight: isActive || isDone ? 600 : 400,
+                      color: isFuture ? C.gray400 : isDone ? C.green : C.gray800,
+                      transition: "color 0.3s ease",
+                    }}>
+                      {p.label}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Query context card */}
+          <div style={{
+            marginTop: 32, padding: "16px 20px", background: C.white, borderRadius: 10,
+            border: `1px solid ${C.gray200}`, textAlign: "left",
+          }}>
+            <div style={{ fontSize: 11, fontWeight: 600, color: C.gray400, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}>
+              Your search
+            </div>
+            <div style={{ fontSize: 14, color: C.gray700, lineHeight: 1.5, wordBreak: "break-word" }}>
+              {query}
+            </div>
+            {isOpportunity && (
+              <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 6 }}>
+                <div style={{ padding: "2px 8px", borderRadius: 4, background: `${C.purple}10`, fontSize: 11, fontWeight: 600, color: C.purple }}>
+                  Opportunity
+                </div>
+                <span style={{ fontSize: 11, color: C.gray400 }}>Data sourced from GovTribe</span>
+              </div>
+            )}
+            {!isOpportunity && (
+              <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 6 }}>
+                <div style={{ padding: "2px 8px", borderRadius: 4, background: `${C.blue}10`, fontSize: 11, fontWeight: 600, color: C.blue }}>
+                  General Search
+                </div>
+                <span style={{ fontSize: 11, color: C.gray400 }}>AI-powered parameter inference</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Subtle CSS animation for pulse */}
+      <style>{`
+        @keyframes pulse {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.5; transform: scale(0.8); }
+        }
+      `}</style>
     </div>
   );
 }
@@ -691,7 +1314,7 @@ function EnrichmentCard({ onViewResults }) {
 // EXPERT CARD (Visitor — anonymous per Display Explorer)
 // ═══════════════════════════════════════════════════════════
 
-function VisitorExpertCard({ expert, rank, onClickProfile }) {
+function VisitorExpertCard({ expert, rank, onClickProfile, onSignup }) {
   return (
     <div style={{ background: C.white, borderRadius: 12, border: `1px solid ${C.gray200}`, padding: "20px 24px", transition: "box-shadow 0.15s", cursor: "pointer" }}
       onClick={() => onClickProfile(expert)}
@@ -699,9 +1322,16 @@ function VisitorExpertCard({ expert, rank, onClickProfile }) {
       onMouseLeave={e => e.currentTarget.style.boxShadow = "none"}
     >
       <div style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
-        <div style={{ width: 52, height: 52, borderRadius: "50%", background: C.gray100, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: `2px dashed ${C.gray300}` }}>
-          <Icon name="user" size={22} color={C.gray400} />
-        </div>
+        {/* showPhoto: !isAnonymous (per Display Explorer) */}
+        {expert.anonymous ? (
+          <div style={{ width: 52, height: 52, borderRadius: "50%", background: C.gray100, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: `2px dashed ${C.gray300}` }}>
+            <Icon name="user" size={22} color={C.gray400} />
+          </div>
+        ) : (
+          <div style={{ width: 52, height: 52, borderRadius: "50%", background: `linear-gradient(135deg, ${expert.color}, ${expert.color}CC)`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, color: C.white, fontSize: 18, fontWeight: 700 }}>
+            {expert.initials}
+          </div>
+        )}
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
             <div style={{ flex: 1 }}>
@@ -748,7 +1378,7 @@ function VisitorExpertCard({ expert, rank, onClickProfile }) {
               <LockFilled size={12} color={C.teal} />
               Create a free account to see full match details
             </div>
-            <button onClick={e => { e.stopPropagation(); }} style={{
+            <button onClick={e => { e.stopPropagation(); onSignup && onSignup(expert); }} style={{
               background: "white", border: `1.5px solid ${C.teal}`, color: C.teal,
               borderRadius: 8, padding: "8px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer",
             }}>Sign Up to Connect</button>
@@ -970,7 +1600,7 @@ function ResultsPage({ query, isOpportunity, onBack, onViewProfile, onSignup }) 
             {/* Expert cards */}
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {EXPERTS.map((expert, i) => (
-                <VisitorExpertCard key={expert.id} expert={expert} rank={i + 1} onClickProfile={onViewProfile} />
+                <VisitorExpertCard key={expert.id} expert={expert} rank={i + 1} onClickProfile={onViewProfile} onSignup={(exp) => onSignup(exp)} />
               ))}
             </div>
 
@@ -1005,6 +1635,7 @@ function App() {
   const [selectedExpert, setSelectedExpert] = useState(null);
   const [selectedExpertRank, setSelectedExpertRank] = useState(1);
   const [showSignupModal, setShowSignupModal] = useState(false);
+  const [signupExpertContext, setSignupExpertContext] = useState(null);
 
   const detectOpportunity = (q) => {
     const lower = q.toLowerCase();
@@ -1014,6 +1645,10 @@ function App() {
   const handleSearch = (q) => {
     setQuery(q);
     setIsOpportunity(detectOpportunity(q));
+    setScreen("processing");
+  };
+
+  const handleProcessingComplete = () => {
     setScreen("results");
   };
 
@@ -1027,6 +1662,16 @@ function App() {
     setShowSignupModal(false);
     // In a real app, this would authenticate and unlock content
   };
+
+  if (screen === "processing") {
+    return (
+      <QueryProcessingScreen
+        query={query}
+        isOpportunity={isOpportunity}
+        onComplete={handleProcessingComplete}
+      />
+    );
+  }
 
   if (screen === "profile" && selectedExpert) {
     return (
@@ -1043,13 +1688,13 @@ function App() {
   if (screen === "results") {
     return (
       <>
-        {showSignupModal && <SignupModal onClose={() => setShowSignupModal(false)} onSignup={handleSignup} />}
+        {showSignupModal && <SignupModal onClose={() => { setShowSignupModal(false); setSignupExpertContext(null); }} onSignup={handleSignup} expertContext={signupExpertContext} />}
         <ResultsPage
           query={query}
           isOpportunity={isOpportunity}
           onBack={() => setScreen("home")}
           onViewProfile={handleViewProfile}
-          onSignup={() => setShowSignupModal(true)}
+          onSignup={(expertOrNull) => { setSignupExpertContext(expertOrNull || null); setShowSignupModal(true); }}
         />
       </>
     );
@@ -1057,6 +1702,7 @@ function App() {
 
   return <Homepage onSearch={handleSearch} />;
 }
+
 
 ReactDOM.createRoot(document.getElementById("root")).render(<App />);
   </script>
