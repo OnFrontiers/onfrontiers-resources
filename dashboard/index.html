@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OnFrontiers Dashboard — Credit Customer Redesign v2</title>
+<meta name="description" content="OnFrontiers Dashboard Redesign v2 — Project-centric credit customer view">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23005755' stroke-width='2'><circle cx='12' cy='12' r='10'/><path d='M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20'/><path d='M2 12h20'/></svg>">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ========================================
+   DESIGN TOKENS — OnFrontiers Brand (from Julian's v1)
+   ======================================== */
+:root {
+  --teal-50: #ecfffd;
+  --teal-100: #d0f5f1;
+  --teal-200: #a3ebe3;
+  --teal-500: #28BEAF;
+  --teal-700: #009791;
+  --teal-800: #007774;
+  --teal-900: #005755;
+  --teal-950: #003c3d;
+
+  --gray-50: #f7faf9;
+  --gray-100: #e5ebe9;
+  --gray-200: #ccd5d3;
+  --gray-300: #99afa8;
+  --gray-400: #6b8a82;
+  --gray-500: #4d6b63;
+  --gray-600: #3d5650;
+  --gray-700: #344845;
+  --gray-800: #2c3c3a;
+  --gray-900: #2c3533;
+
+  --success: #1DC068;
+  --success-light: #e8f9ef;
+  --error: #E94F74;
+  --warning-amber: #f59e0b;
+  --warning-amber-light: #fffbeb;
+  --porpita: #2389C1;
+
+  --surface-page: #f7faf9;
+  --surface-card: #ffffff;
+  --border-light: #e5ebe9;
+
+  --shadow-card: 0 1px 3px rgba(0,55,53,0.06), 0 1px 2px rgba(0,55,53,0.04);
+  --shadow-card-hover: 0 4px 12px rgba(0,55,53,0.1), 0 2px 4px rgba(0,55,53,0.06);
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+
+  --sp-2: 0.2rem; --sp-4: 0.4rem; --sp-6: 0.6rem; --sp-8: 0.8rem;
+  --sp-10: 1.0rem; --sp-12: 1.2rem; --sp-14: 1.4rem; --sp-16: 1.6rem;
+  --sp-20: 2.0rem; --sp-24: 2.4rem; --sp-32: 3.2rem; --sp-40: 4.0rem;
+  --sp-48: 4.8rem;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 62.5%; -webkit-font-smoothing: antialiased; }
+body {
+  font-family: 'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-size: 1.4rem; line-height: 1.44; letter-spacing: 0.015rem;
+  color: var(--gray-900); background: var(--surface-page);
+}
+a { color: var(--teal-900); text-decoration: none; }
+a:hover { color: var(--teal-700); }
+
+/* ========================================
+   NAVBAR (unchanged from v1)
+   ======================================== */
+.navbar {
+  display: flex; align-items: center; height: 5.2rem;
+  padding: 0 var(--sp-40) 0 var(--sp-24);
+  background: var(--surface-card); border-bottom: 1px solid var(--border-light);
+  position: sticky; top: 0; z-index: 100;
+}
+.navbar-logo {
+  display: flex; align-items: center; gap: var(--sp-8);
+  margin-right: var(--sp-32); font-weight: 700; font-size: 1.6rem; color: var(--teal-900);
+}
+.navbar-logo svg { width: 2.4rem; height: 2.4rem; }
+.navbar-nav { display: flex; align-items: center; gap: var(--sp-4); flex: 1; }
+.nav-item {
+  display: flex; align-items: center; gap: var(--sp-6);
+  padding: var(--sp-8) var(--sp-12); border-radius: var(--radius-sm);
+  color: var(--gray-500); font-size: 1.3rem; font-weight: 500;
+  cursor: pointer; transition: color 0.15s, background 0.15s; white-space: nowrap;
+}
+.nav-item:hover { color: var(--teal-800); background: var(--teal-50); }
+.nav-item.active { color: var(--teal-900); font-weight: 600; }
+.nav-item svg { width: 1.6rem; height: 1.6rem; opacity: 0.7; }
+.navbar-actions { display: flex; align-items: center; gap: var(--sp-12); margin-left: auto; }
+.search-box {
+  display: flex; align-items: center; gap: var(--sp-6);
+  padding: var(--sp-6) var(--sp-12); border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm); color: var(--gray-300); font-size: 1.2rem; cursor: pointer;
+}
+.search-box svg { width: 1.4rem; height: 1.4rem; }
+.btn-primary {
+  padding: var(--sp-6) var(--sp-16); background: var(--teal-900); color: white;
+  border: none; border-radius: var(--radius-sm); font-family: inherit;
+  font-size: 1.2rem; font-weight: 600; letter-spacing: 0.04em;
+  text-transform: uppercase; cursor: pointer; transition: background 0.15s;
+}
+.btn-primary:hover { background: var(--teal-950); }
+.context-switcher {
+  display: flex; align-items: center; gap: var(--sp-8);
+  padding: var(--sp-4) var(--sp-8) var(--sp-4) var(--sp-4);
+  border-radius: var(--radius-sm); cursor: pointer; transition: background 0.15s;
+}
+.context-switcher:hover { background: var(--gray-50); }
+.context-avatar {
+  width: 3.2rem; height: 3.2rem; border-radius: 50%;
+  background: var(--teal-800); color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; font-weight: 600;
+}
+.context-label { font-size: 1.3rem; font-weight: 500; color: var(--gray-900); max-width: 16rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ========================================
+   PAGE
+   ======================================== */
+.page { max-width: 112rem; margin: 0 auto; padding: var(--sp-24) var(--sp-40); }
+
+/* ========================================
+   SHARED CARD STYLES
+   ======================================== */
+.card {
+  background: var(--surface-card); border: 1px solid var(--border-light);
+  border-radius: var(--radius-md); padding: var(--sp-20);
+  box-shadow: var(--shadow-card);
+}
+.card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: var(--sp-16);
+}
+.card-title {
+  font-size: 1.4rem; font-weight: 600; color: var(--gray-900);
+  display: flex; align-items: center; gap: var(--sp-8);
+}
+.card-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 2.0rem; height: 2.0rem; padding: 0 var(--sp-6);
+  background: var(--teal-50); color: var(--teal-900);
+  border-radius: 10rem; font-size: 1.1rem; font-weight: 600;
+}
+.card-badge-amber {
+  background: var(--warning-amber-light); color: #92400e;
+}
+.card-link {
+  font-size: 1.2rem; font-weight: 500; color: var(--teal-900);
+  display: flex; align-items: center; gap: var(--sp-4);
+}
+.card-link:hover { color: var(--teal-700); }
+.card-link svg { width: 1.4rem; height: 1.4rem; }
+.card-footer {
+  display: flex; justify-content: flex-end;
+  margin-top: var(--sp-16); padding-top: var(--sp-12);
+  border-top: 1px solid var(--border-light);
+}
+
+/* ========================================
+   CHIPS
+   ======================================== */
+.chip {
+  display: inline-flex; align-items: center;
+  padding: var(--sp-2) var(--sp-8); border-radius: 10rem;
+  font-size: 1.1rem; font-weight: 500; white-space: nowrap;
+}
+.chip-active { background: var(--success-light); color: #15803d; }
+.chip-hold { background: var(--warning-amber-light); color: #92400e; }
+.chip-completed { background: var(--gray-100); color: var(--gray-600); }
+.chip-time { background: var(--gray-100); color: var(--gray-600); }
+.chip-review { background: #dbeafe; color: #1e40af; }
+.chip-action { background: var(--warning-amber-light); color: #92400e; font-weight: 600; }
+.chip-project { background: var(--teal-50); color: var(--teal-900); font-size: 1.0rem; font-weight: 600; }
+.chip-stage { font-size: 1.0rem; padding: var(--sp-2) var(--sp-6); }
+.chip-suggested { background: var(--gray-100); color: var(--gray-600); }
+.chip-vetting { background: var(--warning-amber-light); color: #92400e; }
+.chip-verified { background: var(--success-light); color: #15803d; }
+.chip-matched { background: var(--teal-50); color: var(--teal-900); }
+
+/* ========================================
+   ZONE 1: TOP ROW
+   ======================================== */
+.top-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: var(--sp-20); margin-bottom: var(--sp-24);
+}
+@media (max-width: 768px) { .top-grid { grid-template-columns: 1fr; } }
+
+/* Account Overview */
+.credit-display { display: flex; align-items: baseline; gap: var(--sp-4); margin-bottom: var(--sp-12); }
+.credit-number { font-size: 3.6rem; font-weight: 700; color: var(--teal-900); line-height: 1; letter-spacing: -0.03em; }
+.credit-total { font-size: 1.4rem; color: var(--gray-400); }
+.credit-bar { height: 0.8rem; background: var(--gray-100); border-radius: 10rem; overflow: hidden; margin-bottom: var(--sp-14); }
+.credit-bar-fill { height: 100%; border-radius: 10rem; background: linear-gradient(90deg, var(--teal-900), var(--teal-700)); }
+.account-row { display: flex; align-items: center; gap: var(--sp-8); padding: var(--sp-6) 0; font-size: 1.3rem; }
+.account-row svg { width: 1.4rem; height: 1.4rem; flex-shrink: 0; color: var(--gray-400); }
+.account-row.muted { color: var(--gray-400); }
+
+/* Upcoming Calls */
+.calls-day-label {
+  font-size: 1.1rem; font-weight: 600; color: var(--gray-400);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  margin-bottom: var(--sp-8); margin-top: var(--sp-12);
+}
+.calls-day-label:first-child { margin-top: 0; }
+.call-item {
+  display: flex; align-items: center; gap: var(--sp-12);
+  padding: var(--sp-8) var(--sp-10); border-radius: var(--radius-sm);
+  margin-bottom: var(--sp-4); transition: background 0.12s;
+}
+.call-item:hover { background: var(--gray-50); }
+.call-time { font-size: 1.2rem; font-weight: 600; color: var(--gray-600); width: 5.6rem; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+.call-avatar {
+  width: 3.2rem; height: 3.2rem; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; font-weight: 600; color: white;
+}
+.call-info { flex: 1; min-width: 0; }
+.call-name { font-size: 1.3rem; font-weight: 500; color: var(--gray-900); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.call-meta { font-size: 1.1rem; color: var(--gray-400); display: flex; align-items: center; gap: var(--sp-6); }
+.btn-join {
+  padding: var(--sp-4) var(--sp-12); background: var(--teal-900); color: white;
+  border: none; border-radius: var(--radius-sm); font-family: inherit;
+  font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: background 0.12s; white-space: nowrap;
+}
+.btn-join:hover { background: var(--teal-950); }
+
+/* ========================================
+   ZONE 2: MY PROJECTS
+   ======================================== */
+.projects-section {
+  background: var(--surface-card); border: 1px solid var(--border-light);
+  border-radius: var(--radius-md); box-shadow: var(--shadow-card);
+  margin-bottom: var(--sp-24); overflow: hidden;
+}
+.projects-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--sp-20);
+  border-bottom: 1px solid var(--border-light);
+}
+
+/* Project Row */
+.project-row {
+  border-bottom: 1px solid var(--border-light);
+}
+.project-row:last-child { border-bottom: none; }
+
+.project-summary {
+  display: flex; align-items: center; gap: var(--sp-16);
+  padding: var(--sp-16) var(--sp-20);
+  cursor: pointer; transition: background 0.12s;
+}
+.project-summary:hover { background: var(--gray-50); }
+
+.project-expand {
+  width: 2.0rem; height: 2.0rem; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--gray-400); transition: transform 0.2s;
+}
+.project-expand.open { transform: rotate(90deg); }
+.project-expand svg { width: 1.4rem; height: 1.4rem; }
+
+.project-name { font-size: 1.4rem; font-weight: 600; color: var(--teal-900); min-width: 18rem; }
+
+.project-stats {
+  display: flex; align-items: center; gap: var(--sp-16); flex: 1;
+  font-size: 1.2rem; color: var(--gray-500);
+}
+.project-stat { display: flex; align-items: center; gap: var(--sp-4); white-space: nowrap; }
+.project-stat svg { width: 1.3rem; height: 1.3rem; opacity: 0.6; }
+.project-stat strong { color: var(--gray-800); font-weight: 600; }
+
+.project-credits {
+  font-size: 1.3rem; font-weight: 600; color: var(--teal-900);
+  white-space: nowrap; min-width: 9rem; text-align: right;
+}
+
+/* Action needed dot */
+.action-dot {
+  width: 0.8rem; height: 0.8rem; border-radius: 50%;
+  background: var(--warning-amber); flex-shrink: 0;
+}
+
+/* Expanded: Expert Request rows */
+.project-details {
+  background: var(--gray-50);
+  padding: 0 var(--sp-20) var(--sp-16) var(--sp-20);
+}
+
+.er-row {
+  background: var(--surface-card); border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm); padding: var(--sp-14) var(--sp-16);
+  margin-top: var(--sp-10);
+}
+
+.er-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: var(--sp-10);
+}
+.er-name { font-size: 1.3rem; font-weight: 600; color: var(--gray-900); }
+.er-stats { font-size: 1.1rem; color: var(--gray-400); display: flex; align-items: center; gap: var(--sp-8); }
+
+/* Expert row within ER */
+.expert-list { display: flex; flex-direction: column; gap: var(--sp-6); }
+.expert-item {
+  display: flex; align-items: center; gap: var(--sp-10);
+  padding: var(--sp-6) var(--sp-8); border-radius: var(--radius-sm);
+  transition: background 0.12s;
+}
+.expert-item:hover { background: var(--gray-50); }
+
+.expert-avatar {
+  width: 2.8rem; height: 2.8rem; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.0rem; font-weight: 600; color: white; flex-shrink: 0;
+}
+.expert-info { flex: 1; min-width: 0; }
+.expert-name { font-size: 1.3rem; font-weight: 500; color: var(--gray-900); }
+.expert-detail { font-size: 1.1rem; color: var(--gray-400); }
+.expert-actions { display: flex; align-items: center; gap: var(--sp-8); }
+
+.btn-small {
+  padding: var(--sp-2) var(--sp-10); border-radius: var(--radius-sm);
+  font-family: inherit; font-size: 1.1rem; font-weight: 500;
+  cursor: pointer; transition: all 0.12s; border: 1px solid var(--border-light);
+  background: white; color: var(--teal-900);
+}
+.btn-small:hover { background: var(--teal-50); border-color: var(--teal-200); }
+.btn-small-action {
+  padding: var(--sp-2) var(--sp-10); border-radius: var(--radius-sm);
+  font-family: inherit; font-size: 1.1rem; font-weight: 600;
+  cursor: pointer; border: none;
+  background: var(--warning-amber); color: white;
+}
+.btn-small-action:hover { background: #d97706; }
+
+/* ========================================
+   ZONE 3: BOTTOM ROW
+   ======================================== */
+.bottom-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: var(--sp-20); margin-bottom: var(--sp-24);
+}
+@media (max-width: 768px) { .bottom-grid { grid-template-columns: 1fr; } }
+
+/* Expert Network Card */
+.network-group { margin-bottom: var(--sp-16); }
+.network-group:last-child { margin-bottom: 0; }
+.network-group-header {
+  font-size: 1.1rem; font-weight: 600; color: var(--gray-400);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  margin-bottom: var(--sp-8); padding-bottom: var(--sp-6);
+  border-bottom: 1px solid var(--border-light);
+  display: flex; align-items: center; gap: var(--sp-6);
+}
+.network-expert {
+  display: flex; align-items: center; gap: var(--sp-10);
+  padding: var(--sp-8) 0;
+}
+.network-expert-info { flex: 1; min-width: 0; }
+.network-expert-name { font-size: 1.3rem; font-weight: 500; color: var(--gray-900); }
+.network-expert-role { font-size: 1.1rem; color: var(--gray-400); }
+
+/* Recent Consultations */
+.consult-strip {
+  display: flex; gap: var(--sp-12); overflow-x: auto;
+  padding-bottom: var(--sp-8); scroll-snap-type: x mandatory;
+}
+.consult-strip::-webkit-scrollbar { height: 4px; }
+.consult-strip::-webkit-scrollbar-track { background: var(--gray-100); border-radius: 10rem; }
+.consult-strip::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 10rem; }
+.consult-card {
+  min-width: 20rem; flex-shrink: 0;
+  background: var(--surface-card); border: 1px solid var(--border-light);
+  border-radius: var(--radius-md); padding: var(--sp-14);
+  scroll-snap-align: start; transition: box-shadow 0.2s; cursor: pointer;
+}
+.consult-card:hover { box-shadow: var(--shadow-card-hover); }
+.consult-card-top { display: flex; align-items: center; gap: var(--sp-10); margin-bottom: var(--sp-10); }
+.consult-expert-name { font-size: 1.3rem; font-weight: 600; color: var(--gray-900); }
+.consult-date { font-size: 1.1rem; color: var(--gray-400); }
+.consult-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--sp-6); }
+.consult-meta-item { display: flex; align-items: center; gap: var(--sp-4); font-size: 1.2rem; color: var(--gray-600); }
+.consult-meta-item svg { width: 1.3rem; height: 1.3rem; opacity: 0.6; }
+.consult-rating { display: flex; align-items: center; gap: 2px; }
+.star { width: 1.4rem; height: 1.4rem; color: var(--warning-amber); }
+.star.empty { color: var(--gray-200); }
+
+/* ========================================
+   ANIMATION
+   ======================================== */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate { animation: slideUp 0.35s cubic-bezier(0.23,1,0.32,1) both; }
+.d1 { animation-delay: 0.04s; } .d2 { animation-delay: 0.08s; }
+.d3 { animation-delay: 0.12s; } .d4 { animation-delay: 0.16s; }
+
+/* ========================================
+   EXPAND / COLLAPSE ANIMATION
+   ======================================== */
+.project-details {
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.25s ease;
+}
+.project-details.collapsed {
+  max-height: 0; opacity: 0; padding-top: 0; padding-bottom: 0;
+}
+.project-details:not(.collapsed) {
+  max-height: 200rem; opacity: 1;
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a class="navbar-logo" href="#">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+    OnFrontiers
+  </a>
+  <div class="navbar-nav">
+    <a class="nav-item active" href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Consultations
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      Expert Requests
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      My Network
+    </a>
+  </div>
+  <div class="navbar-actions">
+    <div class="search-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      Search Your Knowledge Network
+    </div>
+    <button class="btn-primary">Find Experts</button>
+    <div class="context-switcher">
+      <div class="context-avatar">JP</div>
+      <span class="context-label">Jeanne Paton — Serco</span>
+      <svg style="width:1.6rem;height:1.6rem;color:var(--gray-400);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+  </div>
+</nav>
+
+<main class="page">
+
+  <!-- Sample data: Serco account (Jeanne Paton) -->
+
+  <!-- =====================================================
+       ZONE 1: ACCOUNT HEALTH + UPCOMING CALLS
+       ===================================================== -->
+  <div class="top-grid">
+
+    <!-- ACCOUNT OVERVIEW -->
+    <div class="card animate d1">
+      <div class="card-header">
+        <span class="card-title">Account Overview</span>
+        <a class="card-link" href="#">Manage Billing <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
+      </div>
+      <div class="credit-display">
+        <span class="credit-number">37</span>
+        <span class="credit-total">/ 50 credits remaining</span>
+      </div>
+      <div class="credit-bar">
+        <div class="credit-bar-fill" style="width: 74%"></div>
+      </div>
+      <div class="account-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Using ~4 credits/month &middot; 37 credits will last ~9 months at this pace
+      </div>
+      <div class="account-row muted">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Scale Plan &middot; $1,008 per credit &middot; Renews Oct 15, 2026
+      </div>
+      <div class="account-row" style="color: var(--teal-800); font-weight: 500;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--teal-700);"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M9 12l2 2 4-4"/></svg>
+        Casey preferred rate unlocked (8+ hrs engaged)
+      </div>
+    </div>
+
+    <!-- UPCOMING CALLS -->
+    <div class="card animate d2">
+      <div class="card-header">
+        <span class="card-title">Upcoming Calls <span class="card-badge">3</span></span>
+      </div>
+
+      <div class="calls-day-label">Today</div>
+      <div class="call-item">
+        <span class="call-time">2:00 PM</span>
+        <div class="call-avatar" style="background: #7c3aed;">CW</div>
+        <div class="call-info">
+          <div class="call-name">Call with Casey Walterscheid</div>
+          <div class="call-meta">
+            Former Contracting Officer
+            <span class="chip chip-project">COSMOS</span>
+          </div>
+        </div>
+        <button class="btn-join">Join Call</button>
+      </div>
+
+      <div class="calls-day-label">Thursday</div>
+      <div class="call-item">
+        <span class="call-time">10:00 AM</span>
+        <div class="call-avatar" style="background: #059669;">GL</div>
+        <div class="call-info">
+          <div class="call-name">Call with Glenn Langston</div>
+          <div class="call-meta">
+            Technical Specialist
+            <span class="chip chip-project">COSMOS</span>
+          </div>
+        </div>
+        <span class="chip chip-time">in 2 days</span>
+      </div>
+      <div class="call-item">
+        <span class="call-time">3:00 PM</span>
+        <div class="call-avatar" style="background: var(--gray-400);">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </div>
+        <div class="call-info">
+          <div class="call-name">Written Response from Christa Frost</div>
+          <div class="call-meta">
+            Former CO
+            <span class="chip chip-project">COSMOS</span>
+          </div>
+        </div>
+        <span class="chip chip-review">In Review</span>
+      </div>
+
+      <div class="card-footer">
+        <a class="card-link" href="#">View all consultations <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- =====================================================
+       ZONE 2: MY PROJECTS (the big change)
+       ===================================================== -->
+  <div class="projects-section animate d3">
+    <div class="projects-header">
+      <span class="card-title">
+        My Projects
+        <span class="card-badge">4</span>
+        <span class="card-badge card-badge-amber" title="Projects needing your attention">2 need attention</span>
+      </span>
+      <a class="card-link" href="#">View all projects <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
+    </div>
+
+    <!-- PROJECT 1: COSMOS — expanded -->
+    <div class="project-row">
+      <div class="project-summary" onclick="this.querySelector('.project-expand').classList.toggle('open'); this.parentElement.querySelector('.project-details').classList.toggle('hidden');">
+        <div class="project-expand open">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <span class="project-name">COSMOS</span>
+        <span class="chip chip-active">Active</span>
+        <div class="project-stats">
+          <span class="project-stat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <strong>2</strong> requests
+          </span>
+          <span class="project-stat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            <strong>5</strong> experts
+          </span>
+          <span class="project-stat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07"/></svg>
+            <strong>4</strong> calls
+          </span>
+        </div>
+        <span class="action-dot" title="Action needed"></span>
+        <span class="project-credits">8 credits used</span>
+      </div>
+
+      <!-- Expanded detail -->
+      <div class="project-details">
+        <!-- ER 1 -->
+        <div class="er-row">
+          <div class="er-header">
+            <span class="er-name">Contracting Office &amp; Program Insight</span>
+            <div class="er-stats">
+              <span>3 experts &middot; 4 calls &middot; 8 credits</span>
+            </div>
+          </div>
+          <div class="expert-list">
+            <div class="expert-item">
+              <div class="expert-avatar" style="background: #7c3aed;">CW</div>
+              <div class="expert-info">
+                <div class="expert-name">Casey Walterscheid</div>
+                <div class="expert-detail">Former Contracting Officer, USSF &middot; 4 calls &middot; 6 credits</div>
+              </div>
+              <span class="chip chip-stage chip-matched">Matched</span>
+              <button class="btn-small">Book Call</button>
+            </div>
+            <div class="expert-item">
+              <div class="expert-avatar" style="background: #dc2626;">CF</div>
+              <div class="expert-info">
+                <div class="expert-name">Christa Frost</div>
+                <div class="expert-detail">Former Contracting Officer &middot; Pending approval from Chris</div>
+              </div>
+              <span class="chip chip-stage chip-verified">Verified</span>
+              <button class="btn-small-action">Review Profile</button>
+            </div>
+            <div class="expert-item">
+              <div class="expert-avatar" style="background: #059669;">GL</div>
+              <div class="expert-info">
+                <div class="expert-name">Glenn Langston</div>
+                <div class="expert-detail">Technical Specialist &middot; 1 call &middot; 2 credits</div>
+              </div>
+              <span class="chip chip-stage chip-matched">Matched</span>
+              <button class="btn-small">Book Call</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ER 2 -->
+        <div class="er-row">
+          <div class="er-header">
+            <span class="er-name">Customer Organization Insight (Space Force)</span>
+            <div class="er-stats">
+              <span>2 experts &middot; 0 calls</span>
+              <span class="chip chip-action">Review 2 experts</span>
+            </div>
+          </div>
+          <div class="expert-list">
+            <div class="expert-item">
+              <div class="expert-avatar" style="background: var(--porpita);">RH</div>
+              <div class="expert-info">
+                <div class="expert-name">Robert Hayes</div>
+                <div class="expert-detail">Former Space Force Program Lead &middot; Suggested Mar 29</div>
+              </div>
+              <span class="chip chip-stage chip-suggested">Suggested</span>
+              <button class="btn-small-action">Give Feedback</button>
+            </div>
+            <div class="expert-item">
+              <div class="expert-avatar" style="background: #8b5cf6;">TP</div>
+              <div class="expert-info">
+                <div class="expert-name">Tanya Petrovic</div>
+                <div class="expert-detail">USSF Acquisition Specialist &middot; Suggested Mar 30</div>
+              </div>
+              <span class="chip chip-stage chip-suggested">Suggested</span>
+              <button class="btn-small-action">Give Feedback</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECT 2: GeoDisc — collapsed -->
+    <div class="project-row">
+      <div class="project-summary">
+        <div class="project-expand">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <span class="project-name">GeoDisc</span>
+        <span class="chip chip-active">Active</span>
+        <div class="project-stats">
+          <span class="project-stat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <strong>1</strong> request
+          </span>
+          <span class="project-stat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            <strong>1</strong> expert
+          </span>
+          <span class="project-stat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07"/></svg>
+            <strong>1</strong> call
+          </span>
+        </div>
+        <span class="project-credits">2 credits used</span>
+      </div>
+    </div>
+
+    <!-- PROJECT 3: ATSSI Next — collapsed, on hold -->
+    <div class="project-row">
+      <div class="project-summary">
+        <div class="project-expand">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <span class="project-name">ATSSI Next</span>
+        <span class="chip chip-hold">On Hold</span>
+        <div class="project-stats">
+          <span class="project-stat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <strong>1</strong> request
+          </span>
+          <span class="project-stat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            <strong>0</strong> experts
+          </span>
+          <span class="project-stat" style="color: var(--gray-300);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07"/></svg>
+            <strong>0</strong> calls
+          </span>
+        </div>
+        <span class="project-credits" style="color: var(--gray-300);">0 credits</span>
+      </div>
+    </div>
+
+    <!-- PROJECT 4: NASA ESDIS Next — collapsed, on hold -->
+    <div class="project-row">
+      <div class="project-summary">
+        <div class="project-expand">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <span class="project-name">NASA ESDIS Next</span>
+        <span class="chip chip-hold">On Hold</span>
+        <div class="project-stats">
+          <span class="project-stat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <strong>0</strong> requests
+          </span>
+          <span class="project-stat" style="color: var(--gray-300);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            <strong>0</strong> experts
+          </span>
+          <span class="project-stat" style="color: var(--gray-300);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07"/></svg>
+            <strong>0</strong> calls
+          </span>
+        </div>
+        <span class="project-credits" style="color: var(--gray-300);">0 credits</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- =====================================================
+       ZONE 3: NETWORK + RECENT CONSULTATIONS
+       ===================================================== -->
+  <div class="bottom-grid">
+
+    <!-- MY EXPERT NETWORK -->
+    <div class="card animate d4">
+      <div class="card-header">
+        <span class="card-title">My Expert Network <span class="card-badge">4</span></span>
+        <a class="card-link" href="#">View full network <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
+      </div>
+
+      <div class="network-group">
+        <div class="network-group-header">
+          <span class="chip chip-project">COSMOS</span>
+          3 experts
+        </div>
+        <div class="network-expert">
+          <div class="expert-avatar" style="background: #7c3aed;">CW</div>
+          <div class="network-expert-info">
+            <div class="network-expert-name">Casey Walterscheid</div>
+            <div class="network-expert-role">Former CO, USSF &middot; Last call Mar 28</div>
+          </div>
+          <button class="btn-small">Book Call</button>
+        </div>
+        <div class="network-expert">
+          <div class="expert-avatar" style="background: #059669;">GL</div>
+          <div class="network-expert-info">
+            <div class="network-expert-name">Glenn Langston</div>
+            <div class="network-expert-role">Technical Specialist &middot; Last call Feb 10</div>
+          </div>
+          <button class="btn-small">Book Call</button>
+        </div>
+        <div class="network-expert">
+          <div class="expert-avatar" style="background: #dc2626;">CF</div>
+          <div class="network-expert-info">
+            <div class="network-expert-name">Christa Frost</div>
+            <div class="network-expert-role">Former CO &middot; Not yet consulted</div>
+          </div>
+          <button class="btn-small">Book Call</button>
+        </div>
+      </div>
+
+      <div class="network-group">
+        <div class="network-group-header">
+          <span class="chip chip-project">GeoDisc</span>
+          1 expert
+        </div>
+        <div class="network-expert">
+          <div class="expert-avatar" style="background: #7c3aed;">CW</div>
+          <div class="network-expert-info">
+            <div class="network-expert-name">Casey Walterscheid</div>
+            <div class="network-expert-role">Former CO, USSF &middot; Also in COSMOS</div>
+          </div>
+          <button class="btn-small">Book Call</button>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <a class="card-link" href="#">View full network <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
+      </div>
+    </div>
+
+    <!-- RECENT CONSULTATIONS -->
+    <div class="card animate d4">
+      <div class="card-header">
+        <span class="card-title">Recent Consultations</span>
+        <a class="card-link" href="#">View history <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
+      </div>
+      <div class="consult-strip" style="flex-direction: column; overflow: visible;">
+
+        <div class="consult-card" style="min-width: auto; width: 100%;">
+          <div class="consult-card-top">
+            <div class="expert-avatar" style="background: #7c3aed;">CW</div>
+            <div>
+              <div class="consult-expert-name">Casey Walterscheid</div>
+              <div class="consult-date">Mar 28 &middot; COSMOS proposal review</div>
+            </div>
+          </div>
+          <div class="consult-meta">
+            <span class="consult-meta-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              60 min
+            </span>
+            <span class="consult-meta-item" style="font-weight: 600; color: var(--teal-900);">2 credits</span>
+            <span class="chip chip-project">COSMOS</span>
+          </div>
+          <div class="consult-rating">
+            <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+        </div>
+
+        <div class="consult-card" style="min-width: auto; width: 100%;">
+          <div class="consult-card-top">
+            <div class="expert-avatar" style="background: #059669;">GL</div>
+            <div>
+              <div class="consult-expert-name">Glenn Langston</div>
+              <div class="consult-date">Feb 10 &middot; Technical sanity check</div>
+            </div>
+          </div>
+          <div class="consult-meta">
+            <span class="consult-meta-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              45 min
+            </span>
+            <span class="consult-meta-item" style="font-weight: 600; color: var(--teal-900);">2 credits</span>
+            <span class="chip chip-project">COSMOS</span>
+          </div>
+          <div class="consult-rating">
+            <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg class="star empty" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// Expand/collapse project rows with animation
+document.querySelectorAll('.project-summary').forEach(summary => {
+  summary.addEventListener('click', () => {
+    const chevron = summary.querySelector('.project-expand');
+    const details = summary.parentElement.querySelector('.project-details');
+    if (details) {
+      chevron.classList.toggle('open');
+      details.classList.toggle('collapsed');
+    }
+  });
+});
+
+// Initialize collapsed state for projects that don't start expanded
+document.querySelectorAll('.project-row').forEach(row => {
+  const chevron = row.querySelector('.project-expand');
+  const details = row.querySelector('.project-details');
+  if (details && !chevron.classList.contains('open')) {
+    details.classList.add('collapsed');
+  }
+});
+</script>
+</body>
+</html>
