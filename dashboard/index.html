@@ -679,6 +679,91 @@ body.member-view .member-only { display: block !important; }
 body.member-view .member-only-flex { display: flex !important; }
 body.member-view .member-only-grid { display: grid !important; }
 
+/* Roadmap toggle visibility */
+.future-only { display: none; }
+body.future-view .future-only { display: block !important; }
+body.future-view .future-only-flex { display: flex !important; }
+body.future-view .current-only { display: none !important; }
+
+/* Future feature label */
+.future-label {
+  display: inline-flex; align-items: center; gap: var(--sp-4);
+  padding: var(--sp-2) var(--sp-8); border-radius: var(--radius-sm);
+  background: #ede9fe; color: #6d28d9;
+  font-size: 1.0rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+  margin-left: var(--sp-8);
+}
+.future-label svg { width: 1.2rem; height: 1.2rem; }
+
+/* ========================================
+   RECOMMENDATIONS SECTION (future)
+   ======================================== */
+.rec-section {
+  background: var(--surface-card); border: 1px solid var(--border-light);
+  border-radius: var(--radius-md); box-shadow: var(--shadow-card);
+  margin-bottom: var(--sp-24); padding: var(--sp-20);
+}
+.rec-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: var(--sp-16);
+}
+.rec-subtext { font-size: 1.2rem; color: var(--gray-400); margin-top: var(--sp-2); }
+.rec-carousel {
+  display: flex; gap: var(--sp-14); overflow-x: auto;
+  padding-bottom: var(--sp-8); scroll-snap-type: x mandatory;
+}
+.rec-carousel::-webkit-scrollbar { height: 4px; }
+.rec-carousel::-webkit-scrollbar-track { background: var(--gray-100); border-radius: 10rem; }
+.rec-carousel::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 10rem; }
+.rec-card {
+  min-width: 22rem; max-width: 24rem; flex-shrink: 0;
+  background: var(--surface-card); border: 1px solid var(--border-light);
+  border-radius: var(--radius-md); padding: var(--sp-16);
+  scroll-snap-align: start; transition: box-shadow 0.2s;
+  display: flex; flex-direction: column; gap: var(--sp-10);
+}
+.rec-card:hover { box-shadow: var(--shadow-card-hover); }
+.rec-card-top { display: flex; align-items: center; gap: var(--sp-10); }
+.rec-card-info { flex: 1; min-width: 0; }
+.rec-card-name { font-size: 1.3rem; font-weight: 600; color: var(--gray-900); }
+.rec-card-title { font-size: 1.1rem; color: var(--gray-400); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rec-card-tags { display: flex; flex-wrap: wrap; gap: var(--sp-4); }
+.rec-card-tag {
+  padding: 1px var(--sp-6); border-radius: 10rem;
+  font-size: 1.0rem; font-weight: 500;
+  background: var(--gray-100); color: var(--gray-600);
+}
+.rec-card-tag.agency { background: var(--teal-50); color: var(--teal-900); }
+.rec-card-tag.domain { background: #dbeafe; color: #1e40af; }
+.rec-card-tag.role { background: #ede9fe; color: #6d28d9; }
+.rec-card-reason {
+  font-size: 1.1rem; color: var(--gray-500); font-style: italic;
+  display: flex; align-items: flex-start; gap: var(--sp-4);
+}
+.rec-card-reason svg { width: 1.3rem; height: 1.3rem; flex-shrink: 0; color: var(--teal-700); margin-top: 1px; }
+.rec-card-bottom {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: auto; padding-top: var(--sp-8);
+  border-top: 1px solid var(--border-light);
+}
+.rec-card-rating { display: flex; align-items: center; gap: var(--sp-4); font-size: 1.2rem; color: var(--gray-600); }
+.rec-card-rating strong { color: var(--gray-800); }
+.rec-card-rating svg { width: 1.2rem; height: 1.2rem; color: var(--warning-amber); }
+.rec-network-badge {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 1px var(--sp-6); border-radius: 10rem;
+  font-size: 1.0rem; font-weight: 600;
+  background: var(--success-light); color: #15803d;
+}
+.rec-network-badge svg { width: 1.0rem; height: 1.0rem; }
+.btn-rec {
+  padding: var(--sp-4) var(--sp-12); border-radius: var(--radius-sm);
+  font-family: inherit; font-size: 1.1rem; font-weight: 600;
+  cursor: pointer; border: 1px solid var(--teal-700);
+  background: white; color: var(--teal-900); transition: all 0.12s;
+}
+.btn-rec:hover { background: var(--teal-50); }
+
 /* ========================================
    TEAM ACTIVITY (admin only)
    ======================================== */
@@ -789,6 +874,12 @@ body.member-view .member-only-grid { display: grid !important; }
     <button class="active" onclick="setRole('admin')">Team Owner / Admin</button>
     <button onclick="setRole('member')">Team Member</button>
   </div>
+  <span style="width: 1px; height: 2rem; background: rgba(255,255,255,0.2); margin: 0 var(--sp-4);"></span>
+  <span class="label">Roadmap:</span>
+  <div class="role-toggle" id="roadmap-toggle">
+    <button class="active" onclick="setRoadmap('current')">Current</button>
+    <button onclick="setRoadmap('future')">Future Features</button>
+  </div>
 </div>
 
 <div class="page-wrapper">
@@ -815,9 +906,17 @@ body.member-view .member-only-grid { display: grid !important; }
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       Team Activity
     </a>
-    <a class="side-nav-item" href="#zone-network" onclick="smoothScroll(event, 'zone-network')">
+    <a class="side-nav-item future-only" href="#zone-network" onclick="smoothScroll(event, 'zone-network')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
       Serco Network
+    </a>
+    <a class="side-nav-item future-only" href="#zone-recommendations" onclick="smoothScroll(event, 'zone-recommendations')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      Recommendations
+    </a>
+    <a class="side-nav-item future-only" href="#zone-intelligence" onclick="smoothScroll(event, 'zone-intelligence')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      Intelligence
     </a>
   </div>
 </nav>
@@ -1644,7 +1743,7 @@ body.member-view .member-only-grid { display: grid !important; }
   <!-- =====================================================
        ZONE 4: SERCO NETWORK (corporate asset view)
        ===================================================== -->
-  <div id="zone-network" class="network-section animate d5">
+  <div id="zone-network" class="network-section animate d5 future-only">
     <div class="network-header">
       <div class="network-headline">
         <div class="network-headline-number">12</div>
@@ -1790,6 +1889,223 @@ body.member-view .member-only-grid { display: grid !important; }
     </div>
   </div>
 
+
+  <!-- =====================================================
+       PERSONALIZED RECOMMENDATIONS (future-only)
+       ===================================================== -->
+  <div id="zone-recommendations" class="rec-section animate d5 future-only">
+    <div class="rec-header">
+      <div>
+        <span class="card-title">
+          Recommended for You
+          <span class="future-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Future
+          </span>
+        </span>
+        <div class="rec-subtext">Experts matched to your role, agency focus, and engagement history</div>
+      </div>
+      <a class="card-link" href="#">Explore all experts <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
+    </div>
+
+    <div class="rec-carousel">
+
+      <!-- Card 1: New expert, high relevance -->
+      <div class="rec-card">
+        <div class="rec-card-top">
+          <div class="expert-avatar" style="background: #0369a1; width: 3.6rem; height: 3.6rem; font-size: 1.2rem;">KM</div>
+          <div class="rec-card-info">
+            <div class="rec-card-name">Karen Mitchells</div>
+            <div class="rec-card-title">Former USSF Contracting Officer</div>
+          </div>
+        </div>
+        <div class="rec-card-tags">
+          <span class="rec-card-tag agency">USSF</span>
+          <span class="rec-card-tag domain">Space Systems</span>
+          <span class="rec-card-tag role">Contracting</span>
+        </div>
+        <div class="rec-card-reason">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg>
+          Matches your COSMOS project focus &amp; contracting needs
+        </div>
+        <div class="rec-card-bottom">
+          <div class="rec-card-rating">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <strong>4.9</strong> &middot; 12 engagements
+          </div>
+          <button class="btn-rec">Request Intro</button>
+        </div>
+      </div>
+
+      <!-- Card 2: Network re-engagement -->
+      <div class="rec-card" style="border-color: var(--teal-200);">
+        <div class="rec-card-top">
+          <div class="expert-avatar" style="background: #059669; width: 3.6rem; height: 3.6rem; font-size: 1.2rem;">GL</div>
+          <div class="rec-card-info">
+            <div class="rec-card-name">Glenn Langston</div>
+            <div class="rec-card-title">Technical Specialist</div>
+          </div>
+          <span class="rec-network-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            In network
+          </span>
+        </div>
+        <div class="rec-card-tags">
+          <span class="rec-card-tag agency">USSF</span>
+          <span class="rec-card-tag domain">Space Systems</span>
+          <span class="rec-card-tag role">Technical</span>
+        </div>
+        <div class="rec-card-reason">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg>
+          Last engaged Feb 10 — could help with COSMOS red team prep
+        </div>
+        <div class="rec-card-bottom">
+          <div class="rec-card-rating">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <strong>4.7</strong> &middot; 1 prior call
+          </div>
+          <button class="btn-rec">Book Call</button>
+        </div>
+      </div>
+
+      <!-- Card 3: New expert, NASA focus -->
+      <div class="rec-card">
+        <div class="rec-card-top">
+          <div class="expert-avatar" style="background: #b45309; width: 3.6rem; height: 3.6rem; font-size: 1.2rem;">JR</div>
+          <div class="rec-card-info">
+            <div class="rec-card-name">James Redford</div>
+            <div class="rec-card-title">Former NASA ESDIS Deputy PM</div>
+          </div>
+        </div>
+        <div class="rec-card-tags">
+          <span class="rec-card-tag agency">NASA</span>
+          <span class="rec-card-tag domain">Earth Science Data</span>
+          <span class="rec-card-tag role">Program Mgmt</span>
+        </div>
+        <div class="rec-card-reason">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg>
+          Relevant to your NASA ESDIS Next project
+        </div>
+        <div class="rec-card-bottom">
+          <div class="rec-card-rating">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <strong>4.8</strong> &middot; 8 engagements
+          </div>
+          <button class="btn-rec">Request Intro</button>
+        </div>
+      </div>
+
+      <!-- Card 4: New expert, Air Force -->
+      <div class="rec-card">
+        <div class="rec-card-top">
+          <div class="expert-avatar" style="background: #7c3aed; width: 3.6rem; height: 3.6rem; font-size: 1.2rem;">LP</div>
+          <div class="rec-card-info">
+            <div class="rec-card-name">Lisa Park</div>
+            <div class="rec-card-title">USAF Acquisition Strategist</div>
+          </div>
+        </div>
+        <div class="rec-card-tags">
+          <span class="rec-card-tag agency">USAF</span>
+          <span class="rec-card-tag domain">Defense Acquisition</span>
+          <span class="rec-card-tag role">Acquisition</span>
+        </div>
+        <div class="rec-card-reason">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg>
+          Similar profile to experts you've rated 5 stars
+        </div>
+        <div class="rec-card-bottom">
+          <div class="rec-card-rating">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <strong>4.6</strong> &middot; 5 engagements
+          </div>
+          <button class="btn-rec">Request Intro</button>
+        </div>
+      </div>
+
+      <!-- Card 5: Network re-engagement -->
+      <div class="rec-card" style="border-color: var(--teal-200);">
+        <div class="rec-card-top">
+          <div class="expert-avatar" style="background: #7c3aed; width: 3.6rem; height: 3.6rem; font-size: 1.2rem;">CW</div>
+          <div class="rec-card-info">
+            <div class="rec-card-name">Casey Walterscheid</div>
+            <div class="rec-card-title">Former CO, USSF</div>
+          </div>
+          <span class="rec-network-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            In network
+          </span>
+        </div>
+        <div class="rec-card-tags">
+          <span class="rec-card-tag agency">USSF</span>
+          <span class="rec-card-tag domain">Space Systems</span>
+          <span class="rec-card-tag role">Contracting</span>
+        </div>
+        <div class="rec-card-reason">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg>
+          Your top-rated expert — scheduled call today at 2 PM
+        </div>
+        <div class="rec-card-bottom">
+          <div class="rec-card-rating">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <strong>4.9</strong> &middot; 4 prior calls
+          </div>
+          <button class="btn-rec">Book Call</button>
+        </div>
+      </div>
+
+      <!-- Card 6: New expert, partner ID -->
+      <div class="rec-card">
+        <div class="rec-card-top">
+          <div class="expert-avatar" style="background: #dc2626; width: 3.6rem; height: 3.6rem; font-size: 1.2rem;">NW</div>
+          <div class="rec-card-info">
+            <div class="rec-card-name">Nadia Williams</div>
+            <div class="rec-card-title">Former NGA Contracts Director</div>
+          </div>
+        </div>
+        <div class="rec-card-tags">
+          <span class="rec-card-tag agency">NGA</span>
+          <span class="rec-card-tag domain">GEOINT</span>
+          <span class="rec-card-tag role">Contracting</span>
+        </div>
+        <div class="rec-card-reason">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg>
+          Could help with GeoDisc teaming &amp; partner identification
+        </div>
+        <div class="rec-card-bottom">
+          <div class="rec-card-rating">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <strong>4.7</strong> &middot; 6 engagements
+          </div>
+          <button class="btn-rec">Request Intro</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- =====================================================
+       PROJECT INTELLIGENCE SUMMARY (future-only, placeholder)
+       ===================================================== -->
+  <div id="zone-intelligence" class="rec-section animate d5 future-only">
+    <div class="rec-header">
+      <div>
+        <span class="card-title">
+          Project Intelligence
+          <span class="future-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Future
+          </span>
+        </span>
+        <div class="rec-subtext">Coming next — will be designed after recommendations review</div>
+      </div>
+    </div>
+    <div style="padding: var(--sp-24); text-align: center; color: var(--gray-300); font-size: 1.4rem;">
+      <svg style="width: 4rem; height: 4rem; margin-bottom: var(--sp-8); opacity: 0.4;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      <div>Intelligence summary design pending</div>
+    </div>
+  </div>
+
 </main>
 </div><!-- /page-wrapper -->
 
@@ -1827,6 +2143,20 @@ function setRole(role) {
     btns[0].classList.add('active');
   }
   // Re-run scroll spy to update side nav active state
+  updateScrollSpy();
+}
+
+// Roadmap toggle
+function setRoadmap(mode) {
+  const btns = document.querySelectorAll('#roadmap-toggle button');
+  btns.forEach(b => b.classList.remove('active'));
+  if (mode === 'future') {
+    document.body.classList.add('future-view');
+    btns[1].classList.add('active');
+  } else {
+    document.body.classList.remove('future-view');
+    btns[0].classList.add('active');
+  }
   updateScrollSpy();
 }
 
