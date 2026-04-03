@@ -827,6 +827,15 @@ body.future-view .current-only { display: none !important; }
 }
 .btn-intel-action:hover { background: #ede9fe; }
 
+/* AI Insights indicator on project rows */
+.chip-intel {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: var(--sp-2) var(--sp-8); border-radius: 10rem;
+  background: #ede9fe; color: #6d28d9;
+  font-size: 1.0rem; font-weight: 600;
+}
+.chip-intel svg { width: 1.1rem; height: 1.1rem; }
+
 /* ========================================
    TEAM ACTIVITY (admin only)
    ======================================== */
@@ -976,10 +985,6 @@ body.future-view .current-only { display: none !important; }
     <a class="side-nav-item future-only" href="#zone-recommendations" onclick="smoothScroll(event, 'zone-recommendations')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
       Recommendations
-    </a>
-    <a class="side-nav-item future-only" href="#zone-projects" onclick="smoothScroll(event, 'zone-projects')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-      Intelligence
     </a>
   </div>
 </nav>
@@ -1457,6 +1462,10 @@ body.future-view .current-only { display: none !important; }
         </div>
         <span class="project-name">COSMOS</span>
         <span class="chip chip-active">Active</span>
+        <span class="chip-intel future-only" style="display: none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93L12 22"/><path d="M12 2a4 4 0 0 0-4 4c0 1.95 1.4 3.58 3.25 3.93"/></svg>
+          AI Insights
+        </span>
         <div class="project-stats">
           <span class="project-stat">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
