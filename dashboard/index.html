@@ -390,6 +390,63 @@ a:hover { color: var(--teal-700); }
 .star.empty { color: var(--gray-200); }
 
 /* ========================================
+   VALUE DIMENSIONS
+   ======================================== */
+.value-summary {
+  margin-top: var(--sp-14); padding-top: var(--sp-14);
+  border-top: 1px solid var(--border-light);
+}
+.value-summary-label {
+  font-size: 1.1rem; font-weight: 600; color: var(--gray-400);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  margin-bottom: var(--sp-8); display: flex; align-items: center; gap: var(--sp-6);
+}
+.value-summary-label svg { width: 1.4rem; height: 1.4rem; opacity: 0.6; }
+.value-tags { display: flex; flex-wrap: wrap; gap: var(--sp-6); }
+.value-tag {
+  display: inline-flex; align-items: center; gap: var(--sp-4);
+  padding: var(--sp-4) var(--sp-8); border-radius: var(--radius-sm);
+  font-size: 1.1rem; font-weight: 500; white-space: nowrap;
+}
+.value-tag svg { width: 1.2rem; height: 1.2rem; flex-shrink: 0; }
+.value-tag-time { background: #ede9fe; color: #6d28d9; }
+.value-tag-confidence { background: #dbeafe; color: #1e40af; }
+.value-tag-partner { background: var(--teal-50); color: var(--teal-900); }
+.value-tag-cost { background: var(--success-light); color: #15803d; }
+.value-tag-opportunity { background: #fef3c7; color: #92400e; }
+.value-tag-count { font-weight: 700; margin-left: 1px; }
+
+/* Inline value chips for consultation rows */
+.consult-value-chips { display: flex; flex-wrap: wrap; gap: var(--sp-4); margin-top: var(--sp-4); }
+.consult-value-chip {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 1px var(--sp-6); border-radius: 10rem;
+  font-size: 1.0rem; font-weight: 500;
+}
+.consult-value-chip svg { width: 1.0rem; height: 1.0rem; }
+
+/* Account aggregate stats */
+.account-stats {
+  display: flex; gap: var(--sp-4); margin-bottom: var(--sp-14);
+}
+.account-stat-item {
+  flex: 1; text-align: center;
+  padding: var(--sp-8) var(--sp-4);
+  background: var(--gray-50); border-radius: var(--radius-sm);
+}
+.account-stat-number {
+  font-size: 2.0rem; font-weight: 700; color: var(--teal-900); line-height: 1.2;
+}
+.account-stat-number.has-star {
+  display: flex; align-items: center; justify-content: center; gap: 3px;
+}
+.account-stat-number .mini-star { width: 1.4rem; height: 1.4rem; color: var(--warning-amber); }
+.account-stat-label {
+  font-size: 1.0rem; font-weight: 500; color: var(--gray-400);
+  text-transform: uppercase; letter-spacing: 0.04em; margin-top: 2px;
+}
+
+/* ========================================
    ANIMATION
    ======================================== */
 @keyframes slideUp {
@@ -477,6 +534,31 @@ a:hover { color: var(--teal-700); }
       <div class="credit-bar">
         <div class="credit-bar-fill" style="width: 74%"></div>
       </div>
+
+      <!-- Aggregate stats -->
+      <div class="account-stats">
+        <div class="account-stat-item">
+          <div class="account-stat-number">4</div>
+          <div class="account-stat-label">Projects</div>
+        </div>
+        <div class="account-stat-item">
+          <div class="account-stat-number">3</div>
+          <div class="account-stat-label">Requests</div>
+        </div>
+        <div class="account-stat-item">
+          <div class="account-stat-number">5</div>
+          <div class="account-stat-label">Experts</div>
+        </div>
+        <div class="account-stat-item">
+          <div class="account-stat-number">5</div>
+          <div class="account-stat-label">Consultations</div>
+        </div>
+        <div class="account-stat-item">
+          <div class="account-stat-number has-star">4.8 <svg class="mini-star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+          <div class="account-stat-label">Avg Rating</div>
+        </div>
+      </div>
+
       <div class="account-row">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         Using ~4 credits/month &middot; 37 credits will last ~9 months at this pace
@@ -484,6 +566,36 @@ a:hover { color: var(--teal-700); }
       <div class="account-row muted">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
         Scale Plan &middot; $1,008 per credit &middot; Renews Oct 15, 2026
+      </div>
+
+      <!-- Value Delivered Summary -->
+      <div class="value-summary">
+        <div class="value-summary-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          Value Delivered <span style="font-weight: 400; text-transform: none; letter-spacing: normal; color: var(--gray-300);">&middot; from 4 reviewed consultations</span>
+        </div>
+        <div class="value-tags">
+          <span class="value-tag value-tag-time">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Time Savings <span class="value-tag-count">&times;3</span>
+          </span>
+          <span class="value-tag value-tag-confidence">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Bid Confidence <span class="value-tag-count">&times;3</span>
+          </span>
+          <span class="value-tag value-tag-partner">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Partner ID <span class="value-tag-count">&times;2</span>
+          </span>
+          <span class="value-tag value-tag-cost">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            Cost Savings <span class="value-tag-count">&times;2</span>
+          </span>
+          <span class="value-tag value-tag-opportunity">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            New Opportunities <span class="value-tag-count">&times;1</span>
+          </span>
+        </div>
       </div>
     </div>
 
@@ -587,6 +699,19 @@ a:hover { color: var(--teal-700); }
 
       <!-- Expanded detail -->
       <div class="project-details">
+        <!-- Project-level value roll-up -->
+        <div style="padding: var(--sp-6) var(--sp-8) var(--sp-4); display: flex; align-items: center; gap: var(--sp-8); flex-wrap: wrap;">
+          <span style="font-size: 1.1rem; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.06em; display: flex; align-items: center; gap: var(--sp-4);">
+            <svg style="width: 1.3rem; height: 1.3rem; opacity: 0.6;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            Value reported
+          </span>
+          <span class="consult-value-chip value-tag-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Time Savings &times;2</span>
+          <span class="consult-value-chip value-tag-confidence"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Bid Confidence &times;2</span>
+          <span class="consult-value-chip value-tag-partner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> Partner ID &times;2</span>
+          <span class="consult-value-chip value-tag-cost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Cost Savings &times;1</span>
+          <span class="consult-value-chip value-tag-opportunity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> New Opp &times;1</span>
+        </div>
+
         <!-- ER 1 -->
         <div class="er-row">
           <div class="er-header">
@@ -842,6 +967,11 @@ a:hover { color: var(--teal-700); }
               <div>
                 <div style="font-size: 1.3rem; font-weight: 500; color: var(--gray-900);">Contracting landscape & acquisition strategy</div>
                 <div style="font-size: 1.1rem; color: var(--gray-400);">Mar 14 &middot; 45 min call &middot; 2 credits</div>
+                <div class="consult-value-chips">
+                  <span class="consult-value-chip value-tag-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Time Savings</span>
+                  <span class="consult-value-chip value-tag-confidence"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Bid Confidence</span>
+                  <span class="consult-value-chip value-tag-partner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> Partner ID</span>
+                </div>
               </div>
             </div>
             <span class="chip chip-project">COSMOS</span>
@@ -862,6 +992,11 @@ a:hover { color: var(--teal-700); }
               <div>
                 <div style="font-size: 1.3rem; font-weight: 500; color: var(--gray-900);">GeoDisc RFI response guidance</div>
                 <div style="font-size: 1.1rem; color: var(--gray-400);">Feb 26 &middot; Written response &middot; 1 credit</div>
+                <div class="consult-value-chips">
+                  <span class="consult-value-chip value-tag-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Time Savings</span>
+                  <span class="consult-value-chip value-tag-confidence"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Bid Confidence</span>
+                  <span class="consult-value-chip value-tag-cost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Cost Savings</span>
+                </div>
               </div>
             </div>
             <span class="chip chip-project">GeoDisc</span>
@@ -882,6 +1017,12 @@ a:hover { color: var(--teal-700); }
               <div>
                 <div style="font-size: 1.3rem; font-weight: 500; color: var(--gray-900);">Initial program overview & environment assessment</div>
                 <div style="font-size: 1.1rem; color: var(--gray-400);">Jan 30 &middot; 30 min call &middot; 1 credit</div>
+                <div class="consult-value-chips">
+                  <span class="consult-value-chip value-tag-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Time Savings</span>
+                  <span class="consult-value-chip value-tag-partner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> Partner ID</span>
+                  <span class="consult-value-chip value-tag-cost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Cost Savings</span>
+                  <span class="consult-value-chip value-tag-opportunity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> New Opp</span>
+                </div>
               </div>
             </div>
             <span class="chip chip-project">COSMOS</span>
