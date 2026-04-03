@@ -765,6 +765,69 @@ body.future-view .current-only { display: none !important; }
 .btn-rec:hover { background: var(--teal-50); }
 
 /* ========================================
+   PROJECT INTELLIGENCE PANEL (future, inside project expand)
+   ======================================== */
+.intel-panel {
+  background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+  border: 1px solid #ddd6fe; border-radius: var(--radius-md);
+  padding: var(--sp-16); margin-top: var(--sp-10);
+}
+.intel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: var(--sp-14);
+}
+.intel-title {
+  font-size: 1.3rem; font-weight: 600; color: #5b21b6;
+  display: flex; align-items: center; gap: var(--sp-6);
+}
+.intel-title svg { width: 1.6rem; height: 1.6rem; }
+.intel-ai-badge {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 2px var(--sp-8); border-radius: 10rem;
+  background: #ddd6fe; color: #6d28d9;
+  font-size: 1.0rem; font-weight: 600;
+}
+.intel-ai-badge svg { width: 1.1rem; height: 1.1rem; }
+.intel-source { font-size: 1.1rem; color: #7c3aed; opacity: 0.7; }
+
+.intel-columns { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-16); }
+@media (max-width: 768px) { .intel-columns { grid-template-columns: 1fr; } }
+
+.intel-col-title {
+  font-size: 1.1rem; font-weight: 600; color: #7c3aed;
+  text-transform: uppercase; letter-spacing: 0.05em;
+  margin-bottom: var(--sp-10); display: flex; align-items: center; gap: var(--sp-4);
+}
+.intel-col-title svg { width: 1.3rem; height: 1.3rem; opacity: 0.7; }
+
+.intel-item {
+  display: flex; align-items: flex-start; gap: var(--sp-8);
+  padding: var(--sp-8) var(--sp-10);
+  background: rgba(255,255,255,0.7); border-radius: var(--radius-sm);
+  margin-bottom: var(--sp-6); font-size: 1.2rem; color: var(--gray-800);
+}
+.intel-item svg { width: 1.3rem; height: 1.3rem; flex-shrink: 0; margin-top: 2px; }
+.intel-item.takeaway svg { color: #7c3aed; }
+.intel-item.gap svg { color: #d97706; }
+
+.intel-gap-action {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--sp-8) var(--sp-10);
+  background: rgba(255,255,255,0.85); border: 1px dashed #c4b5fd;
+  border-radius: var(--radius-sm); margin-bottom: var(--sp-6);
+}
+.intel-gap-question { font-size: 1.2rem; color: var(--gray-800); flex: 1; }
+.intel-gap-expert { font-size: 1.0rem; color: #7c3aed; margin-top: 2px; }
+.btn-intel-action {
+  padding: var(--sp-2) var(--sp-10); border-radius: var(--radius-sm);
+  font-family: inherit; font-size: 1.0rem; font-weight: 600;
+  cursor: pointer; border: 1px solid #7c3aed;
+  background: white; color: #6d28d9; white-space: nowrap;
+  transition: all 0.12s;
+}
+.btn-intel-action:hover { background: #ede9fe; }
+
+/* ========================================
    TEAM ACTIVITY (admin only)
    ======================================== */
 .team-section {
@@ -914,7 +977,7 @@ body.future-view .current-only { display: none !important; }
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
       Recommendations
     </a>
-    <a class="side-nav-item future-only" href="#zone-intelligence" onclick="smoothScroll(event, 'zone-intelligence')">
+    <a class="side-nav-item future-only" href="#zone-projects" onclick="smoothScroll(event, 'zone-projects')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
       Intelligence
     </a>
@@ -1429,6 +1492,80 @@ body.future-view .current-only { display: none !important; }
           <span class="consult-value-chip value-tag-partner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> Partner ID &times;2</span>
           <span class="consult-value-chip value-tag-cost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Cost Savings &times;1</span>
           <span class="consult-value-chip value-tag-opportunity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> New Opp &times;1</span>
+        </div>
+
+        <!-- PROJECT INTELLIGENCE (future-only) -->
+        <div class="intel-panel future-only">
+          <div class="intel-header">
+            <div class="intel-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              COSMOS Intelligence
+              <span class="intel-ai-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93L12 22"/><path d="M12 2a4 4 0 0 0-4 4c0 1.95 1.4 3.58 3.25 3.93"/></svg>
+                AI Summary
+              </span>
+              <span class="future-label">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                Future
+              </span>
+            </div>
+            <span class="intel-source">Based on 5 consultations &middot; Last updated today</span>
+          </div>
+
+          <div class="intel-columns">
+            <!-- Key Takeaways -->
+            <div>
+              <div class="intel-col-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                Key Takeaways
+              </div>
+              <div class="intel-item takeaway">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/></svg>
+                <div>COSMOS recompete is expected Q2 2027 with a shift from single-award to multi-award IDIQ structure.</div>
+              </div>
+              <div class="intel-item takeaway">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/></svg>
+                <div>The contracting office is prioritizing past performance on similar space C2 systems over lowest price technically acceptable.</div>
+              </div>
+              <div class="intel-item takeaway">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/></svg>
+                <div>Current incumbent (Raytheon) has delivery delays on Phase 2 — potential vulnerability to highlight in proposal.</div>
+              </div>
+              <div class="intel-item takeaway">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/></svg>
+                <div>Small business subcontracting goals (23%) will be a significant evaluation factor — teaming strategy critical.</div>
+              </div>
+            </div>
+
+            <!-- Knowledge Gaps / Next Objectives -->
+            <div>
+              <div class="intel-col-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                Knowledge Gaps
+              </div>
+              <div class="intel-gap-action">
+                <div>
+                  <div class="intel-gap-question">What is the government's budget ceiling for the COSMOS recompete?</div>
+                  <div class="intel-gap-expert">Best answered by: Former Program Manager or Budget Analyst</div>
+                </div>
+                <button class="btn-intel-action" onclick="event.stopPropagation();">Create Request</button>
+              </div>
+              <div class="intel-gap-action">
+                <div>
+                  <div class="intel-gap-question">Who are the most likely teaming partners for the multi-award structure?</div>
+                  <div class="intel-gap-expert">Best answered by: Industry BD Lead or Former CO</div>
+                </div>
+                <button class="btn-intel-action" onclick="event.stopPropagation();">Create Request</button>
+              </div>
+              <div class="intel-gap-action">
+                <div>
+                  <div class="intel-gap-question">What technical differentiators would the evaluation board weigh most heavily?</div>
+                  <div class="intel-gap-expert">Best answered by: Former Technical Evaluator</div>
+                </div>
+                <button class="btn-intel-action" onclick="event.stopPropagation();">Create Request</button>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- ER 1 -->
@@ -2084,27 +2221,8 @@ body.future-view .current-only { display: none !important; }
   </div>
 
 
-  <!-- =====================================================
-       PROJECT INTELLIGENCE SUMMARY (future-only, placeholder)
-       ===================================================== -->
-  <div id="zone-intelligence" class="rec-section animate d5 future-only">
-    <div class="rec-header">
-      <div>
-        <span class="card-title">
-          Project Intelligence
-          <span class="future-label">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            Future
-          </span>
-        </span>
-        <div class="rec-subtext">Coming next — will be designed after recommendations review</div>
-      </div>
-    </div>
-    <div style="padding: var(--sp-24); text-align: center; color: var(--gray-300); font-size: 1.4rem;">
-      <svg style="width: 4rem; height: 4rem; margin-bottom: var(--sp-8); opacity: 0.4;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-      <div>Intelligence summary design pending</div>
-    </div>
-  </div>
+  <!-- Intelligence now lives inside project expanded views (see COSMOS above) -->
+  <div id="zone-intelligence"></div>
 
 </main>
 </div><!-- /page-wrapper -->
