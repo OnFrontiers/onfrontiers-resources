@@ -120,7 +120,66 @@ a:hover { color: var(--teal-700); }
 /* ========================================
    PAGE
    ======================================== */
-.page { max-width: 112rem; margin: 0 auto; padding: var(--sp-24) var(--sp-40); }
+.page-wrapper { display: flex; max-width: 120rem; margin: 0 auto; }
+.page { flex: 1; min-width: 0; padding: var(--sp-24) var(--sp-40); }
+
+/* ========================================
+   SIDE NAV RAIL
+   ======================================== */
+.side-nav {
+  width: 18rem; flex-shrink: 0;
+  position: sticky; top: 9rem; /* below navbar + role toggle */
+  height: calc(100vh - 9rem);
+  padding: var(--sp-20) var(--sp-12) var(--sp-20) var(--sp-16);
+  overflow-y: auto;
+}
+.side-nav-label {
+  font-size: 1.0rem; font-weight: 600; color: var(--gray-300);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  padding: 0 var(--sp-10); margin-bottom: var(--sp-10);
+}
+.side-nav-items { display: flex; flex-direction: column; gap: var(--sp-2); }
+.side-nav-item {
+  display: flex; align-items: center; gap: var(--sp-8);
+  padding: var(--sp-8) var(--sp-10);
+  border-radius: var(--radius-sm);
+  font-size: 1.2rem; font-weight: 500; color: var(--gray-400);
+  cursor: pointer; transition: all 0.15s;
+  text-decoration: none; border-left: 2px solid transparent;
+  position: relative;
+}
+.side-nav-item:hover { color: var(--teal-800); background: var(--teal-50); }
+.side-nav-item.active {
+  color: var(--teal-900); font-weight: 600;
+  background: var(--teal-50); border-left-color: var(--teal-700);
+}
+.side-nav-item svg { width: 1.5rem; height: 1.5rem; flex-shrink: 0; opacity: 0.6; }
+.side-nav-item.active svg { opacity: 1; }
+.side-nav-item .nav-badge {
+  margin-left: auto; font-size: 1.0rem; font-weight: 600;
+  background: var(--warning-amber-light); color: #92400e;
+  padding: 1px var(--sp-6); border-radius: 10rem;
+}
+.side-nav-divider {
+  height: 1px; background: var(--border-light);
+  margin: var(--sp-10) var(--sp-10);
+}
+
+/* Zone-level collapse */
+.zone-collapse-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2.2rem; height: 2.2rem; border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light); background: var(--surface-card);
+  cursor: pointer; transition: all 0.15s; margin-left: var(--sp-8);
+}
+.zone-collapse-btn:hover { background: var(--gray-50); }
+.zone-collapse-btn svg { width: 1.2rem; height: 1.2rem; color: var(--gray-400); transition: transform 0.2s; }
+.zone-collapse-btn.collapsed svg { transform: rotate(-90deg); }
+.zone-body { transition: max-height 0.35s ease, opacity 0.25s ease; overflow: hidden; }
+.zone-body.zone-collapsed { max-height: 0 !important; opacity: 0; }
+.zone-body:not(.zone-collapsed) { max-height: 400rem; opacity: 1; }
+
+@media (max-width: 1024px) { .side-nav { display: none; } }
 
 /* ========================================
    SHARED CARD STYLES
@@ -587,6 +646,100 @@ a:hover { color: var(--teal-700); }
 .project-details:not(.collapsed) {
   max-height: 200rem; opacity: 1;
 }
+
+/* ========================================
+   ROLE TOGGLE (wireframe demo control)
+   ======================================== */
+.role-toggle-bar {
+  display: flex; align-items: center; justify-content: center; gap: var(--sp-12);
+  padding: var(--sp-10) var(--sp-20);
+  background: var(--teal-950); color: white;
+  font-size: 1.2rem; font-weight: 500;
+  position: sticky; top: 5.2rem; z-index: 99;
+}
+.role-toggle-bar span.label { opacity: 0.7; text-transform: uppercase; letter-spacing: 0.06em; font-size: 1.1rem; }
+.role-toggle {
+  display: flex; background: rgba(255,255,255,0.15); border-radius: var(--radius-sm); overflow: hidden;
+}
+.role-toggle button {
+  padding: var(--sp-6) var(--sp-16); border: none; background: transparent;
+  color: rgba(255,255,255,0.6); font-family: inherit; font-size: 1.2rem; font-weight: 600;
+  cursor: pointer; transition: all 0.15s;
+}
+.role-toggle button.active {
+  background: white; color: var(--teal-950); border-radius: var(--radius-sm);
+}
+.role-toggle button:hover:not(.active) { color: white; }
+
+/* Role-based visibility */
+.admin-only { display: block; }
+.member-only { display: none; }
+body.member-view .admin-only { display: none !important; }
+body.member-view .member-only { display: block !important; }
+body.member-view .member-only-flex { display: flex !important; }
+body.member-view .member-only-grid { display: grid !important; }
+
+/* ========================================
+   TEAM ACTIVITY (admin only)
+   ======================================== */
+.team-section {
+  background: var(--surface-card); border: 1px solid var(--border-light);
+  border-radius: var(--radius-md); box-shadow: var(--shadow-card);
+  margin-bottom: var(--sp-24); overflow: hidden;
+}
+.team-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--sp-20);
+  border-bottom: 1px solid var(--border-light);
+}
+.team-summary-stats {
+  display: flex; gap: var(--sp-16); font-size: 1.2rem; color: var(--gray-500);
+}
+.team-summary-stat { display: flex; align-items: center; gap: var(--sp-4); }
+.team-summary-stat strong { color: var(--gray-800); font-weight: 600; }
+
+.member-row {
+  display: flex; align-items: center; gap: var(--sp-16);
+  padding: var(--sp-14) var(--sp-20);
+  border-bottom: 1px solid var(--border-light);
+  transition: background 0.12s;
+}
+.member-row:last-child { border-bottom: none; }
+.member-row:hover { background: var(--gray-50); }
+
+.member-info { min-width: 16rem; }
+.member-name { font-size: 1.3rem; font-weight: 600; color: var(--gray-900); }
+.member-role-label { font-size: 1.1rem; color: var(--gray-400); }
+
+.member-stats {
+  display: flex; align-items: center; gap: var(--sp-20); flex: 1;
+  font-size: 1.2rem; color: var(--gray-500);
+}
+.member-stat { display: flex; align-items: center; gap: var(--sp-4); white-space: nowrap; }
+.member-stat strong { color: var(--gray-800); font-weight: 600; }
+.member-stat svg { width: 1.3rem; height: 1.3rem; opacity: 0.5; }
+
+.member-status { min-width: 9rem; text-align: right; }
+
+/* Mini review bar for member rows */
+.mini-review-bar {
+  width: 4.8rem; height: 0.5rem; background: var(--gray-100);
+  border-radius: 10rem; overflow: hidden; display: inline-block; vertical-align: middle; margin-left: var(--sp-4);
+}
+.mini-review-bar-fill { height: 100%; border-radius: 10rem; background: var(--teal-700); }
+.mini-review-bar-fill.low { background: var(--warning-amber); }
+
+/* Activity recency chips */
+.chip-recent { background: var(--success-light); color: #15803d; }
+.chip-stale { background: var(--gray-100); color: var(--gray-400); }
+.chip-inactive { background: #fee2e2; color: #991b1b; }
+
+/* ========================================
+   MEMBER VIEW: YOUR ACTIVITY card
+   ======================================== */
+.your-activity-stats {
+  display: flex; gap: var(--sp-4); margin-bottom: var(--sp-14);
+}
 </style>
 </head>
 <body>
@@ -629,6 +782,46 @@ a:hover { color: var(--teal-700); }
   </div>
 </nav>
 
+<!-- WIREFRAME DEMO: Role Toggle -->
+<div class="role-toggle-bar">
+  <span class="label">Viewing as:</span>
+  <div class="role-toggle">
+    <button class="active" onclick="setRole('admin')">Team Owner / Admin</button>
+    <button onclick="setRole('member')">Team Member</button>
+  </div>
+</div>
+
+<div class="page-wrapper">
+
+<!-- SIDE NAV RAIL -->
+<nav class="side-nav">
+  <div class="side-nav-label">Dashboard</div>
+  <div class="side-nav-items">
+    <a class="side-nav-item active" href="#zone-account" onclick="smoothScroll(event, 'zone-account')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Account Overview
+    </a>
+    <a class="side-nav-item" href="#zone-experts" onclick="smoothScroll(event, 'zone-experts')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      My Experts
+      <span class="nav-badge">1 review</span>
+    </a>
+    <a class="side-nav-item" href="#zone-projects" onclick="smoothScroll(event, 'zone-projects')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+      My Projects
+      <span class="nav-badge">2 attention</span>
+    </a>
+    <a class="side-nav-item admin-only" href="#zone-team" onclick="smoothScroll(event, 'zone-team')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Team Activity
+    </a>
+    <a class="side-nav-item" href="#zone-network" onclick="smoothScroll(event, 'zone-network')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+      Serco Network
+    </a>
+  </div>
+</nav>
+
 <main class="page">
 
   <!-- Sample data: Serco account (Jeanne Paton) -->
@@ -636,10 +829,10 @@ a:hover { color: var(--teal-700); }
   <!-- =====================================================
        ZONE 1: ACCOUNT HEALTH + UPCOMING CALLS
        ===================================================== -->
-  <div class="top-grid">
+  <div id="zone-account" class="top-grid">
 
-    <!-- ACCOUNT OVERVIEW -->
-    <div class="card animate d1">
+    <!-- ACCOUNT OVERVIEW (Admin view) -->
+    <div class="card animate d1 admin-only">
       <div class="card-header">
         <span class="card-title">Account Overview</span>
         <a class="card-link" href="#">Manage Billing <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
@@ -687,13 +880,13 @@ a:hover { color: var(--teal-700); }
         </div>
       </div>
 
-      <div class="account-row">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        Using ~4 credits/month &middot; 37 credits will last ~9 months at this pace
+      <div class="account-row" style="color: var(--teal-800);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        13 credits used this year &middot; up from 8 at this point last year
       </div>
       <div class="account-row muted">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-        Scale Plan &middot; $1,008 per credit &middot; Renews Oct 15, 2026
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Scale Plan &middot; Renews Oct 15, 2026
       </div>
 
       <!-- Review nudge -->
@@ -729,6 +922,73 @@ a:hover { color: var(--teal-700); }
           <span class="value-tag value-tag-opportunity">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             New Opportunities <span class="value-tag-count">&times;1</span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- YOUR ACTIVITY (Member view) -->
+    <div class="card animate d1 member-only" style="display: none;">
+      <div class="card-header">
+        <span class="card-title">Your Activity</span>
+        <span style="font-size: 1.2rem; color: var(--gray-400);">Jeanne Paton &middot; Serco</span>
+      </div>
+
+      <!-- Member personal stats -->
+      <div class="account-stats">
+        <div class="account-stat-item">
+          <div class="account-stat-number">2</div>
+          <div class="account-stat-label">Projects</div>
+        </div>
+        <div class="account-stat-item">
+          <div class="account-stat-number">3</div>
+          <div class="account-stat-label">Experts</div>
+        </div>
+        <div class="account-stat-item">
+          <div class="account-stat-number">5</div>
+          <div class="account-stat-label">Consultations</div>
+        </div>
+        <div class="account-stat-item">
+          <div class="account-stat-number has-star">4.8 <svg class="mini-star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+          <div class="account-stat-label">Avg Rating</div>
+        </div>
+        <div class="account-stat-item">
+          <div class="review-rate-ring">
+            <svg viewBox="0 0 40 40">
+              <circle class="ring-bg" cx="20" cy="20" r="17"/>
+              <circle class="ring-fill" cx="20" cy="20" r="17" stroke-dasharray="106.8" stroke-dashoffset="21.4"/>
+            </svg>
+            <div class="review-rate-pct">80%</div>
+          </div>
+          <div class="account-stat-label">Reviewed</div>
+        </div>
+      </div>
+
+      <!-- Review nudge (same as admin) -->
+      <div class="review-nudge">
+        <svg style="width: 1.6rem; height: 1.6rem; flex-shrink: 0; color: #d97706;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <div class="review-nudge-text"><strong>1 consultation</strong> awaiting your review. Reviews help us match better experts for you.</div>
+        <button class="btn-nudge">Review now</button>
+      </div>
+
+      <!-- Member value delivered (scoped to their consultations) -->
+      <div class="value-summary">
+        <div class="value-summary-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          Your Value Report <span style="font-weight: 400; text-transform: none; letter-spacing: normal; color: var(--gray-300);">&middot; from 4 of 5 consultations reviewed</span>
+        </div>
+        <div class="value-tags">
+          <span class="value-tag value-tag-time">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Time Savings <span class="value-tag-count">&times;3</span>
+          </span>
+          <span class="value-tag value-tag-confidence">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Bid Confidence <span class="value-tag-count">&times;3</span>
+          </span>
+          <span class="value-tag value-tag-partner">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            Partner ID <span class="value-tag-count">&times;2</span>
           </span>
         </div>
       </div>
@@ -792,12 +1052,15 @@ a:hover { color: var(--teal-700); }
   <!-- =====================================================
        ZONE 2: MY EXPERTS (expandable engagement history)
        ===================================================== -->
-  <div class="projects-section animate d3">
+  <div id="zone-experts" class="projects-section animate d3">
     <div class="projects-header">
       <span class="card-title">
         My Experts
         <span class="card-badge">3</span>
         <span class="card-badge card-badge-amber">1 needs review</span>
+        <button class="zone-collapse-btn" onclick="toggleZone(this)" title="Collapse section">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
       </span>
       <a class="card-link" href="#">View full network <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
     </div>
@@ -1011,12 +1274,15 @@ a:hover { color: var(--teal-700); }
   <!-- =====================================================
        ZONE 3: MY PROJECTS (the big change)
        ===================================================== -->
-  <div class="projects-section animate d4">
+  <div id="zone-projects" class="projects-section animate d4">
     <div class="projects-header">
       <span class="card-title">
         My Projects
         <span class="card-badge">4</span>
         <span class="card-badge card-badge-amber" title="Projects needing your attention">2 need attention</span>
+        <button class="zone-collapse-btn" onclick="toggleZone(this)" title="Collapse section">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
       </span>
       <a class="card-link" href="#">View all projects <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
     </div>
@@ -1231,9 +1497,154 @@ a:hover { color: var(--teal-700); }
 
 
   <!-- =====================================================
+       TEAM ACTIVITY (admin-only)
+       ===================================================== -->
+  <div id="zone-team" class="team-section animate d4 admin-only" style="margin-bottom: var(--sp-24);">
+    <div class="team-header">
+      <span class="card-title">
+        Team Activity
+        <span class="card-badge">5 members</span>
+        <button class="zone-collapse-btn" onclick="toggleZone(this)" title="Collapse section">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+      </span>
+      <div class="team-summary-stats">
+        <span class="team-summary-stat">
+          <strong>4</strong>&nbsp;active this month
+        </span>
+        <span class="team-summary-stat" style="color: #991b1b;">
+          <strong>1</strong>&nbsp;not yet onboarded
+        </span>
+      </div>
+    </div>
+
+    <!-- Member: Jeanne Paton (admin, highly active) -->
+    <div class="member-row">
+      <div class="expert-avatar" style="background: var(--teal-800); width: 3.2rem; height: 3.2rem; font-size: 1.1rem;">JP</div>
+      <div class="member-info">
+        <div class="member-name">Jeanne Paton</div>
+        <div class="member-role-label">Admin &middot; Capture Manager</div>
+      </div>
+      <div class="member-stats">
+        <span class="member-stat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          <strong>8</strong> credits used
+        </span>
+        <span class="member-stat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <strong>4</strong> consultations
+        </span>
+        <span class="member-stat">
+          Reviews: <strong>80%</strong>
+          <span class="mini-review-bar"><span class="mini-review-bar-fill" style="width: 80%;"></span></span>
+        </span>
+      </div>
+      <div class="member-status">
+        <span class="chip chip-recent">Active today</span>
+      </div>
+    </div>
+
+    <!-- Member: Chris Harwood (active) -->
+    <div class="member-row">
+      <div class="expert-avatar" style="background: #7c3aed; width: 3.2rem; height: 3.2rem; font-size: 1.1rem;">CH</div>
+      <div class="member-info">
+        <div class="member-name">Chris Harwood</div>
+        <div class="member-role-label">Member &middot; Program Manager</div>
+      </div>
+      <div class="member-stats">
+        <span class="member-stat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          <strong>3</strong> credits used
+        </span>
+        <span class="member-stat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <strong>2</strong> consultations
+        </span>
+        <span class="member-stat">
+          Reviews: <strong>100%</strong>
+          <span class="mini-review-bar"><span class="mini-review-bar-fill" style="width: 100%;"></span></span>
+        </span>
+      </div>
+      <div class="member-status">
+        <span class="chip chip-recent">Active this week</span>
+      </div>
+    </div>
+
+    <!-- Member: Angela Torres (moderate) -->
+    <div class="member-row">
+      <div class="expert-avatar" style="background: #059669; width: 3.2rem; height: 3.2rem; font-size: 1.1rem;">AT</div>
+      <div class="member-info">
+        <div class="member-name">Angela Torres</div>
+        <div class="member-role-label">Member &middot; BD Lead</div>
+      </div>
+      <div class="member-stats">
+        <span class="member-stat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          <strong>2</strong> credits used
+        </span>
+        <span class="member-stat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <strong>1</strong> consultation
+        </span>
+        <span class="member-stat">
+          Reviews: <strong>100%</strong>
+          <span class="mini-review-bar"><span class="mini-review-bar-fill" style="width: 100%;"></span></span>
+        </span>
+      </div>
+      <div class="member-status">
+        <span class="chip chip-stale">2 weeks ago</span>
+      </div>
+    </div>
+
+    <!-- Member: David Kim (low engagement) -->
+    <div class="member-row">
+      <div class="expert-avatar" style="background: #b45309; width: 3.2rem; height: 3.2rem; font-size: 1.1rem;">DK</div>
+      <div class="member-info">
+        <div class="member-name">David Kim</div>
+        <div class="member-role-label">Member &middot; Technical SME</div>
+      </div>
+      <div class="member-stats">
+        <span class="member-stat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          <strong>0</strong> credits used
+        </span>
+        <span class="member-stat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <strong>0</strong> consultations
+        </span>
+        <span class="member-stat" style="color: var(--gray-300);">
+          Reviews: <strong>—</strong>
+        </span>
+      </div>
+      <div class="member-status">
+        <span class="chip chip-stale">Last month</span>
+      </div>
+    </div>
+
+    <!-- Member: Sarah Nguyen (not onboarded) -->
+    <div class="member-row" style="background: #fef2f2;">
+      <div class="expert-avatar" style="background: var(--gray-300); width: 3.2rem; height: 3.2rem; font-size: 1.1rem;">SN</div>
+      <div class="member-info">
+        <div class="member-name">Sarah Nguyen</div>
+        <div class="member-role-label">Member &middot; Invited Mar 15</div>
+      </div>
+      <div class="member-stats">
+        <span class="member-stat" style="color: var(--gray-300);">
+          Hasn't logged in yet
+        </span>
+      </div>
+      <div class="member-status">
+        <span class="chip chip-inactive">Not onboarded</span>
+        <button class="btn-small" style="margin-left: var(--sp-6); font-size: 1.0rem;">Resend Invite</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- =====================================================
        ZONE 4: SERCO NETWORK (corporate asset view)
        ===================================================== -->
-  <div class="network-section animate d5">
+  <div id="zone-network" class="network-section animate d5">
     <div class="network-header">
       <div class="network-headline">
         <div class="network-headline-number">12</div>
@@ -1380,6 +1791,7 @@ a:hover { color: var(--teal-700); }
   </div>
 
 </main>
+</div><!-- /page-wrapper -->
 
 <script>
 // Expand/collapse project rows with animation
@@ -1402,6 +1814,77 @@ document.querySelectorAll('.project-row').forEach(row => {
     details.classList.add('collapsed');
   }
 });
+
+// Role toggle (wireframe demo)
+function setRole(role) {
+  const btns = document.querySelectorAll('.role-toggle button');
+  btns.forEach(b => b.classList.remove('active'));
+  if (role === 'member') {
+    document.body.classList.add('member-view');
+    btns[1].classList.add('active');
+  } else {
+    document.body.classList.remove('member-view');
+    btns[0].classList.add('active');
+  }
+  // Re-run scroll spy to update side nav active state
+  updateScrollSpy();
+}
+
+// Smooth scroll to section
+function smoothScroll(e, targetId) {
+  e.preventDefault();
+  const el = document.getElementById(targetId);
+  if (el) {
+    const offset = 100; // account for sticky navbar + toggle bar
+    const top = el.getBoundingClientRect().top + window.pageYOffset - offset;
+    window.scrollTo({ top, behavior: 'smooth' });
+  }
+}
+
+// Zone-level collapse
+function toggleZone(btn) {
+  btn.classList.toggle('collapsed');
+  const section = btn.closest('.projects-section, .team-section, .network-section');
+  if (!section) return;
+  // Toggle all children after the header
+  const header = section.querySelector('.projects-header, .team-header, .network-header');
+  let sibling = header.nextElementSibling;
+  while (sibling) {
+    if (btn.classList.contains('collapsed')) {
+      sibling.style.display = 'none';
+    } else {
+      sibling.style.display = '';
+    }
+    sibling = sibling.nextElementSibling;
+  }
+}
+
+// Scroll spy — highlight active side nav item
+function updateScrollSpy() {
+  const zones = ['zone-account', 'zone-experts', 'zone-projects', 'zone-team', 'zone-network'];
+  const navItems = document.querySelectorAll('.side-nav-item');
+  let activeId = zones[0];
+
+  zones.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      const rect = el.getBoundingClientRect();
+      if (rect.top <= 150) activeId = id;
+    }
+  });
+
+  navItems.forEach(item => {
+    const href = item.getAttribute('href');
+    if (href === '#' + activeId) {
+      item.classList.add('active');
+    } else {
+      item.classList.remove('active');
+    }
+  });
+}
+
+window.addEventListener('scroll', updateScrollSpy, { passive: true });
+updateScrollSpy();
 </script>
 </body>
 </html>
