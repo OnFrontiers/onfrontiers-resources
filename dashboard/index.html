@@ -446,6 +446,38 @@ a:hover { color: var(--teal-700); }
   text-transform: uppercase; letter-spacing: 0.04em; margin-top: 2px;
 }
 
+/* Review rate ring */
+.review-rate-ring {
+  position: relative; width: 4.4rem; height: 4.4rem; margin: 0 auto var(--sp-2);
+}
+.review-rate-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.review-rate-ring circle { fill: none; stroke-width: 3; }
+.review-rate-ring .ring-bg { stroke: var(--gray-100); }
+.review-rate-ring .ring-fill { stroke: var(--teal-700); stroke-linecap: round; transition: stroke-dashoffset 0.6s ease; }
+.review-rate-ring .ring-fill.warning { stroke: var(--warning-amber); }
+.review-rate-pct {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem; font-weight: 700; color: var(--teal-900);
+}
+
+/* Review nudge banner */
+.review-nudge {
+  display: flex; align-items: center; gap: var(--sp-10);
+  padding: var(--sp-10) var(--sp-14); margin-top: var(--sp-12);
+  background: var(--warning-amber-light); border-radius: var(--radius-sm);
+  border-left: 3px solid var(--warning-amber);
+}
+.review-nudge-text { flex: 1; font-size: 1.2rem; color: #92400e; }
+.review-nudge-text strong { font-weight: 600; }
+.btn-nudge {
+  padding: var(--sp-4) var(--sp-12); border-radius: var(--radius-sm);
+  font-family: inherit; font-size: 1.1rem; font-weight: 600;
+  cursor: pointer; border: 1px solid #d97706;
+  background: white; color: #92400e; white-space: nowrap;
+  transition: background 0.12s;
+}
+.btn-nudge:hover { background: #fef3c7; }
+
 /* ========================================
    ANIMATION
    ======================================== */
@@ -456,6 +488,91 @@ a:hover { color: var(--teal-700); }
 .animate { animation: slideUp 0.35s cubic-bezier(0.23,1,0.32,1) both; }
 .d1 { animation-delay: 0.04s; } .d2 { animation-delay: 0.08s; }
 .d3 { animation-delay: 0.12s; } .d4 { animation-delay: 0.16s; }
+.d5 { animation-delay: 0.20s; }
+
+/* ========================================
+   ZONE 4: COMPANY NETWORK
+   ======================================== */
+.network-section {
+  background: var(--surface-card); border: 1px solid var(--border-light);
+  border-radius: var(--radius-md); box-shadow: var(--shadow-card);
+  margin-bottom: var(--sp-24); padding: var(--sp-20);
+}
+.network-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: var(--sp-20);
+}
+.network-headline {
+  display: flex; align-items: center; gap: var(--sp-10);
+}
+.network-headline-number {
+  font-size: 2.8rem; font-weight: 700; color: var(--teal-900); line-height: 1;
+}
+.network-headline-text {
+  font-size: 1.4rem; font-weight: 600; color: var(--gray-900);
+}
+.network-headline-sub {
+  font-size: 1.2rem; color: var(--gray-400); font-weight: 400;
+}
+.network-growth {
+  display: inline-flex; align-items: center; gap: var(--sp-4);
+  padding: var(--sp-4) var(--sp-10); border-radius: 10rem;
+  background: var(--success-light); color: #15803d;
+  font-size: 1.2rem; font-weight: 600;
+}
+.network-growth svg { width: 1.4rem; height: 1.4rem; }
+
+/* Facet grid */
+.network-facets {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--sp-16); margin-bottom: var(--sp-20);
+}
+@media (max-width: 768px) { .network-facets { grid-template-columns: 1fr; } }
+
+.facet-card {
+  background: var(--gray-50); border-radius: var(--radius-md);
+  padding: var(--sp-16);
+}
+.facet-title {
+  font-size: 1.1rem; font-weight: 600; color: var(--gray-400);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  margin-bottom: var(--sp-12); display: flex; align-items: center; gap: var(--sp-6);
+}
+.facet-title svg { width: 1.4rem; height: 1.4rem; opacity: 0.5; }
+.facet-items { display: flex; flex-direction: column; gap: var(--sp-6); }
+.facet-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--sp-6) var(--sp-10); background: var(--surface-card);
+  border-radius: var(--radius-sm); font-size: 1.3rem; color: var(--gray-800);
+  cursor: pointer; transition: background 0.12s, box-shadow 0.12s;
+}
+.facet-item:hover { box-shadow: var(--shadow-card); background: white; }
+.facet-count {
+  font-size: 1.2rem; font-weight: 700; color: var(--teal-900);
+  background: var(--teal-50); padding: 1px var(--sp-8);
+  border-radius: 10rem; min-width: 2.4rem; text-align: center;
+}
+
+/* Recent experts strip */
+.recent-experts-strip {
+  display: flex; gap: var(--sp-12); overflow-x: auto;
+  padding-bottom: var(--sp-4);
+}
+.recent-experts-strip::-webkit-scrollbar { height: 4px; }
+.recent-experts-strip::-webkit-scrollbar-track { background: var(--gray-100); border-radius: 10rem; }
+.recent-experts-strip::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 10rem; }
+.recent-expert-card {
+  min-width: 18rem; flex-shrink: 0;
+  display: flex; align-items: center; gap: var(--sp-10);
+  padding: var(--sp-10) var(--sp-14);
+  background: var(--gray-50); border-radius: var(--radius-md);
+  cursor: pointer; transition: background 0.12s, box-shadow 0.12s;
+}
+.recent-expert-card:hover { background: white; box-shadow: var(--shadow-card); }
+.recent-expert-info { flex: 1; min-width: 0; }
+.recent-expert-name { font-size: 1.3rem; font-weight: 500; color: var(--gray-900); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.recent-expert-role { font-size: 1.1rem; color: var(--gray-400); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.recent-expert-date { font-size: 1.0rem; color: var(--gray-300); white-space: nowrap; }
 
 /* ========================================
    EXPAND / COLLAPSE ANIMATION
@@ -557,6 +674,17 @@ a:hover { color: var(--teal-700); }
           <div class="account-stat-number has-star">4.8 <svg class="mini-star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
           <div class="account-stat-label">Avg Rating</div>
         </div>
+        <div class="account-stat-item">
+          <div class="review-rate-ring">
+            <!-- circumference = 2π × 17 ≈ 106.8; 80% fill = dashoffset 21.4 -->
+            <svg viewBox="0 0 40 40">
+              <circle class="ring-bg" cx="20" cy="20" r="17"/>
+              <circle class="ring-fill" cx="20" cy="20" r="17" stroke-dasharray="106.8" stroke-dashoffset="21.4"/>
+            </svg>
+            <div class="review-rate-pct">80%</div>
+          </div>
+          <div class="account-stat-label">Reviewed</div>
+        </div>
       </div>
 
       <div class="account-row">
@@ -568,11 +696,18 @@ a:hover { color: var(--teal-700); }
         Scale Plan &middot; $1,008 per credit &middot; Renews Oct 15, 2026
       </div>
 
+      <!-- Review nudge -->
+      <div class="review-nudge">
+        <svg style="width: 1.6rem; height: 1.6rem; flex-shrink: 0; color: #d97706;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <div class="review-nudge-text"><strong>1 consultation</strong> awaiting your review. Reviews unlock value insights below and help us match better experts for you.</div>
+        <button class="btn-nudge">Review now</button>
+      </div>
+
       <!-- Value Delivered Summary -->
       <div class="value-summary">
         <div class="value-summary-label">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-          Value Delivered <span style="font-weight: 400; text-transform: none; letter-spacing: normal; color: var(--gray-300);">&middot; from 4 reviewed consultations</span>
+          Value Delivered <span style="font-weight: 400; text-transform: none; letter-spacing: normal; color: var(--gray-300);">&middot; from 4 of 5 consultations reviewed</span>
         </div>
         <div class="value-tags">
           <span class="value-tag value-tag-time">
@@ -655,9 +790,228 @@ a:hover { color: var(--teal-700); }
 
 
   <!-- =====================================================
-       ZONE 2: MY PROJECTS (the big change)
+       ZONE 2: MY EXPERTS (expandable engagement history)
        ===================================================== -->
   <div class="projects-section animate d3">
+    <div class="projects-header">
+      <span class="card-title">
+        My Experts
+        <span class="card-badge">3</span>
+        <span class="card-badge card-badge-amber">1 needs review</span>
+      </span>
+      <a class="card-link" href="#">View full network <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
+    </div>
+
+    <!-- EXPERT 1: Casey Walterscheid — expanded -->
+    <div class="project-row">
+      <div class="project-summary expert-summary">
+        <div class="project-expand open">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="expert-avatar" style="background: #7c3aed; width: 3.6rem; height: 3.6rem; font-size: 1.2rem;">CW</div>
+        <div style="flex: 1; min-width: 0;">
+          <div class="project-name" style="min-width: auto;">Casey Walterscheid</div>
+          <div style="font-size: 1.2rem; color: var(--gray-400);">Former Contracting Officer, USSF</div>
+        </div>
+        <div class="project-stats">
+          <span class="project-stat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <strong>4</strong> completed
+          </span>
+          <span class="project-stat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <strong>1</strong> scheduled
+          </span>
+        </div>
+        <span class="action-dot" title="Consultation needs review"></span>
+        <span class="project-credits">6 credits used</span>
+        <button class="btn-small" onclick="event.stopPropagation();" style="margin-left: var(--sp-8);">Message</button>
+        <button class="btn-join" onclick="event.stopPropagation();" style="margin-left: var(--sp-4);">Book Call</button>
+      </div>
+
+      <!-- Expanded: consultation history -->
+      <div class="project-details">
+        <div style="padding: var(--sp-6) var(--sp-8) var(--sp-4); font-size: 1.1rem; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.06em;">
+          Engagement History &middot; Projects: <span class="chip chip-project" style="margin-left: var(--sp-4);">COSMOS</span> <span class="chip chip-project" style="margin-left: var(--sp-2);">GeoDisc</span>
+        </div>
+
+        <!-- Unreviewed consultation — highlighted -->
+        <div class="er-row" style="border-left: 3px solid var(--warning-amber); background: var(--warning-amber-light);">
+          <div style="display: flex; align-items: center; gap: var(--sp-12);">
+            <div style="flex: 1; display: flex; align-items: center; gap: var(--sp-12);">
+              <span class="chip chip-action" style="flex-shrink: 0;">Needs review</span>
+              <div>
+                <div style="font-size: 1.3rem; font-weight: 500; color: var(--gray-900);">COSMOS proposal review — Pink team prep</div>
+                <div style="font-size: 1.1rem; color: var(--gray-400);">Mar 28 &middot; 60 min call &middot; 2 credits</div>
+              </div>
+            </div>
+            <span class="chip chip-project">COSMOS</span>
+            <div class="consult-rating" style="opacity: 0.3; flex-shrink: 0;">
+              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <button class="btn-small-action" onclick="event.stopPropagation();">Leave a Review</button>
+          </div>
+        </div>
+
+        <!-- Scheduled consultation -->
+        <div class="er-row">
+          <div style="display: flex; align-items: center; gap: var(--sp-12);">
+            <div style="flex: 1; display: flex; align-items: center; gap: var(--sp-12);">
+              <span class="chip chip-time" style="flex-shrink: 0;">Scheduled</span>
+              <div>
+                <div style="font-size: 1.3rem; font-weight: 500; color: var(--gray-900);">Red team risk & deficiency review</div>
+                <div style="font-size: 1.1rem; color: var(--gray-400);">Apr 2, 2:00 PM &middot; Call &middot; Est. 4 hrs</div>
+              </div>
+            </div>
+            <span class="chip chip-project">COSMOS</span>
+            <button class="btn-join" onclick="event.stopPropagation();">Join Call</button>
+          </div>
+        </div>
+
+        <!-- Completed + reviewed consultations -->
+        <div class="er-row">
+          <div style="display: flex; align-items: center; gap: var(--sp-12);">
+            <div style="flex: 1; display: flex; align-items: center; gap: var(--sp-12);">
+              <span class="chip chip-completed" style="flex-shrink: 0;">Completed</span>
+              <div>
+                <div style="font-size: 1.3rem; font-weight: 500; color: var(--gray-900);">Contracting landscape & acquisition strategy</div>
+                <div style="font-size: 1.1rem; color: var(--gray-400);">Mar 14 &middot; 45 min call &middot; 2 credits</div>
+                <div class="consult-value-chips">
+                  <span class="consult-value-chip value-tag-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Time Savings</span>
+                  <span class="consult-value-chip value-tag-confidence"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Bid Confidence</span>
+                  <span class="consult-value-chip value-tag-partner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> Partner ID</span>
+                </div>
+              </div>
+            </div>
+            <span class="chip chip-project">COSMOS</span>
+            <div class="consult-rating" style="flex-shrink: 0;">
+              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="er-row">
+          <div style="display: flex; align-items: center; gap: var(--sp-12);">
+            <div style="flex: 1; display: flex; align-items: center; gap: var(--sp-12);">
+              <span class="chip chip-completed" style="flex-shrink: 0;">Completed</span>
+              <div>
+                <div style="font-size: 1.3rem; font-weight: 500; color: var(--gray-900);">GeoDisc RFI response guidance</div>
+                <div style="font-size: 1.1rem; color: var(--gray-400);">Feb 26 &middot; Written response &middot; 1 credit</div>
+                <div class="consult-value-chips">
+                  <span class="consult-value-chip value-tag-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Time Savings</span>
+                  <span class="consult-value-chip value-tag-confidence"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Bid Confidence</span>
+                  <span class="consult-value-chip value-tag-cost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Cost Savings</span>
+                </div>
+              </div>
+            </div>
+            <span class="chip chip-project">GeoDisc</span>
+            <div class="consult-rating" style="flex-shrink: 0;">
+              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg class="star empty" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="er-row">
+          <div style="display: flex; align-items: center; gap: var(--sp-12);">
+            <div style="flex: 1; display: flex; align-items: center; gap: var(--sp-12);">
+              <span class="chip chip-completed" style="flex-shrink: 0;">Completed</span>
+              <div>
+                <div style="font-size: 1.3rem; font-weight: 500; color: var(--gray-900);">Initial program overview & environment assessment</div>
+                <div style="font-size: 1.1rem; color: var(--gray-400);">Jan 30 &middot; 30 min call &middot; 1 credit</div>
+                <div class="consult-value-chips">
+                  <span class="consult-value-chip value-tag-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Time Savings</span>
+                  <span class="consult-value-chip value-tag-partner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> Partner ID</span>
+                  <span class="consult-value-chip value-tag-cost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Cost Savings</span>
+                  <span class="consult-value-chip value-tag-opportunity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> New Opp</span>
+                </div>
+              </div>
+            </div>
+            <span class="chip chip-project">COSMOS</span>
+            <div class="consult-rating" style="flex-shrink: 0;">
+              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXPERT 2: Glenn Langston — collapsed -->
+    <div class="project-row">
+      <div class="project-summary expert-summary">
+        <div class="project-expand">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="expert-avatar" style="background: #059669; width: 3.6rem; height: 3.6rem; font-size: 1.2rem;">GL</div>
+        <div style="flex: 1; min-width: 0;">
+          <div class="project-name" style="min-width: auto;">Glenn Langston</div>
+          <div style="font-size: 1.2rem; color: var(--gray-400);">Technical Specialist &middot; <span class="chip chip-project" style="vertical-align: middle;">COSMOS</span></div>
+        </div>
+        <div class="project-stats">
+          <span class="project-stat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <strong>1</strong> completed
+          </span>
+          <span class="project-stat" style="color: var(--gray-300);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <strong>0</strong> scheduled
+          </span>
+        </div>
+        <span class="project-credits">2 credits used</span>
+        <button class="btn-small" onclick="event.stopPropagation();" style="margin-left: var(--sp-8);">Message</button>
+        <button class="btn-join" onclick="event.stopPropagation();" style="margin-left: var(--sp-4);">Book Call</button>
+      </div>
+    </div>
+
+    <!-- EXPERT 3: Christa Frost — collapsed, no consultations yet -->
+    <div class="project-row">
+      <div class="project-summary expert-summary">
+        <div class="project-expand">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="expert-avatar" style="background: #dc2626; width: 3.6rem; height: 3.6rem; font-size: 1.2rem;">CF</div>
+        <div style="flex: 1; min-width: 0;">
+          <div class="project-name" style="min-width: auto;">Christa Frost</div>
+          <div style="font-size: 1.2rem; color: var(--gray-400);">Former Contracting Officer &middot; <span class="chip chip-project" style="vertical-align: middle;">COSMOS</span></div>
+        </div>
+        <div class="project-stats">
+          <span class="project-stat" style="color: var(--gray-300);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <strong>0</strong> completed
+          </span>
+          <span class="project-stat" style="color: var(--gray-300);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <strong>0</strong> scheduled
+          </span>
+        </div>
+        <span class="project-credits" style="color: var(--gray-300);">0 credits</span>
+        <button class="btn-small" onclick="event.stopPropagation();" style="margin-left: var(--sp-8);">Message</button>
+        <button class="btn-join" onclick="event.stopPropagation();" style="margin-left: var(--sp-4);">Book Call</button>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       ZONE 3: MY PROJECTS (the big change)
+       ===================================================== -->
+  <div class="projects-section animate d4">
     <div class="projects-header">
       <span class="card-title">
         My Projects
@@ -877,221 +1231,152 @@ a:hover { color: var(--teal-700); }
 
 
   <!-- =====================================================
-       ZONE 3: MY EXPERTS (expandable engagement history)
+       ZONE 4: SERCO NETWORK (corporate asset view)
        ===================================================== -->
-  <div class="projects-section animate d4">
-    <div class="projects-header">
-      <span class="card-title">
-        My Experts
-        <span class="card-badge">3</span>
-        <span class="card-badge card-badge-amber">1 needs review</span>
-      </span>
-      <a class="card-link" href="#">View full network <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
+  <div class="network-section animate d5">
+    <div class="network-header">
+      <div class="network-headline">
+        <div class="network-headline-number">12</div>
+        <div>
+          <div class="network-headline-text">Serco Expert Network</div>
+          <div class="network-headline-sub">Experts available for re-engagement across your organization</div>
+        </div>
+        <span class="network-growth">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          +3 this quarter
+        </span>
+      </div>
+      <a class="card-link" href="#">Browse full network <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
     </div>
 
-    <!-- EXPERT 1: Casey Walterscheid — expanded -->
-    <div class="project-row">
-      <div class="project-summary expert-summary">
-        <div class="project-expand open">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    <!-- Facet breakdown -->
+    <div class="network-facets">
+
+      <!-- Domains -->
+      <div class="facet-card">
+        <div class="facet-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+          Domains
         </div>
-        <div class="expert-avatar" style="background: #7c3aed; width: 3.6rem; height: 3.6rem; font-size: 1.2rem;">CW</div>
-        <div style="flex: 1; min-width: 0;">
-          <div class="project-name" style="min-width: auto;">Casey Walterscheid</div>
-          <div style="font-size: 1.2rem; color: var(--gray-400);">Former Contracting Officer, USSF</div>
+        <div class="facet-items">
+          <div class="facet-item">
+            Space Systems & Satellites
+            <span class="facet-count">5</span>
+          </div>
+          <div class="facet-item">
+            IT Modernization
+            <span class="facet-count">3</span>
+          </div>
+          <div class="facet-item">
+            Defense Acquisition
+            <span class="facet-count">3</span>
+          </div>
+          <div class="facet-item">
+            Earth Science Data Systems
+            <span class="facet-count">1</span>
+          </div>
         </div>
-        <div class="project-stats">
-          <span class="project-stat">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            <strong>4</strong> completed
-          </span>
-          <span class="project-stat">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            <strong>1</strong> scheduled
-          </span>
-        </div>
-        <span class="action-dot" title="Consultation needs review"></span>
-        <span class="project-credits">6 credits used</span>
-        <button class="btn-small" onclick="event.stopPropagation();" style="margin-left: var(--sp-8);">Message</button>
-        <button class="btn-join" onclick="event.stopPropagation();" style="margin-left: var(--sp-4);">Book Call</button>
       </div>
 
-      <!-- Expanded: consultation history -->
-      <div class="project-details">
-        <div style="padding: var(--sp-6) var(--sp-8) var(--sp-4); font-size: 1.1rem; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.06em;">
-          Engagement History &middot; Projects: <span class="chip chip-project" style="margin-left: var(--sp-4);">COSMOS</span> <span class="chip chip-project" style="margin-left: var(--sp-2);">GeoDisc</span>
+      <!-- Agencies -->
+      <div class="facet-card">
+        <div class="facet-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><path d="M9 9h1"/><path d="M9 13h1"/><path d="M9 17h1"/></svg>
+          Agencies
         </div>
-
-        <!-- Unreviewed consultation — highlighted -->
-        <div class="er-row" style="border-left: 3px solid var(--warning-amber); background: var(--warning-amber-light);">
-          <div style="display: flex; align-items: center; gap: var(--sp-12);">
-            <div style="flex: 1; display: flex; align-items: center; gap: var(--sp-12);">
-              <span class="chip chip-action" style="flex-shrink: 0;">Needs review</span>
-              <div>
-                <div style="font-size: 1.3rem; font-weight: 500; color: var(--gray-900);">COSMOS proposal review — Pink team prep</div>
-                <div style="font-size: 1.1rem; color: var(--gray-400);">Mar 28 &middot; 60 min call &middot; 2 credits</div>
-              </div>
-            </div>
-            <span class="chip chip-project">COSMOS</span>
-            <div class="consult-rating" style="opacity: 0.3; flex-shrink: 0;">
-              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            </div>
-            <button class="btn-small-action" onclick="event.stopPropagation();">Leave a Review</button>
+        <div class="facet-items">
+          <div class="facet-item">
+            US Space Force (USSF)
+            <span class="facet-count">4</span>
+          </div>
+          <div class="facet-item">
+            NASA
+            <span class="facet-count">3</span>
+          </div>
+          <div class="facet-item">
+            US Air Force
+            <span class="facet-count">3</span>
+          </div>
+          <div class="facet-item">
+            NGA / NRO
+            <span class="facet-count">2</span>
           </div>
         </div>
+      </div>
 
-        <!-- Scheduled consultation -->
-        <div class="er-row">
-          <div style="display: flex; align-items: center; gap: var(--sp-12);">
-            <div style="flex: 1; display: flex; align-items: center; gap: var(--sp-12);">
-              <span class="chip chip-time" style="flex-shrink: 0;">Scheduled</span>
-              <div>
-                <div style="font-size: 1.3rem; font-weight: 500; color: var(--gray-900);">Red team risk & deficiency review</div>
-                <div style="font-size: 1.1rem; color: var(--gray-400);">Apr 2, 2:00 PM &middot; Call &middot; Est. 4 hrs</div>
-              </div>
-            </div>
-            <span class="chip chip-project">COSMOS</span>
-            <button class="btn-join" onclick="event.stopPropagation();">Join Call</button>
-          </div>
+      <!-- Functional Roles -->
+      <div class="facet-card">
+        <div class="facet-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Functional Roles
         </div>
-
-        <!-- Completed + reviewed consultations -->
-        <div class="er-row">
-          <div style="display: flex; align-items: center; gap: var(--sp-12);">
-            <div style="flex: 1; display: flex; align-items: center; gap: var(--sp-12);">
-              <span class="chip chip-completed" style="flex-shrink: 0;">Completed</span>
-              <div>
-                <div style="font-size: 1.3rem; font-weight: 500; color: var(--gray-900);">Contracting landscape & acquisition strategy</div>
-                <div style="font-size: 1.1rem; color: var(--gray-400);">Mar 14 &middot; 45 min call &middot; 2 credits</div>
-                <div class="consult-value-chips">
-                  <span class="consult-value-chip value-tag-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Time Savings</span>
-                  <span class="consult-value-chip value-tag-confidence"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Bid Confidence</span>
-                  <span class="consult-value-chip value-tag-partner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> Partner ID</span>
-                </div>
-              </div>
-            </div>
-            <span class="chip chip-project">COSMOS</span>
-            <div class="consult-rating" style="flex-shrink: 0;">
-              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            </div>
+        <div class="facet-items">
+          <div class="facet-item">
+            Contracting Officers
+            <span class="facet-count">4</span>
           </div>
-        </div>
-
-        <div class="er-row">
-          <div style="display: flex; align-items: center; gap: var(--sp-12);">
-            <div style="flex: 1; display: flex; align-items: center; gap: var(--sp-12);">
-              <span class="chip chip-completed" style="flex-shrink: 0;">Completed</span>
-              <div>
-                <div style="font-size: 1.3rem; font-weight: 500; color: var(--gray-900);">GeoDisc RFI response guidance</div>
-                <div style="font-size: 1.1rem; color: var(--gray-400);">Feb 26 &middot; Written response &middot; 1 credit</div>
-                <div class="consult-value-chips">
-                  <span class="consult-value-chip value-tag-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Time Savings</span>
-                  <span class="consult-value-chip value-tag-confidence"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Bid Confidence</span>
-                  <span class="consult-value-chip value-tag-cost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Cost Savings</span>
-                </div>
-              </div>
-            </div>
-            <span class="chip chip-project">GeoDisc</span>
-            <div class="consult-rating" style="flex-shrink: 0;">
-              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star empty" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            </div>
+          <div class="facet-item">
+            Program Managers
+            <span class="facet-count">3</span>
           </div>
-        </div>
-
-        <div class="er-row">
-          <div style="display: flex; align-items: center; gap: var(--sp-12);">
-            <div style="flex: 1; display: flex; align-items: center; gap: var(--sp-12);">
-              <span class="chip chip-completed" style="flex-shrink: 0;">Completed</span>
-              <div>
-                <div style="font-size: 1.3rem; font-weight: 500; color: var(--gray-900);">Initial program overview & environment assessment</div>
-                <div style="font-size: 1.1rem; color: var(--gray-400);">Jan 30 &middot; 30 min call &middot; 1 credit</div>
-                <div class="consult-value-chips">
-                  <span class="consult-value-chip value-tag-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Time Savings</span>
-                  <span class="consult-value-chip value-tag-partner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> Partner ID</span>
-                  <span class="consult-value-chip value-tag-cost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Cost Savings</span>
-                  <span class="consult-value-chip value-tag-opportunity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> New Opp</span>
-                </div>
-              </div>
-            </div>
-            <span class="chip chip-project">COSMOS</span>
-            <div class="consult-rating" style="flex-shrink: 0;">
-              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <svg class="star" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            </div>
+          <div class="facet-item">
+            Technical Specialists
+            <span class="facet-count">3</span>
+          </div>
+          <div class="facet-item">
+            End Users / Operators
+            <span class="facet-count">2</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- EXPERT 2: Glenn Langston — collapsed -->
-    <div class="project-row">
-      <div class="project-summary expert-summary">
-        <div class="project-expand">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    <!-- Recently added experts -->
+    <div style="margin-bottom: var(--sp-8);">
+      <span style="font-size: 1.1rem; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.06em;">Recently Added</span>
+    </div>
+    <div class="recent-experts-strip">
+      <div class="recent-expert-card">
+        <div class="expert-avatar" style="background: #dc2626; width: 3.2rem; height: 3.2rem; font-size: 1.1rem;">CF</div>
+        <div class="recent-expert-info">
+          <div class="recent-expert-name">Christa Frost</div>
+          <div class="recent-expert-role">Former CO, USSF</div>
         </div>
-        <div class="expert-avatar" style="background: #059669; width: 3.6rem; height: 3.6rem; font-size: 1.2rem;">GL</div>
-        <div style="flex: 1; min-width: 0;">
-          <div class="project-name" style="min-width: auto;">Glenn Langston</div>
-          <div style="font-size: 1.2rem; color: var(--gray-400);">Technical Specialist &middot; <span class="chip chip-project" style="vertical-align: middle;">COSMOS</span></div>
+        <div class="recent-expert-date">Mar 30</div>
+      </div>
+      <div class="recent-expert-card">
+        <div class="expert-avatar" style="background: var(--porpita); width: 3.2rem; height: 3.2rem; font-size: 1.1rem;">RH</div>
+        <div class="recent-expert-info">
+          <div class="recent-expert-name">Robert Hayes</div>
+          <div class="recent-expert-role">Fmr. Space Force Program Lead</div>
         </div>
-        <div class="project-stats">
-          <span class="project-stat">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            <strong>1</strong> completed
-          </span>
-          <span class="project-stat" style="color: var(--gray-300);">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            <strong>0</strong> scheduled
-          </span>
+        <div class="recent-expert-date">Mar 29</div>
+      </div>
+      <div class="recent-expert-card">
+        <div class="expert-avatar" style="background: #8b5cf6; width: 3.2rem; height: 3.2rem; font-size: 1.1rem;">TP</div>
+        <div class="recent-expert-info">
+          <div class="recent-expert-name">Tanya Petrovic</div>
+          <div class="recent-expert-role">USSF Acquisition Specialist</div>
         </div>
-        <span class="project-credits">2 credits used</span>
-        <button class="btn-small" onclick="event.stopPropagation();" style="margin-left: var(--sp-8);">Message</button>
-        <button class="btn-join" onclick="event.stopPropagation();" style="margin-left: var(--sp-4);">Book Call</button>
+        <div class="recent-expert-date">Mar 30</div>
+      </div>
+      <div class="recent-expert-card">
+        <div class="expert-avatar" style="background: #059669; width: 3.2rem; height: 3.2rem; font-size: 1.1rem;">GL</div>
+        <div class="recent-expert-info">
+          <div class="recent-expert-name">Glenn Langston</div>
+          <div class="recent-expert-role">Technical Specialist</div>
+        </div>
+        <div class="recent-expert-date">Feb 10</div>
+      </div>
+      <div class="recent-expert-card">
+        <div class="expert-avatar" style="background: #b45309; width: 3.2rem; height: 3.2rem; font-size: 1.1rem;">ML</div>
+        <div class="recent-expert-info">
+          <div class="recent-expert-name">Maria Lopez</div>
+          <div class="recent-expert-role">NASA ESDIS Program Analyst</div>
+        </div>
+        <div class="recent-expert-date">Jan 22</div>
       </div>
     </div>
-
-    <!-- EXPERT 3: Christa Frost — collapsed, no consultations yet -->
-    <div class="project-row">
-      <div class="project-summary expert-summary">
-        <div class="project-expand">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-        <div class="expert-avatar" style="background: #dc2626; width: 3.6rem; height: 3.6rem; font-size: 1.2rem;">CF</div>
-        <div style="flex: 1; min-width: 0;">
-          <div class="project-name" style="min-width: auto;">Christa Frost</div>
-          <div style="font-size: 1.2rem; color: var(--gray-400);">Former Contracting Officer &middot; <span class="chip chip-project" style="vertical-align: middle;">COSMOS</span></div>
-        </div>
-        <div class="project-stats">
-          <span class="project-stat" style="color: var(--gray-300);">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            <strong>0</strong> completed
-          </span>
-          <span class="project-stat" style="color: var(--gray-300);">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            <strong>0</strong> scheduled
-          </span>
-        </div>
-        <span class="project-credits" style="color: var(--gray-300);">0 credits</span>
-        <button class="btn-small" onclick="event.stopPropagation();" style="margin-left: var(--sp-8);">Message</button>
-        <button class="btn-join" onclick="event.stopPropagation();" style="margin-left: var(--sp-4);">Book Call</button>
-      </div>
-    </div>
-
   </div>
 
 </main>
