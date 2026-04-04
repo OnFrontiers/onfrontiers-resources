@@ -1082,10 +1082,19 @@ function EnrichmentCard({ onViewResults }) {
 // QUERY PROCESSING INTERSTITIAL
 // ═══════════════════════════════════════════════════════════
 
-function QueryProcessingScreen({ query, isOpportunity, onComplete }) {
+function QueryProcessingScreen({ query, isOpportunity, onComplete, requiresEmail, onEmailCaptured, searchCount }) {
   const [phase, setPhase] = useState(0);
   const [progress, setProgress] = useState(0);
   const [dots, setDots] = useState("");
+  const [paused, setPaused] = useState(false);
+  const [emailValue, setEmailValue] = useState("");
+  const [emailSubmitted, setEmailSubmitted] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const pausedRef = useRef(false);
+
+  // The email gate pauses after the classification phase (phase 1)
+  // so the user sees that we *understood* their query before asking for email
+  const EMAIL_GATE_PHASE = 1;
 
   // Define phases based on query type
   const oppPhases = [
@@ -1115,11 +1124,29 @@ function QueryProcessingScreen({ query, isOpportunity, onComplete }) {
     return () => clearInterval(interval);
   }, []);
 
+  // Email validation
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  const handleEmailSubmit = () => {
+    if (!validateEmail(emailValue)) {
+      setEmailError("Please enter a valid email address");
+      return;
+    }
+    setEmailError("");
+    setEmailSubmitted(true);
+    onEmailCaptured(emailValue);
+    // Resume processing after a brief pause to show the "thank you" state
+    setTimeout(() => {
+      pausedRef.current = false;
+      setPaused(false);
+    }, 800);
+  };
+
   // Simulate phased processing with realistic timing
   useEffect(() => {
     const timings = isOpportunity
-      ? [700, 800, 2200, 1200, 1200, 500]   // Opportunity: ~6.6s total (GovTribe fetch + AI analysis)
-      : [700, 1200, 1000, 1000, 500];        // General: ~4.4s total
+      ? [700, 800, 2200, 1200, 1200, 500]
+      : [700, 1200, 1000, 1000, 500];
 
     let elapsed = 0;
     const totalTime = timings.reduce((a, b) => a + b, 0);
@@ -1128,23 +1155,31 @@ function QueryProcessingScreen({ query, isOpportunity, onComplete }) {
     timings.forEach((delay, i) => {
       elapsed += delay;
       timeouts.push(setTimeout(() => {
+        // If paused, don't advance past the gate
+        if (pausedRef.current) return;
         setPhase(i);
         setProgress(Math.min(((i + 1) / phases.length) * 100, 100));
-        // Last phase triggers completion after a beat
+        // Check if we should pause for email gate
+        if (requiresEmail && i === EMAIL_GATE_PHASE && !emailSubmitted) {
+          pausedRef.current = true;
+          setPaused(true);
+          return;
+        }
         if (i === phases.length - 1) {
           setTimeout(() => onComplete(), 500);
         }
       }, elapsed - delay));
     });
 
-    // Final completion
     timeouts.push(setTimeout(() => {
-      setPhase(phases.length - 1);
-      setProgress(100);
+      if (!pausedRef.current) {
+        setPhase(phases.length - 1);
+        setProgress(100);
+      }
     }, totalTime - 400));
 
-    // Smooth progress bar animation
     const progressInterval = setInterval(() => {
+      if (pausedRef.current) return;
       setProgress(prev => {
         const target = ((phase + 1) / phases.length) * 100;
         if (prev < target) return Math.min(prev + 0.5, target);
@@ -1158,6 +1193,32 @@ function QueryProcessingScreen({ query, isOpportunity, onComplete }) {
     };
   }, []);
 
+  // After email is captured and paused is lifted, resume the remaining phases
+  useEffect(() => {
+    if (!paused && emailSubmitted) {
+      const remainingPhases = phases.slice(EMAIL_GATE_PHASE + 1);
+      const timings = isOpportunity
+        ? [2200, 1200, 1200, 500]
+        : [1000, 1000, 500];
+
+      let elapsed = 0;
+      const timeouts = [];
+      remainingPhases.forEach((_, i) => {
+        const phaseIndex = EMAIL_GATE_PHASE + 1 + i;
+        elapsed += timings[i] || 800;
+        timeouts.push(setTimeout(() => {
+          setPhase(phaseIndex);
+          setProgress(Math.min(((phaseIndex + 1) / phases.length) * 100, 100));
+          if (phaseIndex === phases.length - 1) {
+            setTimeout(() => onComplete(), 500);
+          }
+        }, elapsed));
+      });
+
+      return () => timeouts.forEach(clearTimeout);
+    }
+  }, [paused, emailSubmitted]);
+
   const currentPhase = phases[Math.min(phase, phases.length - 1)];
   const isComplete = phase === phases.length - 1;
 
@@ -1166,7 +1227,7 @@ function QueryProcessingScreen({ query, isOpportunity, onComplete }) {
       minHeight: "100vh", background: C.gray50, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
       display: "flex", flexDirection: "column",
     }}>
-      {/* Slim nav that mirrors the results page */}
+      {/* Slim nav */}
       <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 32px", background: C.white, borderBottom: `1px solid ${C.gray200}` }}>
         <OFLogo color={C.dark} />
         <div style={{ flex: 1, maxWidth: 480, margin: "0 24px" }}>
@@ -1190,31 +1251,106 @@ function QueryProcessingScreen({ query, isOpportunity, onComplete }) {
           {/* Animated icon */}
           <div style={{
             width: 72, height: 72, borderRadius: "50%", margin: "0 auto 24px",
-            background: isComplete ? `${C.green}12` : `${C.teal}10`,
-            border: `2px solid ${isComplete ? C.green : C.teal}30`,
+            background: paused ? `${C.amber}12` : isComplete ? `${C.green}12` : `${C.teal}10`,
+            border: `2px solid ${paused ? `${C.amber}30` : isComplete ? `${C.green}30` : `${C.teal}30`}`,
             display: "flex", alignItems: "center", justifyContent: "center",
             transition: "all 0.4s ease",
           }}>
-            <Icon name={currentPhase.icon} size={28} color={isComplete ? C.green : C.teal} />
+            <Icon name={paused ? "mail" : currentPhase.icon} size={28} color={paused ? C.amber : isComplete ? C.green : C.teal} />
           </div>
 
-          {/* Current phase label */}
-          <h2 style={{
-            fontSize: 22, fontWeight: 700, color: C.gray900, margin: "0 0 6px",
-            transition: "opacity 0.3s ease",
-          }}>
-            {currentPhase.label}{!isComplete ? dots : ""}
-          </h2>
-          <p style={{ fontSize: 14, color: C.gray500, margin: "0 0 32px", lineHeight: 1.5 }}>
-            {currentPhase.detail}
-          </p>
+          {/* Current phase label / Email gate */}
+          {paused && !emailSubmitted ? (
+            <>
+              <h2 style={{ fontSize: 22, fontWeight: 700, color: C.gray900, margin: "0 0 6px" }}>
+                {isOpportunity ? "Opportunity identified" : "Query analyzed"} — one more step
+              </h2>
+              <p style={{ fontSize: 14, color: C.gray500, margin: "0 0 24px", lineHeight: 1.5, maxWidth: 420, marginLeft: "auto", marginRight: "auto" }}>
+                Enter your email to unlock full enrichment, expert matching, and save this search to your account.
+              </p>
+
+              {/* Email capture card */}
+              <div style={{
+                maxWidth: 420, margin: "0 auto 24px", padding: "24px", background: C.white, borderRadius: 12,
+                border: `1px solid ${C.gray200}`, boxShadow: "0 4px 16px rgba(0,0,0,0.06)", textAlign: "left",
+              }}>
+                <div style={{ fontSize: 11, fontWeight: 600, color: C.gray400, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 12 }}>
+                  Continue your search
+                </div>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <input
+                    type="email" autoFocus
+                    placeholder="you@company.com"
+                    value={emailValue}
+                    onChange={e => { setEmailValue(e.target.value); setEmailError(""); }}
+                    onKeyDown={e => e.key === "Enter" && handleEmailSubmit()}
+                    style={{
+                      flex: 1, fontSize: 14, color: C.gray700, border: `1.5px solid ${emailError ? C.red : C.gray200}`,
+                      borderRadius: 8, padding: "10px 14px", outline: "none", fontFamily: "inherit",
+                      transition: "border-color 0.15s",
+                    }}
+                    onFocus={e => { if (!emailError) e.target.style.borderColor = C.teal; }}
+                    onBlur={e => { if (!emailError) e.target.style.borderColor = C.gray200; }}
+                  />
+                  <button onClick={handleEmailSubmit} style={{
+                    padding: "10px 20px", background: C.teal, color: C.white, border: "none",
+                    borderRadius: 8, fontSize: 14, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap",
+                  }}>
+                    Continue
+                  </button>
+                </div>
+                {emailError && <div style={{ fontSize: 12, color: C.red, marginTop: 6 }}>{emailError}</div>}
+                <div style={{ fontSize: 11, color: C.gray400, marginTop: 10, lineHeight: 1.4 }}>
+                  Your first search was free. We ask for your email to prevent abuse and so we can save your results. No spam — just your search data.
+                </div>
+
+                {/* What you'll get */}
+                <div style={{ marginTop: 14, paddingTop: 14, borderTop: `1px solid ${C.gray100}` }}>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: C.gray500, marginBottom: 8 }}>With your email you unlock:</div>
+                  {[
+                    { icon: "building", text: isOpportunity ? "Full GovTribe opportunity enrichment" : "AI-powered search context analysis" },
+                    { icon: "shield", text: "Expert matching across 17,000+ SMEs" },
+                    { icon: "bookmark", text: "Saved searches and opportunity tracking" },
+                    { icon: "user", text: "Free account creation (when ready)" },
+                  ].map((item, i) => (
+                    <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                      <Icon name={item.icon} size={14} color={C.teal} />
+                      <span style={{ fontSize: 12, color: C.gray600 }}>{item.text}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          ) : paused && emailSubmitted ? (
+            <>
+              <h2 style={{ fontSize: 22, fontWeight: 700, color: C.green, margin: "0 0 6px" }}>
+                Got it — resuming your search
+              </h2>
+              <p style={{ fontSize: 14, color: C.gray500, margin: "0 0 24px", lineHeight: 1.5 }}>
+                Thanks! Now enriching your results...
+              </p>
+            </>
+          ) : (
+            <>
+              <h2 style={{
+                fontSize: 22, fontWeight: 700, color: C.gray900, margin: "0 0 6px",
+                transition: "opacity 0.3s ease",
+              }}>
+                {currentPhase.label}{!isComplete ? dots : ""}
+              </h2>
+              <p style={{ fontSize: 14, color: C.gray500, margin: "0 0 32px", lineHeight: 1.5 }}>
+                {currentPhase.detail}
+              </p>
+            </>
+          )}
 
           {/* Progress bar */}
           <div style={{ maxWidth: 400, margin: "0 auto 32px" }}>
             <div style={{ height: 4, background: C.gray200, borderRadius: 2, overflow: "hidden" }}>
               <div style={{
-                height: "100%", background: isComplete ? C.green : `linear-gradient(90deg, ${C.teal}, ${C.tealLight})`,
-                borderRadius: 2, transition: "width 0.3s ease",
+                height: "100%",
+                background: paused ? C.amber : isComplete ? C.green : `linear-gradient(90deg, ${C.teal}, ${C.tealLight})`,
+                borderRadius: 2, transition: "width 0.3s ease, background 0.3s ease",
                 width: `${progress}%`,
               }} />
             </div>
@@ -1223,20 +1359,22 @@ function QueryProcessingScreen({ query, isOpportunity, onComplete }) {
           {/* Phase timeline */}
           <div style={{ display: "flex", flexDirection: "column", gap: 0, textAlign: "left", maxWidth: 380, margin: "0 auto" }}>
             {phases.map((p, i) => {
-              const isActive = i === phase;
-              const isDone = i < phase;
+              const isActive = i === phase && !paused;
+              const isPausePoint = paused && i === phase;
+              const isDone = i < phase || (i === phase && paused && emailSubmitted);
               const isFuture = i > phase;
               return (
                 <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 12, position: "relative" }}>
-                  {/* Timeline connector */}
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
                     <div style={{
                       width: 24, height: 24, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center",
-                      background: isDone ? C.green : isActive ? C.teal : C.gray200,
+                      background: isDone ? C.green : isPausePoint ? C.amber : isActive ? C.teal : C.gray200,
                       transition: "all 0.3s ease",
                     }}>
                       {isDone ? (
                         <Icon name="check" size={12} color={C.white} />
+                      ) : isPausePoint ? (
+                        <Icon name="mail" size={11} color={C.white} />
                       ) : (
                         <div style={{
                           width: 8, height: 8, borderRadius: "50%",
@@ -1248,19 +1386,18 @@ function QueryProcessingScreen({ query, isOpportunity, onComplete }) {
                     {i < phases.length - 1 && (
                       <div style={{
                         width: 2, height: 24,
-                        background: isDone ? C.green : C.gray200,
+                        background: isDone ? C.green : isPausePoint ? C.amber : C.gray200,
                         transition: "background 0.3s ease",
                       }} />
                     )}
                   </div>
-                  {/* Label */}
                   <div style={{ paddingTop: 2, paddingBottom: i < phases.length - 1 ? 8 : 0 }}>
                     <div style={{
-                      fontSize: 13, fontWeight: isActive || isDone ? 600 : 400,
-                      color: isFuture ? C.gray400 : isDone ? C.green : C.gray800,
+                      fontSize: 13, fontWeight: isActive || isDone || isPausePoint ? 600 : 400,
+                      color: isFuture ? C.gray400 : isDone ? C.green : isPausePoint ? C.amber : C.gray800,
                       transition: "color 0.3s ease",
                     }}>
-                      {p.label}
+                      {isPausePoint && !emailSubmitted ? `${p.label} — email required` : p.label}
                     </div>
                   </div>
                 </div>
@@ -1273,8 +1410,13 @@ function QueryProcessingScreen({ query, isOpportunity, onComplete }) {
             marginTop: 32, padding: "16px 20px", background: C.white, borderRadius: 10,
             border: `1px solid ${C.gray200}`, textAlign: "left",
           }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: C.gray400, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}>
-              Your search
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: C.gray400, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}>
+                Your search
+              </div>
+              {searchCount > 1 && (
+                <div style={{ fontSize: 10, color: C.gray400 }}>Search #{searchCount} this session</div>
+              )}
             </div>
             <div style={{ fontSize: 14, color: C.gray700, lineHeight: 1.5, wordBreak: "break-word" }}>
               {query}
@@ -1299,7 +1441,6 @@ function QueryProcessingScreen({ query, isOpportunity, onComplete }) {
         </div>
       </div>
 
-      {/* Subtle CSS animation for pulse */}
       <style>{`
         @keyframes pulse {
           0%, 100% { opacity: 1; transform: scale(1); }
@@ -1454,8 +1595,14 @@ function Homepage({ onSearch }) {
           </div>
         </div>
 
+        {/* Free search badge */}
+        <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 16, position: "relative", zIndex: 3 }}>
+          <div style={{ width: 6, height: 6, borderRadius: "50%", background: C.green }} />
+          <span style={{ fontSize: 12, color: C.gray400 }}>Your first search is free — no sign-up required</span>
+        </div>
+
         {/* Quick pills */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 20, justifyContent: "center", position: "relative", zIndex: 3, maxWidth: 680 }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 12, justifyContent: "center", position: "relative", zIndex: 3, maxWidth: 680 }}>
           {QUICK_PILLS.map(pill => (
             <button key={pill.label} onClick={() => handlePill(pill.query)} style={{
               padding: "6px 14px", borderRadius: 20, background: C.dark300, border: `1px solid ${C.dark400}`,
@@ -1636,16 +1783,26 @@ function App() {
   const [selectedExpertRank, setSelectedExpertRank] = useState(1);
   const [showSignupModal, setShowSignupModal] = useState(false);
   const [signupExpertContext, setSignupExpertContext] = useState(null);
+  const [searchCount, setSearchCount] = useState(0);
+  const [capturedEmail, setCapturedEmail] = useState(null);
 
   const detectOpportunity = (q) => {
     const lower = q.toLowerCase();
     return lower.includes("govtribe.com") || lower.includes("sam.gov") || /W\d{5,}/.test(q) || /\d{4,}-\d{2,}/.test(q) || lower.includes("solicitation") || lower.includes("caei") || lower.includes("navwar");
   };
 
+  // First search is free; subsequent searches require email
+  const isEmailGated = searchCount > 0 && !capturedEmail;
+
   const handleSearch = (q) => {
     setQuery(q);
     setIsOpportunity(detectOpportunity(q));
+    setSearchCount(prev => prev + 1);
     setScreen("processing");
+  };
+
+  const handleEmailCaptured = (email) => {
+    setCapturedEmail(email);
   };
 
   const handleProcessingComplete = () => {
@@ -1669,6 +1826,9 @@ function App() {
         query={query}
         isOpportunity={isOpportunity}
         onComplete={handleProcessingComplete}
+        requiresEmail={isEmailGated}
+        onEmailCaptured={handleEmailCaptured}
+        searchCount={searchCount}
       />
     );
   }
