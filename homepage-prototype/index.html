@@ -1124,18 +1124,46 @@ function QueryProcessingScreen({ query, isOpportunity, onComplete, requiresEmail
     return () => clearInterval(interval);
   }, []);
 
-  // Email validation
+  // Email validation & domain intelligence
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const PERSONAL_DOMAINS = ["gmail.com", "yahoo.com", "hotmail.com", "outlook.com", "aol.com", "icloud.com", "me.com", "mail.com", "protonmail.com", "zoho.com", "yandex.com", "live.com", "msn.com", "comcast.net", "att.net", "verizon.net", "cox.net"];
+
+  const getEmailDomain = (email) => {
+    const parts = email.split("@");
+    return parts.length === 2 ? parts[1].toLowerCase() : "";
+  };
+  const isPersonalEmail = (email) => PERSONAL_DOMAINS.includes(getEmailDomain(email));
+  const isWorkEmail = (email) => validateEmail(email) && !isPersonalEmail(email);
+
+  // Track whether user has attempted personal email
+  const [showPersonalNudge, setShowPersonalNudge] = useState(false);
+  const [personalEmailAllowed, setPersonalEmailAllowed] = useState(false);
 
   const handleEmailSubmit = () => {
     if (!validateEmail(emailValue)) {
       setEmailError("Please enter a valid email address");
       return;
     }
+    // Nudge toward work email on first personal email attempt
+    if (isPersonalEmail(emailValue) && !personalEmailAllowed) {
+      setShowPersonalNudge(true);
+      setEmailError("");
+      return;
+    }
     setEmailError("");
     setEmailSubmitted(true);
     onEmailCaptured(emailValue);
-    // Resume processing after a brief pause to show the "thank you" state
+    setTimeout(() => {
+      pausedRef.current = false;
+      setPaused(false);
+    }, 800);
+  };
+
+  const handleContinueWithPersonal = () => {
+    setPersonalEmailAllowed(true);
+    setEmailSubmitted(true);
+    onEmailCaptured(emailValue);
+    setShowPersonalNudge(false);
     setTimeout(() => {
       pausedRef.current = false;
       setPaused(false);
@@ -1266,7 +1294,7 @@ function QueryProcessingScreen({ query, isOpportunity, onComplete, requiresEmail
                 {isOpportunity ? "Opportunity identified" : "Query analyzed"} — one more step
               </h2>
               <p style={{ fontSize: 14, color: C.gray500, margin: "0 0 24px", lineHeight: 1.5, maxWidth: 420, marginLeft: "auto", marginRight: "auto" }}>
-                Enter your email to unlock full enrichment, expert matching, and save this search to your account.
+                Enter your work email to unlock full enrichment, expert matching, and save this search to your account.
               </p>
 
               {/* Email capture card */}
@@ -1274,24 +1302,75 @@ function QueryProcessingScreen({ query, isOpportunity, onComplete, requiresEmail
                 maxWidth: 420, margin: "0 auto 24px", padding: "24px", background: C.white, borderRadius: 12,
                 border: `1px solid ${C.gray200}`, boxShadow: "0 4px 16px rgba(0,0,0,0.06)", textAlign: "left",
               }}>
-                <div style={{ fontSize: 11, fontWeight: 600, color: C.gray400, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 12 }}>
-                  Continue your search
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: C.gray400, textTransform: "uppercase", letterSpacing: 0.5 }}>
+                    Continue your search
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 10, color: C.teal, fontWeight: 600 }}>
+                    <Icon name="building" size={10} color={C.teal} />
+                    Work email recommended
+                  </div>
                 </div>
+
+                {/* Work email nudge banner (shown when personal email detected) */}
+                {showPersonalNudge && !personalEmailAllowed && (
+                  <div style={{
+                    padding: "12px 14px", marginBottom: 12, background: `${C.amber}08`, borderRadius: 8,
+                    border: `1px solid ${C.amber}25`,
+                  }}>
+                    <div style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
+                      <Icon name="building" size={16} color={C.amber} style={{ flexShrink: 0, marginTop: 1 }} />
+                      <div>
+                        <div style={{ fontSize: 13, fontWeight: 600, color: C.gray800, marginBottom: 4 }}>
+                          Use your work email for the best experience
+                        </div>
+                        <div style={{ fontSize: 12, color: C.gray500, lineHeight: 1.4, marginBottom: 10 }}>
+                          Work emails unlock company-matched results, team sharing, and priority support. We also use your company domain to tailor expert recommendations to your organization's focus areas.
+                        </div>
+                        <div style={{ display: "flex", gap: 8 }}>
+                          <button onClick={() => { setShowPersonalNudge(false); setEmailValue(""); }} style={{
+                            padding: "6px 14px", background: C.teal, color: C.white, border: "none",
+                            borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer",
+                          }}>
+                            Enter work email
+                          </button>
+                          <button onClick={handleContinueWithPersonal} style={{
+                            padding: "6px 14px", background: "transparent", color: C.gray500, border: `1px solid ${C.gray200}`,
+                            borderRadius: 6, fontSize: 12, fontWeight: 500, cursor: "pointer",
+                          }}>
+                            Continue with {getEmailDomain(emailValue)}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Email input */}
                 <div style={{ display: "flex", gap: 8 }}>
-                  <input
-                    type="email" autoFocus
-                    placeholder="you@company.com"
-                    value={emailValue}
-                    onChange={e => { setEmailValue(e.target.value); setEmailError(""); }}
-                    onKeyDown={e => e.key === "Enter" && handleEmailSubmit()}
-                    style={{
-                      flex: 1, fontSize: 14, color: C.gray700, border: `1.5px solid ${emailError ? C.red : C.gray200}`,
-                      borderRadius: 8, padding: "10px 14px", outline: "none", fontFamily: "inherit",
-                      transition: "border-color 0.15s",
-                    }}
-                    onFocus={e => { if (!emailError) e.target.style.borderColor = C.teal; }}
-                    onBlur={e => { if (!emailError) e.target.style.borderColor = C.gray200; }}
-                  />
+                  <div style={{ flex: 1, position: "relative" }}>
+                    <input
+                      type="email" autoFocus
+                      placeholder="you@company.com"
+                      value={emailValue}
+                      onChange={e => { setEmailValue(e.target.value); setEmailError(""); setShowPersonalNudge(false); }}
+                      onKeyDown={e => e.key === "Enter" && handleEmailSubmit()}
+                      style={{
+                        width: "100%", fontSize: 14, color: C.gray700,
+                        border: `1.5px solid ${emailError ? C.red : isWorkEmail(emailValue) ? C.green : C.gray200}`,
+                        borderRadius: 8, padding: "10px 14px", paddingRight: isWorkEmail(emailValue) ? 36 : 14,
+                        outline: "none", fontFamily: "inherit", transition: "border-color 0.15s", boxSizing: "border-box",
+                      }}
+                      onFocus={e => { if (!emailError && !isWorkEmail(emailValue)) e.target.style.borderColor = C.teal; }}
+                      onBlur={e => { if (!emailError && !isWorkEmail(emailValue)) e.target.style.borderColor = C.gray200; }}
+                    />
+                    {/* Green check for work email */}
+                    {isWorkEmail(emailValue) && (
+                      <div style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)" }}>
+                        <Icon name="check" size={16} color={C.green} />
+                      </div>
+                    )}
+                  </div>
                   <button onClick={handleEmailSubmit} style={{
                     padding: "10px 20px", background: C.teal, color: C.white, border: "none",
                     borderRadius: 8, fontSize: 14, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap",
@@ -1299,23 +1378,49 @@ function QueryProcessingScreen({ query, isOpportunity, onComplete, requiresEmail
                     Continue
                   </button>
                 </div>
-                {emailError && <div style={{ fontSize: 12, color: C.red, marginTop: 6 }}>{emailError}</div>}
-                <div style={{ fontSize: 11, color: C.gray400, marginTop: 10, lineHeight: 1.4 }}>
-                  Your first search was free. We ask for your email to prevent abuse and so we can save your results. No spam — just your search data.
-                </div>
 
-                {/* What you'll get */}
+                {emailError && <div style={{ fontSize: 12, color: C.red, marginTop: 6 }}>{emailError}</div>}
+
+                {/* Domain-aware messaging */}
+                {isWorkEmail(emailValue) ? (
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 8 }}>
+                    <Icon name="check" size={12} color={C.green} />
+                    <span style={{ fontSize: 11, color: C.green, fontWeight: 500 }}>
+                      Work email detected — you'll get company-matched results for {getEmailDomain(emailValue).split(".")[0].toUpperCase()}
+                    </span>
+                  </div>
+                ) : emailValue.includes("@") && isPersonalEmail(emailValue) ? (
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 8 }}>
+                    <Icon name="building" size={12} color={C.gray400} />
+                    <span style={{ fontSize: 11, color: C.gray400 }}>
+                      Tip: Work emails unlock company-matched results and team features
+                    </span>
+                  </div>
+                ) : (
+                  <div style={{ fontSize: 11, color: C.gray400, marginTop: 10, lineHeight: 1.4 }}>
+                    Your first search was free. We ask for your email to prevent abuse and save your results. No spam.
+                  </div>
+                )}
+
+                {/* Value prop — tiered by email type */}
                 <div style={{ marginTop: 14, paddingTop: 14, borderTop: `1px solid ${C.gray100}` }}>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: C.gray500, marginBottom: 8 }}>With your email you unlock:</div>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: C.gray500, marginBottom: 8 }}>
+                    {isWorkEmail(emailValue) ? "With your work email you unlock:" : "With your email you unlock:"}
+                  </div>
                   {[
-                    { icon: "building", text: isOpportunity ? "Full GovTribe opportunity enrichment" : "AI-powered search context analysis" },
-                    { icon: "shield", text: "Expert matching across 17,000+ SMEs" },
-                    { icon: "bookmark", text: "Saved searches and opportunity tracking" },
-                    { icon: "user", text: "Free account creation (when ready)" },
-                  ].map((item, i) => (
+                    { icon: "building", text: isOpportunity ? "Full GovTribe opportunity enrichment" : "AI-powered search context analysis", all: true },
+                    { icon: "shield", text: "Expert matching across 17,000+ SMEs", all: true },
+                    { icon: "bookmark", text: "Saved searches and opportunity tracking", all: true },
+                    { icon: "user", text: "Free account creation (when ready)", all: true },
+                    { icon: "globe", text: "Company-matched results tailored to your org", workOnly: true },
+                    { icon: "list", text: "Team sharing and collaborative shortlists", workOnly: true },
+                  ].filter(item => item.all || (item.workOnly && isWorkEmail(emailValue))).map((item, i) => (
                     <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-                      <Icon name={item.icon} size={14} color={C.teal} />
-                      <span style={{ fontSize: 12, color: C.gray600 }}>{item.text}</span>
+                      <Icon name={item.icon} size={14} color={item.workOnly ? C.green : C.teal} />
+                      <span style={{ fontSize: 12, color: C.gray600 }}>
+                        {item.text}
+                        {item.workOnly && <span style={{ fontSize: 10, color: C.green, fontWeight: 600, marginLeft: 4 }}>WORK EMAIL BONUS</span>}
+                      </span>
                     </div>
                   ))}
                 </div>
