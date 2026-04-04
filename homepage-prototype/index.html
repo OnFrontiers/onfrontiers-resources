@@ -1630,10 +1630,130 @@ function EnrichmentCard({ onViewResults }) {
 }
 
 // ═══════════════════════════════════════════════════════════
+// OPPORTUNITY CUSTOMIZE STEP (for pre-enriched opportunities)
+// ═══════════════════════════════════════════════════════════
+
+function OpportunityCustomizeCard({ opportunity, onViewResults }) {
+  const [selectedRoles, setSelectedRoles] = useState(["Program SME"]);
+  const [selectedPriorities, setSelectedPriorities] = useState(["Agency Relationships"]);
+  const [focusNotes, setFocusNotes] = useState("");
+  const [selectedServices, setSelectedServices] = useState(["Intelligence Briefing"]);
+
+  const roles = ["Program SME", "Technical SME", "Agency SME", "Capture Manager", "Proposal Manager", "Proposal Writer", "Solution Architect", "Pricing Expert", "Contracts Specialist"];
+  const priorities = ["Agency Relationships", "Domain Depth", "Clearance Level", "Incumbent Knowledge", "Panel Review Experience", "Teaming Connections", "Technical Currency", "Proposal Win Rate"];
+  const services = ["Intelligence Briefing", "Black Hat Review", "Technical Review", "Proposal Review", "Strategy Session", "Capture Planning", "Price-to-Win Analysis"];
+
+  const toggleItem = (item, list, setter) => {
+    setter(prev => prev.includes(item) ? prev.filter(x => x !== item) : [...prev, item]);
+  };
+
+  return (
+    <div style={{ background: C.white, borderRadius: 16, border: `1px solid ${C.gray200}`, padding: "28px 32px", maxWidth: 720, width: "100%", boxShadow: "0 4px 24px rgba(0,0,0,0.06)" }}>
+      {/* Opportunity context — read-only, already known */}
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+        <div style={{ width: 36, height: 36, borderRadius: 8, background: `${C.teal}10`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+          <Icon name="building" size={18} color={C.teal} />
+        </div>
+        <div style={{ flex: 1 }}>
+          <p style={{ margin: 0, fontSize: 14, fontWeight: 700, color: C.gray900 }}>{opportunity?.title || "CAEI — Comprehensive Applied Engineering Initiative"}</p>
+          <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
+            <span style={{ padding: "2px 8px", borderRadius: 4, fontSize: 10, fontWeight: 600, background: `${C.teal}10`, color: C.teal }}>{opportunity?.agency || "NAVWAR"}</span>
+            <span style={{ padding: "2px 8px", borderRadius: 4, fontSize: 10, fontWeight: 600, background: C.gray100, color: C.gray600 }}>{opportunity?.solicitation || "N66001-24-R-0042"}</span>
+            <span style={{ padding: "2px 8px", borderRadius: 4, fontSize: 10, fontWeight: 600, background: `${C.green}10`, color: C.green }}>
+              {opportunity?.preMatchedCount || 5} pre-matched
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ height: 1, background: C.gray200, margin: "0 0 20px" }} />
+
+      {/* Customer angle — this is the new part */}
+      <h2 style={{ fontSize: 18, fontWeight: 700, color: C.gray900, margin: "0 0 4px" }}>Customize Your Search</h2>
+      <p style={{ fontSize: 13, color: C.gray500, margin: "0 0 20px", lineHeight: 1.5 }}>
+        We have {opportunity?.preMatchedCount || 5} pre-matched experts for this opportunity. Tell us your angle so we can rank them for your needs.
+      </p>
+
+      {/* Role selection */}
+      <div style={{ marginBottom: 20 }}>
+        <div style={{ fontSize: 11, fontWeight: 600, color: C.gray400, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>What role are you filling?</div>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+          {roles.map(role => (
+            <button key={role} onClick={() => toggleItem(role, selectedRoles, setSelectedRoles)} style={{
+              padding: "5px 12px", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer",
+              border: `1.5px solid ${selectedRoles.includes(role) ? C.teal : C.gray200}`,
+              background: selectedRoles.includes(role) ? `${C.teal}08` : "white",
+              color: selectedRoles.includes(role) ? C.teal : C.gray500,
+            }}>{role}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* What matters most */}
+      <div style={{ marginBottom: 20 }}>
+        <div style={{ fontSize: 11, fontWeight: 600, color: C.gray400, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>What matters most? <span style={{ fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>(pick 1-2)</span></div>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+          {priorities.map(p => (
+            <button key={p} onClick={() => toggleItem(p, selectedPriorities, setSelectedPriorities)} style={{
+              padding: "5px 12px", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer",
+              border: `1.5px solid ${selectedPriorities.includes(p) ? C.blue : C.gray200}`,
+              background: selectedPriorities.includes(p) ? `${C.blue}08` : "white",
+              color: selectedPriorities.includes(p) ? C.blue : C.gray500,
+            }}>{p}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* Service type */}
+      <div style={{ marginBottom: 20 }}>
+        <div style={{ fontSize: 11, fontWeight: 600, color: C.gray400, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>What service do you need?</div>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+          {services.map(svc => (
+            <button key={svc} onClick={() => toggleItem(svc, selectedServices, setSelectedServices)} style={{
+              padding: "5px 12px", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer",
+              border: `1.5px solid ${selectedServices.includes(svc) ? C.purple : C.gray200}`,
+              background: selectedServices.includes(svc) ? `${C.purple}08` : "white",
+              color: selectedServices.includes(svc) ? C.purple : C.gray500,
+            }}>{svc}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* Specific focus */}
+      <div style={{ marginBottom: 20 }}>
+        <div style={{ fontSize: 11, fontWeight: 600, color: C.gray400, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}>
+          Any specific focus? <span style={{ fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>(optional)</span>
+        </div>
+        <textarea
+          placeholder="E.g., 'We're teaming with Raytheon on the cyber piece' or 'Need someone who's worked the AFRL TPOC'..."
+          value={focusNotes}
+          onChange={e => setFocusNotes(e.target.value)}
+          rows={2}
+          style={{ width: "100%", fontSize: 13, color: C.gray700, border: `1px solid ${C.gray200}`, borderRadius: 8, padding: "10px 12px", outline: "none", fontFamily: "inherit", resize: "vertical", background: C.gray50, boxSizing: "border-box" }}
+          onFocus={e => e.target.style.borderColor = C.teal}
+          onBlur={e => e.target.style.borderColor = C.gray200}
+        />
+        <div style={{ fontSize: 10, color: C.gray400, marginTop: 4 }}>
+          This shapes how we rank pre-matched experts and is saved to your expert request.
+        </div>
+      </div>
+
+      {/* CTA */}
+      <button onClick={onViewResults} style={{
+        width: "100%", padding: "12px", background: C.teal, color: C.white, border: "none", borderRadius: 10,
+        fontSize: 15, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+      }}>
+        View Matched Experts <Icon name="arrowRight" size={18} color={C.white} />
+      </button>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
 // QUERY PROCESSING INTERSTITIAL
 // ═══════════════════════════════════════════════════════════
 
-function QueryProcessingScreen({ query, isOpportunity, onComplete, requiresEmail, onEmailCaptured, searchCount }) {
+function QueryProcessingScreen({ query, isOpportunity, onComplete, requiresEmail, onEmailCaptured, searchCount, fromOpportunity = false }) {
   const [phase, setPhase] = useState(0);
   const [progress, setProgress] = useState(0);
   const [dots, setDots] = useState("");
@@ -1648,6 +1768,13 @@ function QueryProcessingScreen({ query, isOpportunity, onComplete, requiresEmail
   const EMAIL_GATE_PHASE = 1;
 
   // Define phases based on query type
+  // Pre-enriched opportunity flow is faster — we already have the data
+  const preEnrichedPhases = [
+    { icon: "building", label: "Loading opportunity data", detail: "Pulling pre-enriched details from opportunity catalog..." },
+    { icon: "shield", label: "Re-ranking pre-matched experts", detail: "Applying your search criteria to pre-matched expert pool..." },
+    { icon: "check", label: "Results ready", detail: "Experts ranked for your needs — preparing customize view..." },
+  ];
+
   const oppPhases = [
     { icon: "search", label: "Analyzing your query", detail: "Detecting input type and extracting identifiers..." },
     { icon: "globe", label: "Recognized as opportunity", detail: "Solicitation pattern detected — checking cache..." },
@@ -1665,7 +1792,7 @@ function QueryProcessingScreen({ query, isOpportunity, onComplete, requiresEmail
     { icon: "check", label: "Results ready", detail: "Found matching experts — preparing confirmation view..." },
   ];
 
-  const phases = isOpportunity ? oppPhases : genPhases;
+  const phases = fromOpportunity ? preEnrichedPhases : isOpportunity ? oppPhases : genPhases;
 
   // Animate dots
   useEffect(() => {
@@ -1723,9 +1850,11 @@ function QueryProcessingScreen({ query, isOpportunity, onComplete, requiresEmail
 
   // Simulate phased processing with realistic timing
   useEffect(() => {
-    const timings = isOpportunity
-      ? [700, 800, 2200, 1200, 1200, 500]
-      : [700, 1200, 1000, 1000, 500];
+    const timings = fromOpportunity
+      ? [500, 800, 400]  // Fast — data already pre-enriched
+      : isOpportunity
+        ? [700, 800, 2200, 1200, 1200, 500]
+        : [700, 1200, 1000, 1000, 500];
 
     let elapsed = 0;
     const totalTime = timings.reduce((a, b) => a + b, 0);
@@ -1776,9 +1905,11 @@ function QueryProcessingScreen({ query, isOpportunity, onComplete, requiresEmail
   useEffect(() => {
     if (!paused && emailSubmitted) {
       const remainingPhases = phases.slice(EMAIL_GATE_PHASE + 1);
-      const timings = isOpportunity
-        ? [2200, 1200, 1200, 500]
-        : [1000, 1000, 500];
+      const timings = fromOpportunity
+        ? [400]
+        : isOpportunity
+          ? [2200, 1200, 1200, 500]
+          : [1000, 1000, 500];
 
       let elapsed = 0;
       const timeouts = [];
@@ -2724,7 +2855,7 @@ function Homepage({ onSearch, onViewSharedShortlist, onViewOpportunity }) {
 // RESULTS PAGE
 // ═══════════════════════════════════════════════════════════
 
-function ResultsPage({ query, isOpportunity, onBack, onViewProfile, onSignup, userTier = "anonymous", shortlist = [], onToggleShortlist = null, isInShortlist = null, onToggleShortlistPanel = null, onOpenShareModal = null }) {
+function ResultsPage({ query, isOpportunity, onBack, onViewProfile, onSignup, userTier = "anonymous", shortlist = [], onToggleShortlist = null, isInShortlist = null, onToggleShortlistPanel = null, onOpenShareModal = null, fromOpportunity = false, opportunity = null }) {
   const [showEnrichment, setShowEnrichment] = useState(true);
   const [unblurAnimating, setUnblurAnimating] = useState(false);
   const prevTierRef = useRef(userTier);
@@ -2831,9 +2962,11 @@ function ResultsPage({ query, isOpportunity, onBack, onViewProfile, onSignup, us
 
         {showEnrichment ? (
           <div style={{ marginBottom: 24, display: "flex", justifyContent: "center" }}>
-            {isOpportunity
-              ? <EnrichmentCard onViewResults={() => setShowEnrichment(false)} />
-              : <QueryConfirmationCard query={query} onConfirm={() => setShowEnrichment(false)} onBack={onBack} />
+            {fromOpportunity
+              ? <OpportunityCustomizeCard opportunity={opportunity} onViewResults={() => setShowEnrichment(false)} />
+              : isOpportunity
+                ? <EnrichmentCard onViewResults={() => setShowEnrichment(false)} />
+                : <QueryConfirmationCard query={query} onConfirm={() => setShowEnrichment(false)} onBack={onBack} />
             }
           </div>
         ) : (
@@ -3410,6 +3543,7 @@ function App() {
         requiresEmail={isEmailGated}
         onEmailCaptured={handleEmailCaptured}
         searchCount={searchCount}
+        fromOpportunity={!!selectedOpportunity}
       />
     );
   }
@@ -3494,6 +3628,8 @@ function App() {
           isInShortlist={isInShortlist}
           onToggleShortlistPanel={() => setShowShortlistPanel(!showShortlistPanel)}
           onOpenShareModal={() => setShowShareModal(true)}
+          fromOpportunity={!!selectedOpportunity}
+          opportunity={selectedOpportunity}
         />
       </>
     );
