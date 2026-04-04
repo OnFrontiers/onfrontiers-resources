@@ -111,7 +111,7 @@ const OFLogo = ({ color = C.white, height = 22 }) => (
 const EXPERTS = [
   {
     id: 1, initials: "PM", color: "#7C3AED", anonymous: false,
-    name: "Patricia Morales", hourlyRate: "$350",
+    name: "Patricia Morales", firstName: "Patricia", hourlyRate: "$350", location: "Dayton, OH",
     genericTitle: "R&D Portfolio Management Expert",
     matchHeadline: "Former AFRL Division Chief who led S&T programs across air, space, and cyber domains",
     profileHeadline: "Former AFRL division chief with deep R&D portfolio management and S&T strategy experience.",
@@ -132,10 +132,49 @@ const EXPERTS = [
     consultations: 34, rating: 4.8, reviewCount: 28, availability: "Available this week",
     responseTime: "Usually responds within 4 hours",
     education: [{ credential: "M.S. Aerospace Engineering", institution: "MIT" }, { credential: "B.S. Mechanical Engineering", institution: "Georgia Tech" }],
+    govcon: {
+      primaryRole: "Program SME",
+      currentRoleType: "Consultant",
+      yearsInPublicSector: 18,
+      yearsSinceLeftGov: 3,
+      mostRecentGovRole: "Division Chief, Applied Research",
+      mostRecentGovOrg: "AFRL",
+      highestRank: "GS-15",
+      clearances: [{ type: "TS/SCI", status: "Inactive" }],
+      agencyExperience: [
+        { name: "AFRL", years: 15, category: "DoD" },
+        { name: "DARPA", years: 2, category: "DoD" },
+        { name: "NASA", years: 1, category: "Fed Civ" },
+        { name: "ONR", years: 1, category: "DoD" },
+      ],
+      domainExperience: [
+        { name: "Systems Engineering & Integration", years: 12 },
+        { name: "Advanced Materials & Additive Mfg", years: 8 },
+        { name: "Robotics & Autonomous Systems", years: 5 },
+      ],
+      satOnReviewPanels: true,
+    },
+    selfVetting: {
+      fitStatus: "verified",
+    },
+    testimonials: [
+      {
+        quote: "Patricia gave us a masterclass on how AFRL evaluates proposals. She pinpointed gaps in our technical approach that we completely missed — saved us from a fatal weakness.",
+        author: "Capture Manager",
+        company: "Mid-tier Defense Contractor",
+        date: "Dec 2025",
+      },
+      {
+        quote: "Incredibly knowledgeable about the S&T portfolio process. Patricia helped us understand exactly which Areas of Interest align with our capabilities and how to frame our past performance.",
+        author: "VP of Business Development",
+        company: "Aerospace Firm",
+        date: "Oct 2025",
+      },
+    ],
   },
   {
     id: 2, initials: "RK", color: "#2563EB", anonymous: true,
-    name: null, hourlyRate: "$300",
+    name: null, firstName: null, hourlyRate: "$300", location: "Norfolk, VA",
     genericTitle: "C4ISR Systems Integration Expert",
     matchHeadline: "NAVWAR systems engineer with hands-on C5ISR integration experience across Navy tactical networks",
     profileHeadline: "Systems engineer specializing in Navy C4ISR integration across shipboard and expeditionary platforms.",
@@ -155,10 +194,41 @@ const EXPERTS = [
     consultations: 21, rating: 4.9, reviewCount: 18, availability: "Available next week",
     responseTime: "Usually responds within 2 hours",
     education: [{ credential: "M.S. Electrical Engineering", institution: "Naval Postgraduate School" }],
+    govcon: {
+      primaryRole: "Technical SME",
+      currentRoleType: "Consultant",
+      yearsInPublicSector: 15,
+      yearsSinceLeftGov: 4,
+      mostRecentGovRole: "Lead Systems Engineer",
+      mostRecentGovOrg: "NAVWAR/SPAWAR",
+      highestRank: "GS-14",
+      agencyExperience: [
+        { name: "NAVWAR/SPAWAR", years: 10, category: "DoD" },
+        { name: "NIWC Atlantic", years: 4, category: "DoD" },
+        { name: "Naval Sea Systems Command", years: 2, category: "DoD" },
+      ],
+      domainExperience: [
+        { name: "C4ISR Systems Integration", years: 11 },
+        { name: "Tactical Data Links", years: 8 },
+        { name: "Combat Systems", years: 7 },
+      ],
+      satOnReviewPanels: true,
+    },
+    selfVetting: {
+      fitStatus: "verified",
+    },
+    testimonials: [
+      {
+        quote: "Deep knowledge of NAVWAR systems architecture. Understood our integration challenges immediately and provided actionable solutions.",
+        author: "Systems Program Manager",
+        company: "Defense Prime",
+        date: "Nov 2025",
+      },
+    ],
   },
   {
     id: 3, initials: "JL", color: "#059669", anonymous: false,
-    name: "James Liu", hourlyRate: "$275",
+    name: "James Liu", firstName: "James", hourlyRate: "$275", location: "Washington, DC",
     genericTitle: "Navy Acquisition & Contracting Specialist",
     matchHeadline: "Senior contracting officer with NAVWAR procurement authority and IDIQ administration experience",
     profileHeadline: "Former Navy contracting officer with unlimited warrant authority across complex contract types.",
@@ -178,10 +248,40 @@ const EXPERTS = [
     consultations: 47, rating: 4.7, reviewCount: 39, availability: "Available this week",
     responseTime: "Usually responds within 6 hours",
     education: [{ credential: "M.B.A.", institution: "George Washington University" }],
+    govcon: {
+      primaryRole: "Acquisition SME",
+      currentRoleType: "Consultant",
+      yearsInPublicSector: 19,
+      yearsSinceLeftGov: 1,
+      mostRecentGovRole: "Contracting Officer",
+      mostRecentGovOrg: "NAVWAR",
+      highestRank: "GS-14",
+      agencyExperience: [
+        { name: "NAVWAR", years: 14, category: "DoD" },
+        { name: "NAVSEA", years: 5, category: "DoD" },
+      ],
+      domainExperience: [
+        { name: "IDIQ Contract Administration", years: 12 },
+        { name: "Source Selection & Evaluation", years: 10 },
+        { name: "Navy Acquisition Lifecycle", years: 14 },
+      ],
+      satOnReviewPanels: true,
+    },
+    selfVetting: {
+      fitStatus: "verified",
+    },
+    testimonials: [
+      {
+        quote: "James guided us through a complex IDIQ recompete. His insider knowledge of NAVWAR evaluation criteria was invaluable.",
+        author: "VP Strategy",
+        company: "Defense Contractor",
+        date: "Sep 2025",
+      },
+    ],
   },
   {
     id: 4, initials: "DT", color: "#DC2626", anonymous: true,
-    name: null, hourlyRate: "$325",
+    name: null, firstName: null, hourlyRate: "$325", location: "Arlington, VA",
     genericTitle: "Cybersecurity & Zero Trust Architecture Expert",
     matchHeadline: "Led DoD Zero Trust implementation across multiple Navy networks and tactical systems",
     profileHeadline: "Cybersecurity architect specializing in DoD Zero Trust and RMF across Navy networks.",
@@ -201,10 +301,41 @@ const EXPERTS = [
     consultations: 12, rating: 4.6, reviewCount: 9, availability: "Limited availability",
     responseTime: "Usually responds within 8 hours",
     education: [{ credential: "CISSP, CISM" }],
+    govcon: {
+      primaryRole: "Technical SME",
+      currentRoleType: "Contractor",
+      yearsInPublicSector: 10,
+      yearsSinceLeftGov: 0,
+      mostRecentGovRole: "N/A",
+      mostRecentGovOrg: "Contractor",
+      highestRank: "N/A",
+      clearances: [{ type: "TS/SCI", status: "Active" }],
+      agencyExperience: [
+        { name: "DoD — Multiple", years: 10, category: "DoD" },
+        { name: "DHS", years: 2, category: "Fed Civ" },
+      ],
+      domainExperience: [
+        { name: "Cybersecurity Architecture", years: 10 },
+        { name: "Zero Trust Implementation", years: 5 },
+        { name: "RMF/DIACAP Compliance", years: 7 },
+      ],
+      satOnReviewPanels: false,
+    },
+    selfVetting: {
+      fitStatus: "verified",
+    },
+    testimonials: [
+      {
+        quote: "Expert in architecting Zero Trust for complex Navy networks. Delivered RMF documentation that passed ATO on first submission.",
+        author: "ISSO",
+        company: "Defense Integration Team",
+        date: "Oct 2025",
+      },
+    ],
   },
   {
     id: 5, initials: "AS", color: "#B45309", anonymous: false,
-    name: "Alicia Santos", hourlyRate: "$250",
+    name: "Alicia Santos", firstName: "Alicia", hourlyRate: "$250", location: "San Diego, CA",
     genericTitle: "Proposal & Capture Management Professional",
     matchHeadline: "Won $2B+ in Navy IT and C4ISR contracts including multiple NAVWAR competitive recompetes",
     profileHeadline: "Capture manager with $2B+ in Navy IT/C4ISR wins and 65%+ competitive win rate.",
@@ -224,9 +355,44 @@ const EXPERTS = [
     consultations: 56, rating: 4.9, reviewCount: 48, availability: "Available this week",
     responseTime: "Usually responds within 3 hours",
     education: [{ credential: "PMP, APMP Professional" }],
+    govcon: {
+      primaryRole: "Capture Manager",
+      currentRoleType: "Contractor",
+      yearsInPublicSector: 0,
+      yearsSinceLeftGov: 0,
+      mostRecentGovRole: "N/A",
+      mostRecentGovOrg: "N/A",
+      highestRank: "N/A",
+      agencyExperience: [],
+      domainExperience: [
+        { name: "Navy Capture & Proposal", years: 16 },
+        { name: "IDIQ Recompete Strategy", years: 12 },
+        { name: "Competitive Teaming", years: 14 },
+      ],
+      bdSkills: ["Black hat reviews", "Competitive analysis", "Strategic pricing", "Proposal strategy"],
+      satOnReviewPanels: false,
+    },
+    selfVetting: {
+      fitStatus: "verified",
+    },
+    testimonials: [
+      {
+        quote: "Alicia's capture strategy for our Navy recompete was brilliant. $2B win that wouldn't have happened without her insights.",
+        author: "VP Business Development",
+        company: "Large Defense Prime",
+        date: "Jan 2026",
+      },
+      {
+        quote: "Best proposal manager we've worked with. 65% win rate speaks volumes.",
+        author: "Program Manager",
+        company: "Mid-tier Contractor",
+        date: "Dec 2025",
+      },
+    ],
   },
   {
     id: 6, initials: "MH", color: "#7C3AED", anonymous: false,
+    name: "Marcus Harrison", firstName: "Marcus", hourlyRate: "$300", location: "Houston, TX",
     genericTitle: "SEWP & Government IT Contract Vehicle Expert",
     matchHeadline: "SEWP program office veteran with deep knowledge of ordering procedures and competitive positioning",
     profileHeadline: "Former SEWP program office staff with broad IT contract vehicle expertise.",
@@ -246,6 +412,36 @@ const EXPERTS = [
     consultations: 29, rating: 4.7, reviewCount: 22, availability: "Available this week",
     responseTime: "Usually responds within 2 hours",
     education: [{ credential: "M.S. Information Systems", institution: "George Mason University" }],
+    govcon: {
+      primaryRole: "Acquisition SME",
+      currentRoleType: "Consultant",
+      yearsInPublicSector: 8,
+      yearsSinceLeftGov: 4,
+      mostRecentGovRole: "Program Analyst",
+      mostRecentGovOrg: "NASA SEWP Program Office",
+      highestRank: "GS-12",
+      agencyExperience: [
+        { name: "NASA SEWP Program Office", years: 8, category: "Fed Civ" },
+      ],
+      domainExperience: [
+        { name: "IT Contract Vehicles (SEWP, GSA, Alliant)", years: 10 },
+        { name: "Competitive Positioning", years: 8 },
+        { name: "Pricing Strategy", years: 7 },
+      ],
+      bdSkills: ["Competitive analysis", "Pricing strategy", "Pursuit planning"],
+      satOnReviewPanels: false,
+    },
+    selfVetting: {
+      fitStatus: "verified",
+    },
+    testimonials: [
+      {
+        quote: "Marcus's SEWP strategy guidance helped us understand fair opportunity nuances. Saved us from a costly proposal mistake.",
+        author: "BD Manager",
+        company: "Software Firm",
+        date: "Aug 2025",
+      },
+    ],
   },
 ];
 
@@ -304,7 +500,8 @@ function SignupModal({ onClose, onSignup, onCreateAccount, expertContext, userTi
   const [formError, setFormError] = useState("");
 
   const hasEmail = userTier === "email-captured" && userInfo?.email;
-  const inferredCompany = userInfo?.company || "";
+  const [company, setCompany] = useState(userInfo?.company || "");
+  const companyWasInferred = !!(userInfo?.company);
 
   const handleCreateAccount = () => {
     if (!firstName.trim() || !lastName.trim()) { setFormError("First and last name are required"); return; }
@@ -312,7 +509,7 @@ function SignupModal({ onClose, onSignup, onCreateAccount, expertContext, userTi
     if (password.length < 6) { setFormError("Password must be at least 6 characters"); return; }
     if (!agreed) { setFormError("Please agree to the terms to continue"); return; }
     setFormError("");
-    onCreateAccount({ firstName: firstName.trim(), lastName: lastName.trim(), email: hasEmail ? userInfo.email : email.trim(), password });
+    onCreateAccount({ firstName: firstName.trim(), lastName: lastName.trim(), email: hasEmail ? userInfo.email : email.trim(), company: company.trim(), password });
   };
 
   return (
@@ -379,14 +576,16 @@ function SignupModal({ onClose, onSignup, onCreateAccount, expertContext, userTi
                   onFocus={e => e.target.style.borderColor = C.teal} onBlur={e => e.target.style.borderColor = C.gray200} />
               </div>
 
-              {/* Company — auto-inferred from domain, editable */}
-              {inferredCompany && (
-                <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 14px", background: `${C.teal}06`, borderRadius: 8, border: `1px solid ${C.teal}15`, marginBottom: 12 }}>
-                  <Icon name="building" size={14} color={C.teal} />
-                  <span style={{ fontSize: 13, color: C.gray600, flex: 1 }}>{inferredCompany}</span>
-                  <span style={{ fontSize: 10, color: C.gray400 }}>from your email domain</span>
-                </div>
-              )}
+              {/* Company — editable, pre-filled from email domain when available */}
+              <div style={{ position: "relative", marginBottom: 12 }}>
+                <input placeholder="Company" value={company} onChange={e => setCompany(e.target.value)}
+                  style={{ width: "100%", padding: "12px 14px", paddingLeft: 36, borderRadius: 8, border: `1px solid ${companyWasInferred && company === userInfo?.company ? C.teal + '30' : C.gray200}`, fontSize: 14, fontFamily: "inherit", outline: "none", boxSizing: "border-box", background: companyWasInferred && company === userInfo?.company ? `${C.teal}04` : C.white }}
+                  onFocus={e => e.target.style.borderColor = C.teal} onBlur={e => e.target.style.borderColor = companyWasInferred && company === userInfo?.company ? C.teal + '30' : C.gray200} />
+                <Icon name="building" size={14} color={companyWasInferred ? C.teal : C.gray400} style={{ position: "absolute", left: 12, top: 14, pointerEvents: "none" }} />
+                {companyWasInferred && company === userInfo?.company && (
+                  <span style={{ position: "absolute", right: 12, top: 14, fontSize: 10, color: C.gray400 }}>from your email</span>
+                )}
+              </div>
 
               {/* Password */}
               <input type="password" placeholder="Create a password (6+ characters)" value={password} onChange={e => setPassword(e.target.value)}
@@ -457,6 +656,9 @@ function SignupModal({ onClose, onSignup, onCreateAccount, expertContext, userTi
 function ExpertProfilePage({ expert, onBack, onSignup, onCreateAccount, resultPosition, totalResults, userTier = "anonymous", userInfo }) {
   const [showSignup, setShowSignup] = useState(false);
   const isFreeAccount = userTier === "free-account";
+  const meetsRatingThreshold = expert.reviewCount >= 3;
+  const meetsConsultationThreshold = expert.consultations >= 5;
+  const hasTestimonials = expert.testimonials && expert.testimonials.length > 0;
 
   return (
     <div style={{ minHeight: "100vh", background: C.gray50, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
@@ -502,10 +704,10 @@ function ExpertProfilePage({ expert, onBack, onSignup, onCreateAccount, resultPo
       {/* Profile content */}
       <div style={{ maxWidth: 760, margin: "24px auto", padding: "0 32px" }}>
         <div style={{ background: C.white, borderRadius: 12, border: `1px solid ${C.gray200}`, overflow: "hidden" }}>
-          {/* Header section — partially visible */}
+          {/* Header section */}
           <div style={{ padding: "24px 28px", borderBottom: `1px solid ${C.gray100}` }}>
             <div style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
-              {/* showPhoto: !isAnonymous (per Display Explorer) */}
+              {/* showPhoto: !isAnonymous */}
               {expert.anonymous ? (
                 <div style={{ width: 72, height: 72, borderRadius: "50%", background: C.gray100, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: `2px dashed ${C.gray300}` }}>
                   <Icon name="user" size={32} color={C.gray400} />
@@ -518,15 +720,31 @@ function ExpertProfilePage({ expert, onBack, onSignup, onCreateAccount, resultPo
               <div style={{ flex: 1 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                   <div>
-                    {isFreeAccount && expert.name ? (
-                      <>
-                        <h2 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: C.gray900 }}>{expert.name}</h2>
-                        <p style={{ margin: "2px 0 0", fontSize: 14, color: C.gray500, fontWeight: 500 }}>{expert.genericTitle}</p>
-                      </>
+                    {isFreeAccount && expert.firstName ? (
+                      <h2 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: C.gray900 }}>{expert.firstName}</h2>
                     ) : (
                       <h2 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: C.gray900 }}>{expert.genericTitle}</h2>
                     )}
                     <p style={{ margin: "4px 0 0", fontSize: 14, color: C.gray700, fontWeight: 500, lineHeight: 1.4 }}>{expert.matchHeadline}</p>
+                    
+                    {/* Quick stats row for free account */}
+                    {isFreeAccount && (
+                      <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 8, flexWrap: "wrap" }}>
+                        {meetsRatingThreshold && expert.rating && (
+                          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                            <FilledStar size={13} />
+                            <span style={{ fontSize: 12, fontWeight: 600, color: C.gray700 }}>{expert.rating}</span>
+                            <span style={{ fontSize: 11, color: C.gray400 }}>({expert.reviewCount})</span>
+                          </div>
+                        )}
+                        {meetsConsultationThreshold && expert.consultations && (
+                          <span style={{ fontSize: 11, color: C.gray600 }}>{expert.consultations} consultations</span>
+                        )}
+                        {expert.hourlyRate && (
+                          <span style={{ fontSize: 12, fontWeight: 600, color: C.gray800 }}>{expert.hourlyRate}/hr</span>
+                        )}
+                      </div>
+                    )}
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
                     <div style={{ width: 52, height: 52, borderRadius: "50%", border: `3px solid ${expert.alignment >= 85 ? C.green : C.tealLight}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, fontWeight: 800, color: expert.alignment >= 85 ? C.green : C.tealLight }}>
@@ -543,6 +761,37 @@ function ExpertProfilePage({ expert, onBack, onSignup, onCreateAccount, resultPo
                   ))}
                 </div>
 
+                {/* GovCon Tier 1 for Free account */}
+                {isFreeAccount && expert.govcon && (
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
+                    {expert.govcon.primaryRole && (
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "4px 12px", borderRadius: 6, fontSize: 11, fontWeight: 600, background: `${C.orange}15`, color: C.orange, border: `1px solid ${C.orange}30` }}>
+                        {expert.govcon.primaryRole}
+                      </span>
+                    )}
+                    {expert.govcon.currentRoleType && (
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "4px 12px", borderRadius: 6, fontSize: 11, fontWeight: 600, background: `${C.teal}15`, color: C.teal, border: `1px solid ${C.teal}30` }}>
+                        {expert.govcon.currentRoleType}
+                      </span>
+                    )}
+                    {expert.govcon.mostRecentGovRole && (
+                      <span style={{ fontSize: 11, color: C.gray700, fontWeight: 500 }}>{expert.govcon.mostRecentGovRole}</span>
+                    )}
+                    {expert.govcon.highestRank && (
+                      <span style={{ fontSize: 11, color: C.gray600 }}>{expert.govcon.highestRank}</span>
+                    )}
+                    {expert.govcon.yearsInPublicSector && (
+                      <span style={{ fontSize: 11, color: C.gray600 }}>{expert.govcon.yearsInPublicSector}yr public sector</span>
+                    )}
+                    {expert.govcon.yearsSinceLeftGov > 0 && (
+                      <span style={{ fontSize: 11, color: C.gray600 }}>Left gov {expert.govcon.yearsSinceLeftGov}yr ago</span>
+                    )}
+                    {expert.govcon.satOnReviewPanels && (
+                      <span style={{ fontSize: 11, color: C.gray600 }}>Sat on review panels</span>
+                    )}
+                  </div>
+                )}
+
                 {/* First match bullet visible */}
                 <div style={{ marginTop: 12, fontSize: 13, color: C.gray700, lineHeight: 1.6, display: "flex", gap: 8 }}>
                   <span style={{ color: C.teal, flexShrink: 0, fontWeight: 700 }}>•</span>
@@ -552,10 +801,10 @@ function ExpertProfilePage({ expert, onBack, onSignup, onCreateAccount, resultPo
             </div>
           </div>
 
-          {/* Profile content — full for Tier 2, blurred+gated for others */}
+          {/* Profile content — full for Free, blurred+gated for Visitor */}
           {isFreeAccount ? (
             <div style={{ padding: "24px 28px" }}>
-              {/* All match bullets visible */}
+              {/* Match section - all bullets */}
               <h3 style={{ fontSize: 16, fontWeight: 700, color: C.gray900, marginBottom: 8 }}>Match Analysis</h3>
               {expert.matchBullets.map((b, i) => (
                 <div key={i} style={{ fontSize: 14, color: C.gray700, lineHeight: 1.6, display: "flex", gap: 8, marginBottom: 6 }}>
@@ -564,38 +813,106 @@ function ExpertProfilePage({ expert, onBack, onSignup, onCreateAccount, resultPo
                 </div>
               ))}
 
+              {/* GovCon Tier 2 - BLURRED for Free */}
+              {expert.govcon && expert.govcon.agencyExperience && expert.govcon.agencyExperience.length > 0 && (
+                <div style={{ position: "relative", marginTop: 20 }}>
+                  <h3 style={{ fontSize: 16, fontWeight: 700, color: C.gray900, marginBottom: 8 }}>GovCon Background</h3>
+                  <div style={{ position: "relative", filter: "blur(4px)", opacity: 0.25, userSelect: "none", pointerEvents: "none" }}>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: C.gray800, marginBottom: 4 }}>Agency Experience</div>
+                    {expert.govcon.agencyExperience.map((a, i) => (
+                      <div key={i} style={{ fontSize: 13, color: C.gray600, marginBottom: 2 }}>{a.name} · {a.years}yr</div>
+                    ))}
+                  </div>
+                  <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: C.teal, fontWeight: 600, background: C.white, padding: "8px 16px", borderRadius: 8, border: `1px solid ${C.teal}30`, boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
+                      <Icon name="lock" size={12} color={C.teal} />
+                      Upgrade to Pro to see credentials
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Bio */}
               <h3 style={{ fontSize: 16, fontWeight: 700, color: C.gray900, marginTop: 20, marginBottom: 8 }}>About</h3>
               <p style={{ fontSize: 14, color: C.gray600, lineHeight: 1.6 }}>{expert.bio}</p>
 
-              {/* Experience */}
+              {/* Experience - BLURRED for Free */}
               <h3 style={{ fontSize: 16, fontWeight: 700, color: C.gray900, marginTop: 20, marginBottom: 8 }}>Experience</h3>
-              {expert.experience.map((exp, i) => (
-                <div key={i} style={{ marginBottom: 12 }}>
-                  <div style={{ fontSize: 14, fontWeight: 600, color: C.gray800 }}>{exp.role}</div>
-                  <div style={{ fontSize: 13, color: C.gray500 }}>{exp.org} · {exp.years}</div>
-                  <div style={{ fontSize: 13, color: C.gray600, marginTop: 4 }}>{exp.desc}</div>
+              <div style={{ position: "relative" }}>
+                <div style={{ filter: "blur(4px)", opacity: 0.25, userSelect: "none" }}>
+                  {expert.experience.map((exp, i) => (
+                    <div key={i} style={{ marginBottom: 12 }}>
+                      <div style={{ fontSize: 14, fontWeight: 600, color: C.gray800 }}>{exp.role}</div>
+                      <div style={{ fontSize: 13, color: C.gray500 }}>{exp.org} · {exp.years}</div>
+                      <div style={{ fontSize: 13, color: C.gray600, marginTop: 4 }}>{exp.desc}</div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-
-              {/* Ratings */}
-              <h3 style={{ fontSize: 16, fontWeight: 700, color: C.gray900, marginTop: 20, marginBottom: 8 }}>Ratings & Reviews</h3>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-                <span style={{ fontSize: 32, fontWeight: 800, color: C.gray900 }}>{expert.rating}</span>
-                <div>
-                  <div style={{ display: "flex", gap: 2 }}>{[1,2,3,4,5].map(i => <FilledStar key={i} size={16} />)}</div>
-                  <div style={{ fontSize: 12, color: C.gray500 }}>{expert.reviewCount} reviews</div>
+                <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: C.teal, fontWeight: 600, background: C.white, padding: "8px 16px", borderRadius: 8, border: `1px solid ${C.teal}30`, boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
+                    <Icon name="lock" size={12} color={C.teal} />
+                    Upgrade to Pro to see experience
+                  </div>
                 </div>
               </div>
 
-              {/* CTA for Tier 2 — request intro */}
-              <div style={{ borderTop: `1px solid ${C.gray100}`, paddingTop: 20, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <div>
+              {/* Vetting - BLURRED for Free */}
+              {expert.selfVetting && (
+                <div style={{ position: "relative", marginTop: 20 }}>
+                  <h3 style={{ fontSize: 16, fontWeight: 700, color: C.gray900, marginBottom: 8 }}>Expert Vetting</h3>
+                  <div style={{ position: "relative", filter: "blur(4px)", opacity: 0.25, userSelect: "none", pointerEvents: "none" }}>
+                    <div style={{ fontSize: 13, color: C.gray700, marginBottom: 6 }}>Vetting Status: {expert.selfVetting.fitStatus}</div>
+                  </div>
+                  <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: C.teal, fontWeight: 600, background: C.white, padding: "8px 16px", borderRadius: 8, border: `1px solid ${C.teal}30`, boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
+                      <Icon name="lock" size={12} color={C.teal} />
+                      Upgrade to Pro to see vetting details
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Testimonials */}
+              {hasTestimonials && (
+                <div style={{ marginTop: 20 }}>
+                  <h3 style={{ fontSize: 16, fontWeight: 700, color: C.gray900, marginBottom: 12 }}>What clients say</h3>
+                  {expert.testimonials.slice(0, 1).map((t, i) => (
+                    <div key={i} style={{ background: C.gray50, border: `1px solid ${C.gray200}`, borderRadius: 8, padding: 12, marginBottom: 12 }}>
+                      <p style={{ fontSize: 13, color: C.gray700, lineHeight: 1.6, margin: "0 0 8px", fontStyle: "italic" }}>"{t.quote}"</p>
+                      <div style={{ fontSize: 11, color: C.gray500 }}>
+                        <div style={{ fontWeight: 600, color: C.gray700 }}>{t.author}</div>
+                        <div>{t.company}</div>
+                        <div>{t.date}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Ratings */}
+              {meetsRatingThreshold && expert.rating && (
+                <div style={{ marginTop: 20 }}>
+                  <h3 style={{ fontSize: 16, fontWeight: 700, color: C.gray900, marginBottom: 12 }}>Ratings</h3>
+                  <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <span style={{ fontSize: 32, fontWeight: 800, color: C.gray900 }}>{expert.rating}</span>
+                      <div>
+                        <div style={{ display: "flex", gap: 2 }}>{[1,2,3,4,5].map(i => <FilledStar key={i} size={16} />)}</div>
+                        <div style={{ fontSize: 12, color: C.gray500 }}>{expert.reviewCount} reviews</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* CTA for Free */}
+              <div style={{ borderTop: `1px solid ${C.gray100}`, marginTop: 24, paddingTop: 20, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                   {expert.hourlyRate && <span style={{ fontSize: 14, fontWeight: 600, color: C.gray800 }}>{expert.hourlyRate}/hr</span>}
-                  <span style={{ fontSize: 13, color: C.gray500, marginLeft: 12 }}>Typically responds within 24 hours</span>
+                  <span style={{ fontSize: 13, color: C.gray500 }}>Typically responds within 24 hours</span>
                 </div>
                 <button style={{ padding: "12px 28px", background: C.teal, color: C.white, border: "none", borderRadius: 8, fontSize: 15, fontWeight: 700, cursor: "pointer" }}>
-                  Request Introduction
+                  Request Consultation
                 </button>
               </div>
             </div>
@@ -633,13 +950,13 @@ function ExpertProfilePage({ expert, onBack, onSignup, onCreateAccount, resultPo
                   <div style={{ width: 52, height: 52, borderRadius: "50%", background: `${C.teal}10`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
                     <LockFilled size={24} color={C.teal} />
                   </div>
-                  <h3 style={{ margin: "0 0 6px", fontSize: 18, fontWeight: 700, color: C.gray900 }}>Unlock this expert's full profile</h3>
+                  <h3 style={{ margin: "0 0 6px", fontSize: 18, fontWeight: 700, color: C.gray900 }}>Create a free account</h3>
                   <p style={{ margin: "0 0 6px", fontSize: 14, color: C.gray500, lineHeight: 1.5 }}>
-                    Get free access to background, consultation rates, and availability — plus thousands of vetted federal and industry professionals.
+                    Get free access to expert profiles, consultation rates, and availability — plus thousands of vetted federal and industry professionals.
                   </p>
                   <p style={{ margin: "0 0 20px", fontSize: 13, color: C.gray400 }}>Browse free. Book only when you need to.</p>
                   <button onClick={() => setShowSignup(true)} style={{ padding: "14px 32px", background: C.teal, color: C.white, border: "none", borderRadius: 8, fontSize: 15, fontWeight: 700, cursor: "pointer", textTransform: "uppercase", letterSpacing: 0.5 }}>
-                    Get Free Access
+                    Create Free Account
                   </button>
                   <p style={{ margin: "12px 0 0", fontSize: 13, color: C.gray700, fontWeight: 500 }}>
                     Already have an account? <span onClick={() => setShowSignup(true)} style={{ color: C.teal, fontWeight: 600, cursor: "pointer" }}>Sign in</span>
@@ -1702,6 +2019,8 @@ function QueryProcessingScreen({ query, isOpportunity, onComplete, requiresEmail
 function VisitorExpertCard({ expert, rank, onClickProfile, onSignup, userTier = "anonymous" }) {
   const isFreeAccount = userTier === "free-account";
   const isAnonymous = userTier === "anonymous";
+  const meetsRatingThreshold = expert.reviewCount >= 3;
+  const meetsConsultationThreshold = expert.consultations >= 5;
 
   return (
     <div style={{ background: C.white, borderRadius: 12, border: `1px solid ${C.gray200}`, padding: "20px 24px", transition: "box-shadow 0.15s", cursor: "pointer" }}
@@ -1730,6 +2049,9 @@ function VisitorExpertCard({ expert, rank, onClickProfile, onSignup, userTier = 
                 ) : (
                   <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: C.gray900 }}>{expert.genericTitle}</h3>
                 )}
+                {isFreeAccount && expert.selfVetting?.fitStatus === "verified" && (
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 11, fontWeight: 600, color: C.green, background: `${C.green}10`, padding: "2px 8px", borderRadius: 4, border: `1px solid ${C.green}30` }}>✓ Verified Fit</span>
+                )}
               </div>
               {isFreeAccount && expert.name && (
                 <p style={{ margin: "2px 0 0", fontSize: 12, color: C.gray500, fontWeight: 500 }}>{expert.genericTitle}</p>
@@ -1747,13 +2069,36 @@ function VisitorExpertCard({ expert, rank, onClickProfile, onSignup, userTier = 
             </div>
           </div>
 
+          {/* Tags - dimmed for visitor, full for free */}
           <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginTop: 8 }}>
             {expert.tags.map(t => (
-              <span key={t} style={{ padding: "2px 8px", borderRadius: 4, fontSize: 11, fontWeight: 500, background: C.gray50, color: isFreeAccount ? C.gray600 : C.gray400, border: `1px solid ${C.gray200}` }}>{t}</span>
+              <span key={t} style={{ padding: "2px 8px", borderRadius: 4, fontSize: 11, fontWeight: 500, background: isFreeAccount ? `${C.teal}0A` : C.gray50, color: isFreeAccount ? C.teal : C.gray400, border: `1px solid ${isFreeAccount ? `${C.teal}18` : C.gray200}` }}>{t}</span>
             ))}
           </div>
 
-          {/* Match bullets — Tier 2 sees all unblurred, others see 1 + blurred */}
+          {/* GovCon Tier 1 row for Free account only */}
+          {isFreeAccount && expert.govcon && (
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
+              {expert.govcon.primaryRole && (
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "3px 10px", borderRadius: 5, fontSize: 10, fontWeight: 600, background: `${C.orange}15`, color: C.orange, border: `1px solid ${C.orange}30` }}>
+                  {expert.govcon.primaryRole}
+                </span>
+              )}
+              {expert.govcon.currentRoleType && (
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "3px 10px", borderRadius: 5, fontSize: 10, fontWeight: 600, background: `${C.teal}15`, color: C.teal, border: `1px solid ${C.teal}30` }}>
+                  {expert.govcon.currentRoleType}
+                </span>
+              )}
+              {expert.govcon.yearsInPublicSector && (
+                <span style={{ fontSize: 11, color: C.gray600, fontWeight: 500 }}>{expert.govcon.yearsInPublicSector}yr public sector</span>
+              )}
+              {expert.govcon.yearsSinceLeftGov > 0 && (
+                <span style={{ fontSize: 11, color: C.gray600, fontWeight: 500 }}>Left gov {expert.govcon.yearsSinceLeftGov}yr ago</span>
+              )}
+            </div>
+          )}
+
+          {/* Match bullets — Free sees all, Visitor sees 1 + blurred */}
           <div style={{ marginTop: 12 }}>
             {isFreeAccount ? (
               /* Free account: all bullets visible */
@@ -1784,35 +2129,29 @@ function VisitorExpertCard({ expert, rank, onClickProfile, onSignup, userTier = 
 
           {/* Footer CTA — different per tier */}
           {isFreeAccount ? (
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 12 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                {expert.rating && (
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 12, flexWrap: "wrap", gap: 8 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+                {meetsRatingThreshold && expert.rating && (
                   <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
                     <FilledStar size={13} />
                     <span style={{ fontSize: 12, fontWeight: 600, color: C.gray700 }}>{expert.rating}</span>
                     <span style={{ fontSize: 11, color: C.gray400 }}>({expert.reviewCount})</span>
                   </div>
                 )}
-                {expert.hourlyRate && (
-                  <span style={{ fontSize: 12, color: C.gray500, fontWeight: 500 }}>{expert.hourlyRate}/hr</span>
+                {meetsConsultationThreshold && expert.consultations && (
+                  <span style={{ fontSize: 11, color: C.gray600, fontWeight: 500 }}>{expert.consultations} consultations on OnFrontiers</span>
                 )}
               </div>
-              <div style={{ display: "flex", gap: 8 }}>
-                <button onClick={e => { e.stopPropagation(); onClickProfile(expert); }} style={{
-                  background: "white", border: `1.5px solid ${C.gray300}`, color: C.gray700,
-                  borderRadius: 8, padding: "8px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer",
-                }}>View Profile</button>
-                <button onClick={e => { e.stopPropagation(); }} style={{
-                  background: C.teal, border: "none", color: C.white,
-                  borderRadius: 8, padding: "8px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer",
-                }}>Request Introduction</button>
-              </div>
+              <button onClick={e => { e.stopPropagation(); }} style={{
+                background: "white", border: `1.5px solid ${C.gray300}`, color: C.gray700,
+                borderRadius: 8, padding: "8px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer",
+              }}>Request Consultation</button>
             </div>
           ) : (
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 12 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: C.teal, fontWeight: 500 }}>
                 <LockFilled size={12} color={C.teal} />
-                Create a free account to see full match details
+                Sign up to unlock
               </div>
               <button onClick={e => { e.stopPropagation(); onSignup && onSignup(expert); }} style={{
                 background: "white", border: `1.5px solid ${C.teal}`, color: C.teal,
