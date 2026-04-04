@@ -1067,7 +1067,507 @@ function ExpertProfilePage({ expert, onBack, onSignup, onCreateAccount, resultPo
 }
 
 // ═══════════════════════════════════════════════════════════
-// NON-OPPORTUNITY QUERY CONFIRMATION
+// UNIFIED OPPORTUNITY CONFIRMATION CARD
+// One component, one data structure, three pre-fill levels:
+//   "pre-enriched" — from opportunity landing page (all fields filled, instant)
+//   "enriched"     — from search box, detected as opportunity (GovTribe fill, medium reveal)
+//   "inferred"     — from search box, free text (AI-inferred sparse fields, slow reveal)
+// ═══════════════════════════════════════════════════════════
+
+function OpportunityConfirmationCard({ query, opportunity, source = "inferred", onConfirm, onBack }) {
+  // Build initial opportunity data based on source / pre-fill level
+  const buildInitialData = () => {
+    if (source === "pre-enriched" && opportunity) {
+      return {
+        title: opportunity.title || "",
+        agency: opportunity.agency || "",
+        subAgency: opportunity.subAgency || "",
+        solicitation: opportunity.solicitation || "",
+        naics: opportunity.naics || "",
+        status: opportunity.status || "",
+        estimatedValue: opportunity.estimatedValue || "",
+        responseDeadline: opportunity.responseDeadline || "",
+        incumbent: "",
+        setAside: "",
+        contractType: "",
+        popStart: "",
+        domain: opportunity.domain || "",
+      };
+    }
+    if (source === "enriched") {
+      const opp = ENRICHED_OPP;
+      return {
+        title: opp.title, agency: opp.agency, subAgency: opp.subAgency,
+        solicitation: opp.solicitationNum, naics: opp.naics, status: opp.status,
+        estimatedValue: opp.value, responseDeadline: "", incumbent: opp.incumbent,
+        setAside: opp.setAside, contractType: opp.contractType, popStart: opp.popStart,
+        domain: "",
+      };
+    }
+    // "inferred" — sparse AI inference from free text query
+    const l = (query || "").toLowerCase();
+    return {
+      title: query && query.length > 60 ? query.substring(0, 60) + "..." : (query || ""),
+      agency: l.includes("va") || l.includes("veteran") ? "Department of Veterans Affairs"
+        : l.includes("dhs") ? "Department of Homeland Security"
+        : l.includes("dod") || l.includes("defense") ? "Department of Defense"
+        : l.includes("navy") || l.includes("navwar") ? "Department of the Navy" : "",
+      subAgency: "",
+      solicitation: "",
+      naics: "",
+      status: "",
+      estimatedValue: "",
+      responseDeadline: "",
+      incumbent: "",
+      setAside: "",
+      contractType: "",
+      popStart: "",
+      domain: l.includes("cyber") ? "Cybersecurity" : l.includes("health") ? "Health IT"
+        : l.includes("cloud") ? "Cloud & Infrastructure" : l.includes("data") ? "Data Analytics" : "",
+    };
+  };
+
+  const [oppData, setOppData] = useState(buildInitialData);
+  const [editingField, setEditingField] = useState(null);
+
+  // Customer angle state
+  const [selectedRoles, setSelectedRoles] = useState(source === "pre-enriched" ? ["Program SME"] : ["Agency SME"]);
+  const [selectedPriorities, setSelectedPriorities] = useState(source === "pre-enriched" ? ["Agency Relationships"] : []);
+  const [selectedServices, setSelectedServices] = useState(["Intelligence Briefing"]);
+  const [stage, setStage] = useState(source === "enriched" ? ENRICHED_OPP.stage : "");
+  const [urgency, setUrgency] = useState("standard");
+
+  // Intelligence section
+  const [showIntelSection, setShowIntelSection] = useState(false);
+  const [competitors, setCompetitors] = useState([""]);
+  const [strategyNotes, setStrategyNotes] = useState("");
+  const [focusNotes, setFocusNotes] = useState("");
+
+  // AI summary
+  const [showSummary, setShowSummary] = useState(false);
+  const aiSummary = source === "enriched" ? ENRICHED_OPP.aiSummary
+    : `Based on your query, you appear to be looking for expertise related to ${oppData.domain || "federal contracting"} ${oppData.agency ? "within " + oppData.agency : "within the federal government"}. This type of engagement typically involves subject matter experts who can provide strategic guidance, technical reviews, or intelligence briefings on ${oppData.title.toLowerCase().replace("...", "")}. We'll match experts based on relevant agency experience, domain expertise, and the specific service types you select below.`;
+
+  // Progressive reveal — speed depends on source
+  const [loadPhase, setLoadPhase] = useState(source === "pre-enriched" ? 4 : 0);
+  useEffect(() => {
+    if (source === "pre-enriched") return; // All phases instant
+    const timings = source === "enriched"
+      ? [300, 700, 1100, 1400]    // Medium speed — data already fetched
+      : [300, 800, 1300, 1700];   // Slower — AI inference reveal
+    const timers = timings.map((t, i) => setTimeout(() => setLoadPhase(i + 1), t));
+    return () => timers.forEach(clearTimeout);
+  }, [source]);
+
+  // Source badge config
+  const sourceConfig = {
+    "pre-enriched": { label: "Pre-enriched", color: C.green, icon: "check" },
+    "enriched":     { label: source === "enriched" ? "GovTribe" : "Enriched", color: C.purple, icon: "check" },
+    "inferred":     { label: "AI-inferred", color: C.orange, icon: "zap" },
+  }[source];
+
+  // Constants
+  const roles = ["Agency SME", "Program SME", "Technical SME", "Contractor SME", "Acquisition SME", "Capture Manager", "Proposal Manager", "Proposal Writer", "Solution Architect", "Pricing Expert"];
+  const priorities = ["Agency Relationships", "Domain Depth", "Clearance Level", "Incumbent Knowledge", "Panel Review Experience", "Teaming Connections", "Technical Currency", "Proposal Win Rate"];
+  const services = ["Intelligence Briefing", "Black Hat Review", "Technical Review", "Proposal Review", "Strategy Session", "Capture Planning", "Price-to-Win Analysis", "Customer Engagement Prep"];
+  const suggestedServices = [
+    { name: "Agency Intelligence Briefing", desc: `60-min deep-dive on ${oppData.agency || "agency"} priorities and buying patterns`, icon: "building" },
+    { name: "Black Hat Review", desc: "Competitive analysis against likely incumbent and challengers", icon: "shield" },
+    { name: "Technical Review Session", desc: `${oppData.domain || "Domain"} architecture review with subject matter expert`, icon: "zap" },
+  ];
+
+  const toggleItem = (item, list, setter) => {
+    setter(prev => prev.includes(item) ? prev.filter(x => x !== item) : [...prev, item]);
+  };
+
+  const updateField = (key, value) => setOppData(prev => ({ ...prev, [key]: value }));
+
+  // Skeleton placeholder
+  const Skeleton = ({ width, height = 14, style: sx }) => (
+    <div style={{ width, height, borderRadius: 4, background: `linear-gradient(90deg, ${C.gray100} 25%, ${C.gray200} 50%, ${C.gray100} 75%)`, backgroundSize: "200% 100%", animation: "shimmer 1.5s infinite", ...sx }} />
+  );
+
+  // Editable field — works for all sources, shows placeholder for empty
+  const EditableField = ({ fieldKey, label, span2 }) => {
+    const isEditing = editingField === fieldKey;
+    const val = oppData[fieldKey];
+    const isEmpty = !val || val.trim() === "";
+    return (
+      <div style={{ gridColumn: span2 ? "1 / -1" : "auto" }}>
+        <div style={{ fontSize: 11, fontWeight: 600, color: C.gray400, textTransform: "uppercase", letterSpacing: 0.5 }}>{label}</div>
+        {isEditing ? (
+          <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 2 }}>
+            <input autoFocus value={val}
+              onChange={e => updateField(fieldKey, e.target.value)}
+              onKeyDown={e => { if (e.key === "Enter") setEditingField(null); if (e.key === "Escape") setEditingField(null); }}
+              onBlur={() => setEditingField(null)}
+              placeholder={`Enter ${label.toLowerCase()}...`}
+              style={{ fontSize: 13, fontWeight: 500, color: C.gray700, border: `1.5px solid ${C.teal}`, borderRadius: 4, padding: "2px 6px", outline: "none", width: "100%", fontFamily: "inherit" }}
+            />
+          </div>
+        ) : (
+          <div onClick={() => setEditingField(fieldKey)}
+            style={{ fontSize: 13, fontWeight: 500, color: isEmpty ? C.gray400 : C.gray700, marginTop: 2, cursor: "pointer", padding: "2px 0", borderBottom: "1px dashed transparent", display: "flex", alignItems: "center", gap: 4 }}
+            onMouseEnter={e => e.currentTarget.style.borderBottomColor = C.gray300}
+            onMouseLeave={e => e.currentTarget.style.borderBottomColor = "transparent"}
+          >
+            {isEmpty ? `Click to set ${label.toLowerCase()}` : val}
+            <Icon name="edit" size={10} color={C.gray300} style={{ opacity: 0.5, flexShrink: 0 }} />
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <div style={{ background: C.white, borderRadius: 16, border: `1px solid ${C.gray200}`, padding: "28px 32px", maxWidth: 720, width: "100%", boxShadow: "0 4px 24px rgba(0,0,0,0.06)" }}>
+      <style>{`@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }`}</style>
+
+      {/* ── HEADER: provenance badge + source indicator ── */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <Icon name={sourceConfig.icon} size={18} color={sourceConfig.color} />
+          <span style={{ fontSize: 13, fontWeight: 600, color: sourceConfig.color }}>
+            {source === "pre-enriched" ? "Opportunity loaded" : source === "enriched" ? "Opportunity enriched" : "Here's what we understood — adjust anything that's off"}
+          </span>
+          <div style={{ padding: "2px 8px", borderRadius: 4, background: `${sourceConfig.color}10`, fontSize: 11, fontWeight: 600, color: sourceConfig.color, marginLeft: 4 }}>
+            {sourceConfig.label}
+          </div>
+        </div>
+        {oppData.solicitation && (
+          <span style={{ fontSize: 11, color: C.gray400, fontFamily: "monospace" }}>{oppData.solicitation}</span>
+        )}
+      </div>
+
+      {/* ── TITLE — editable ── */}
+      <div style={{ marginBottom: 4 }}>
+        {editingField === "title" ? (
+          <input autoFocus value={oppData.title}
+            onChange={e => updateField("title", e.target.value)}
+            onKeyDown={e => { if (e.key === "Enter" || e.key === "Escape") setEditingField(null); }}
+            onBlur={() => setEditingField(null)}
+            style={{ fontSize: 20, fontWeight: 700, color: C.gray900, border: `1.5px solid ${C.teal}`, borderRadius: 6, padding: "4px 8px", outline: "none", width: "100%", fontFamily: "inherit" }}
+          />
+        ) : (
+          <h2 onClick={() => setEditingField("title")}
+            style={{ fontSize: 20, fontWeight: 700, color: oppData.title ? C.gray900 : C.gray400, margin: 0, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6 }}
+            onMouseEnter={e => { const h = e.currentTarget.querySelector('.edit-hint'); if (h) h.style.opacity = 0.6; }}
+            onMouseLeave={e => { const h = e.currentTarget.querySelector('.edit-hint'); if (h) h.style.opacity = 0; }}
+          >
+            {oppData.title || "Click to set opportunity title"}
+            <span className="edit-hint" style={{ opacity: 0, transition: "opacity 0.15s" }}><Icon name="edit" size={12} color={C.gray400} /></span>
+          </h2>
+        )}
+      </div>
+      {(oppData.agency || oppData.subAgency) && (
+        <p style={{ fontSize: 14, color: C.gray500, margin: "0 0 16px" }}>
+          {[oppData.agency, oppData.subAgency].filter(Boolean).join(" — ")}
+        </p>
+      )}
+
+      {/* ── OPPORTUNITY DETAILS GRID — phase 1, all editable ── */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 24px", marginBottom: 20, transition: "opacity 0.4s ease", opacity: loadPhase >= 1 ? 1 : 0.3 }}>
+        {loadPhase >= 1 ? (
+          <>
+            <EditableField fieldKey="status" label="Status" />
+            <EditableField fieldKey="estimatedValue" label="Est. Value" />
+            <EditableField fieldKey="naics" label="NAICS" />
+            <EditableField fieldKey="setAside" label="Set-Aside" />
+            <EditableField fieldKey="contractType" label="Contract Type" />
+            <EditableField fieldKey="popStart" label="Period of Performance" />
+            <EditableField fieldKey="incumbent" label="Incumbent" span2 />
+          </>
+        ) : (
+          <>
+            {[1,2,3,4,5,6].map(i => (
+              <div key={i}>
+                <Skeleton width="40%" height={10} style={{ marginBottom: 4 }} />
+                <Skeleton width="70%" style={{ marginTop: 4 }} />
+              </div>
+            ))}
+            <div style={{ gridColumn: "1 / -1" }}>
+              <Skeleton width="30%" height={10} style={{ marginBottom: 4 }} />
+              <Skeleton width="85%" style={{ marginTop: 4 }} />
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* ── AI ANALYSIS — phase 2, collapsible ── */}
+      <div style={{ transition: "opacity 0.4s ease", opacity: loadPhase >= 2 ? 1 : 0.3 }}>
+        <div style={{ marginBottom: 16 }}>
+          <button onClick={() => loadPhase >= 2 && setShowSummary(!showSummary)} style={{
+            display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "12px 16px",
+            background: showSummary ? `${sourceConfig.color}06` : C.gray50,
+            borderRadius: showSummary ? "10px 10px 0 0" : 10,
+            border: `1px solid ${showSummary ? `${sourceConfig.color}20` : C.gray200}`,
+            cursor: loadPhase >= 2 ? "pointer" : "default", transition: "all 0.2s ease",
+          }}>
+            <Icon name="zap" size={16} color={sourceConfig.color} />
+            <span style={{ fontSize: 13, fontWeight: 600, color: C.gray700, flex: 1, textAlign: "left" }}>AI Opportunity Analysis</span>
+            <span style={{ fontSize: 11, color: C.gray400, marginRight: 4 }}>
+              {source === "enriched" ? "Based on GovTribe data" : source === "pre-enriched" ? "From opportunity catalog" : "Generated from your input"}
+            </span>
+            <Icon name={showSummary ? "chevDown" : "chevRight"} size={14} color={C.gray400} />
+          </button>
+          {showSummary && loadPhase >= 2 && (
+            <div style={{ padding: "16px", background: C.gray50, borderRadius: "0 0 10px 10px", border: `1px solid ${C.gray200}`, borderTop: "none" }}>
+              <p style={{ fontSize: 13, color: C.gray600, lineHeight: 1.65, margin: 0 }}>{aiSummary}</p>
+              <div style={{ marginTop: 12, display: "flex", alignItems: "center", gap: 8 }}>
+                <div style={{ padding: "2px 8px", borderRadius: 4, background: `${sourceConfig.color}10`, fontSize: 10, fontWeight: 600, color: sourceConfig.color }}>
+                  Source: {sourceConfig.label}
+                </div>
+                <span style={{ fontSize: 10, color: C.gray400 }}>AI summary may contain inaccuracies — verify critical details</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* ── PIPELINE STAGE — phase 2 ── */}
+        <div style={{ marginBottom: 20 }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: C.gray400, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>Your Pipeline Stage</div>
+          {loadPhase >= 2 ? (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              {STAGES.map(s => (
+                <button key={s} onClick={() => setStage(s)} style={{
+                  padding: "5px 12px", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer",
+                  border: `1.5px solid ${stage === s ? C.teal : C.gray200}`,
+                  background: stage === s ? `${C.teal}08` : "white",
+                  color: stage === s ? C.teal : C.gray500,
+                }}>{s}</button>
+              ))}
+            </div>
+          ) : (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              {[80, 120, 100, 130, 90].map((w, i) => <Skeleton key={i} width={w} height={28} style={{ borderRadius: 6 }} />)}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ── CUSTOMER ANGLE — phase 3: roles, priorities, services ── */}
+      <div style={{ transition: "opacity 0.4s ease", opacity: loadPhase >= 3 ? 1 : 0.3 }}>
+        <div style={{ height: 1, background: C.gray200, margin: "0 0 20px" }} />
+        <h3 style={{ fontSize: 16, fontWeight: 700, color: C.gray900, margin: "0 0 4px" }}>Your Search Criteria</h3>
+        <p style={{ fontSize: 12, color: C.gray500, margin: "0 0 16px" }}>
+          {source === "pre-enriched" && opportunity?.preMatchedCount
+            ? `We have ${opportunity.preMatchedCount} pre-matched experts. Tell us your angle so we can rank them for your needs.`
+            : "Tell us what you need so we can match the best experts."}
+        </p>
+
+        {/* Expert roles */}
+        <div style={{ marginBottom: 18 }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: C.gray400, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>What type of expert do you need?</div>
+          {loadPhase >= 3 ? (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              {roles.map(role => (
+                <button key={role} onClick={() => toggleItem(role, selectedRoles, setSelectedRoles)} style={{
+                  padding: "5px 12px", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer",
+                  border: `1.5px solid ${selectedRoles.includes(role) ? C.teal : C.gray200}`,
+                  background: selectedRoles.includes(role) ? `${C.teal}08` : "white",
+                  color: selectedRoles.includes(role) ? C.teal : C.gray500,
+                }}>{role}</button>
+              ))}
+            </div>
+          ) : (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              {[70, 85, 95, 100, 90, 80].map((w, i) => <Skeleton key={i} width={w} height={28} style={{ borderRadius: 6 }} />)}
+            </div>
+          )}
+        </div>
+
+        {/* Priorities */}
+        <div style={{ marginBottom: 18 }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: C.gray400, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>What matters most? <span style={{ fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>(pick 1-2)</span></div>
+          {loadPhase >= 3 ? (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              {priorities.map(p => (
+                <button key={p} onClick={() => toggleItem(p, selectedPriorities, setSelectedPriorities)} style={{
+                  padding: "5px 12px", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer",
+                  border: `1.5px solid ${selectedPriorities.includes(p) ? C.blue : C.gray200}`,
+                  background: selectedPriorities.includes(p) ? `${C.blue}08` : "white",
+                  color: selectedPriorities.includes(p) ? C.blue : C.gray500,
+                }}>{p}</button>
+              ))}
+            </div>
+          ) : (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              {[100, 80, 90, 110, 85, 95].map((w, i) => <Skeleton key={i} width={w} height={28} style={{ borderRadius: 6 }} />)}
+            </div>
+          )}
+        </div>
+
+        {/* Services */}
+        <div style={{ marginBottom: 18 }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: C.gray400, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>What service do you need?</div>
+          {loadPhase >= 3 ? (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              {services.map(svc => (
+                <button key={svc} onClick={() => toggleItem(svc, selectedServices, setSelectedServices)} style={{
+                  padding: "5px 12px", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer",
+                  border: `1.5px solid ${selectedServices.includes(svc) ? C.purple : C.gray200}`,
+                  background: selectedServices.includes(svc) ? `${C.purple}08` : "white",
+                  color: selectedServices.includes(svc) ? C.purple : C.gray500,
+                }}>{svc}</button>
+              ))}
+            </div>
+          ) : (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              {[110, 90, 100, 85, 95].map((w, i) => <Skeleton key={i} width={w} height={28} style={{ borderRadius: 6 }} />)}
+            </div>
+          )}
+        </div>
+
+        {/* Timeline / Urgency */}
+        <div style={{ marginBottom: 18 }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: C.gray400, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>Timeline</div>
+          {loadPhase >= 3 ? (
+            <div style={{ display: "flex", gap: 8 }}>
+              {[
+                { key: "urgent", label: "Urgent (48hrs)", color: C.red },
+                { key: "standard", label: "Standard (1 week)", color: C.teal },
+                { key: "flexible", label: "Flexible", color: C.gray500 },
+              ].map(t => (
+                <button key={t.key} onClick={() => setUrgency(t.key)} style={{
+                  padding: "8px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer",
+                  border: `1.5px solid ${urgency === t.key ? t.color : C.gray200}`,
+                  background: urgency === t.key ? `${t.color}08` : "white",
+                  color: urgency === t.key ? t.color : C.gray500,
+                }}>{t.label}</button>
+              ))}
+            </div>
+          ) : (
+            <div style={{ display: "flex", gap: 8 }}>
+              {[120, 130, 80].map((w, i) => <Skeleton key={i} width={w} height={36} style={{ borderRadius: 8 }} />)}
+            </div>
+          )}
+        </div>
+
+        {/* Recommended Services — only for enriched / pre-enriched */}
+        {source !== "inferred" && loadPhase >= 3 && (
+          <div style={{ marginBottom: 18 }}>
+            <div style={{ fontSize: 11, fontWeight: 600, color: C.gray400, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>Recommended Services</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {suggestedServices.map(svc => (
+                <div key={svc.name} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 14px", background: C.gray50, borderRadius: 8, border: `1px solid ${C.gray200}` }}>
+                  <Icon name={svc.icon} size={18} color={C.teal} />
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: C.gray800 }}>{svc.name}</div>
+                    <div style={{ fontSize: 12, color: C.gray500 }}>{svc.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ── YOUR INTELLIGENCE — phase 4: expandable section ── */}
+      <div style={{ transition: "opacity 0.4s ease, transform 0.4s ease", opacity: loadPhase >= 4 ? 1 : 0, transform: loadPhase >= 4 ? "translateY(0)" : "translateY(8px)" }}>
+        {!showIntelSection ? (
+          <button onClick={() => setShowIntelSection(true)} style={{
+            display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "12px 16px",
+            background: C.white, borderRadius: 10, border: `1.5px dashed ${C.teal}40`, cursor: "pointer",
+            marginBottom: 16, transition: "all 0.15s",
+          }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = C.teal; e.currentTarget.style.background = `${C.teal}04`; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = `${C.teal}40`; e.currentTarget.style.background = C.white; }}
+          >
+            <div style={{ width: 28, height: 28, borderRadius: "50%", background: `${C.teal}10`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <span style={{ fontSize: 16, lineHeight: 1 }}>+</span>
+            </div>
+            <div style={{ textAlign: "left" }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: C.gray800 }}>Add what you know</div>
+              <div style={{ fontSize: 11, color: C.gray500 }}>Competitors, strategy notes, focus areas — your intel improves matching</div>
+            </div>
+          </button>
+        ) : (
+          <div style={{ padding: "16px 20px", background: `${C.teal}04`, borderRadius: 12, border: `1px solid ${C.teal}20`, marginBottom: 16 }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <Icon name="shield" size={16} color={C.teal} />
+                <span style={{ fontSize: 13, fontWeight: 600, color: C.gray800 }}>Your Intelligence</span>
+              </div>
+              <span style={{ fontSize: 10, color: C.gray400, display: "flex", alignItems: "center", gap: 4 }}>
+                <Icon name="lock" size={10} color={C.gray400} /> Private to your account
+              </span>
+            </div>
+
+            {/* Known competitors */}
+            <div style={{ marginBottom: 14 }}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: C.gray500, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}>Known / Expected Competitors</div>
+              {competitors.map((comp, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                  <input
+                    placeholder={i === 0 ? "e.g., SAIC, Booz Allen Hamilton..." : "Add another competitor..."}
+                    value={comp}
+                    onChange={e => { const n = [...competitors]; n[i] = e.target.value; setCompetitors(n); }}
+                    onKeyDown={e => { if (e.key === "Enter" && comp.trim()) setCompetitors([...competitors, ""]); }}
+                    style={{ flex: 1, fontSize: 13, color: C.gray700, border: `1px solid ${C.gray200}`, borderRadius: 6, padding: "6px 10px", outline: "none", fontFamily: "inherit", background: C.white }}
+                  />
+                  {competitors.length > 1 && (
+                    <button onClick={() => setCompetitors(competitors.filter((_, j) => j !== i))} style={{ background: "none", border: "none", cursor: "pointer", padding: 2 }}>
+                      <Icon name="x" size={14} color={C.gray400} />
+                    </button>
+                  )}
+                </div>
+              ))}
+              {competitors[competitors.length - 1]?.trim() && (
+                <button onClick={() => setCompetitors([...competitors, ""])} style={{ background: "none", border: "none", color: C.teal, fontSize: 12, fontWeight: 600, cursor: "pointer", padding: "4px 0", display: "flex", alignItems: "center", gap: 4 }}>
+                  + Add competitor
+                </button>
+              )}
+            </div>
+
+            {/* Focus / specific angle */}
+            <div style={{ marginBottom: 14 }}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: C.gray500, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}>Specific Focus <span style={{ fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>(optional)</span></div>
+              <textarea
+                placeholder="E.g., 'We're teaming with Raytheon on the cyber piece' or 'Need someone who's worked the AFRL TPOC'..."
+                value={focusNotes}
+                onChange={e => setFocusNotes(e.target.value)}
+                rows={2}
+                style={{ width: "100%", fontSize: 13, color: C.gray700, border: `1px solid ${C.gray200}`, borderRadius: 6, padding: "8px 10px", outline: "none", fontFamily: "inherit", resize: "vertical", background: C.white, boxSizing: "border-box" }}
+              />
+            </div>
+
+            {/* Strategy notes */}
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 600, color: C.gray500, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}>Strategy Notes</div>
+              <textarea
+                placeholder="Add insider knowledge, win themes, team strategy, or anything that will help us find the right experts..."
+                value={strategyNotes}
+                onChange={e => setStrategyNotes(e.target.value)}
+                rows={2}
+                style={{ width: "100%", fontSize: 13, color: C.gray700, border: `1px solid ${C.gray200}`, borderRadius: 6, padding: "8px 10px", outline: "none", fontFamily: "inherit", resize: "vertical", background: C.white, boxSizing: "border-box" }}
+              />
+            </div>
+
+            <div style={{ marginTop: 10, fontSize: 11, color: C.gray400, lineHeight: 1.4 }}>
+              This information improves expert matching and is saved to your opportunity record for future searches.
+            </div>
+          </div>
+        )}
+
+        {/* ── CTA ── */}
+        <div style={{ display: "flex", gap: 12 }}>
+          {onBack && (
+            <button onClick={onBack} style={{ flex: 0, padding: "12px 20px", background: C.white, color: C.gray600, border: `1px solid ${C.gray200}`, borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: "pointer" }}>
+              Back
+            </button>
+          )}
+          <button onClick={onConfirm} style={{ flex: 1, padding: "12px", background: C.teal, color: C.white, border: "none", borderRadius: 10, fontSize: 15, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+            {source === "pre-enriched" ? "View Matched Experts" : "Find Experts"}
+            <Icon name="arrowRight" size={18} color={C.white} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+// LEGACY ALIASES (preserved during transition — delete after full migration)
 // ═══════════════════════════════════════════════════════════
 
 function QueryConfirmationCard({ query, onConfirm, onBack }) {
@@ -2962,12 +3462,13 @@ function ResultsPage({ query, isOpportunity, onBack, onViewProfile, onSignup, us
 
         {showEnrichment ? (
           <div style={{ marginBottom: 24, display: "flex", justifyContent: "center" }}>
-            {fromOpportunity
-              ? <OpportunityCustomizeCard opportunity={opportunity} onViewResults={() => setShowEnrichment(false)} />
-              : isOpportunity
-                ? <EnrichmentCard onViewResults={() => setShowEnrichment(false)} />
-                : <QueryConfirmationCard query={query} onConfirm={() => setShowEnrichment(false)} onBack={onBack} />
-            }
+            <OpportunityConfirmationCard
+              query={query}
+              opportunity={opportunity}
+              source={fromOpportunity ? "pre-enriched" : isOpportunity ? "enriched" : "inferred"}
+              onConfirm={() => setShowEnrichment(false)}
+              onBack={!fromOpportunity && !isOpportunity ? onBack : null}
+            />
           </div>
         ) : (
           <>
