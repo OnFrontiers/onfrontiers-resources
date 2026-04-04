@@ -653,12 +653,13 @@ function SignupModal({ onClose, onSignup, onCreateAccount, expertContext, userTi
 // EXPERT PROFILE PAGE (Visitor — blurred with signup gate)
 // ═══════════════════════════════════════════════════════════
 
-function ExpertProfilePage({ expert, onBack, onSignup, onCreateAccount, resultPosition, totalResults, userTier = "anonymous", userInfo, query = "", isOpportunity = false, onNavigateExpert }) {
+function ExpertProfilePage({ expert, onBack, onSignup, onCreateAccount, resultPosition, totalResults, userTier = "anonymous", userInfo, query = "", isOpportunity = false, onNavigateExpert, isShortlisted = false, onToggleShortlist = null }) {
   const [showSignup, setShowSignup] = useState(false);
   const isFreeAccount = userTier === "free-account";
   const meetsRatingThreshold = expert.reviewCount >= 3;
   const meetsConsultationThreshold = expert.consultations >= 5;
   const hasTestimonials = expert.testimonials && expert.testimonials.length > 0;
+  const canShortlist = userTier !== "anonymous";
 
   const opp = ENRICHED_OPP;
   const searchLabel = isOpportunity
@@ -699,9 +700,29 @@ function ExpertProfilePage({ expert, onBack, onSignup, onCreateAccount, resultPo
           <span style={{ fontSize: 11, color: C.gray400, fontWeight: 500, whiteSpace: "nowrap" }}>Expert {resultPosition} of {totalResults}</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
-          {isFreeAccount && (
-            <button style={{ display: "flex", alignItems: "center", gap: 5, padding: "6px 12px", borderRadius: 6, border: `1px solid ${C.gray200}`, background: C.white, color: C.gray600, fontSize: 12, fontWeight: 500, cursor: "pointer", whiteSpace: "nowrap" }}>
-              <Icon name="star" size={13} color={C.gray400} /> Save to shortlist
+          {canShortlist && (
+            <button
+              onClick={() => onToggleShortlist && onToggleShortlist(expert)}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 5,
+                padding: "6px 12px",
+                borderRadius: 6,
+                border: `1.5px solid ${isShortlisted ? C.amber : C.gray200}`,
+                background: isShortlisted ? `${C.amber}10` : C.white,
+                color: isShortlisted ? C.amber : C.gray600,
+                fontSize: 12,
+                fontWeight: 500,
+                cursor: "pointer",
+                whiteSpace: "nowrap",
+                transition: "all 0.15s",
+              }}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill={isShortlisted ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+              </svg>
+              {isShortlisted ? "Saved to shortlist" : "Save to shortlist"}
             </button>
           )}
           <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
@@ -2036,11 +2057,12 @@ function QueryProcessingScreen({ query, isOpportunity, onComplete, requiresEmail
 // EXPERT CARD (Visitor — anonymous per Display Explorer)
 // ═══════════════════════════════════════════════════════════
 
-function VisitorExpertCard({ expert, rank, onClickProfile, onSignup, userTier = "anonymous" }) {
+function VisitorExpertCard({ expert, rank, onClickProfile, onSignup, userTier = "anonymous", isShortlisted = false, onToggleShortlist = null }) {
   const isFreeAccount = userTier === "free-account";
   const isAnonymous = userTier === "anonymous";
   const meetsRatingThreshold = expert.reviewCount >= 3;
   const meetsConsultationThreshold = expert.consultations >= 5;
+  const canShortlist = userTier !== "anonymous";
 
   return (
     <div style={{ background: C.white, borderRadius: 12, border: `1px solid ${C.gray200}`, padding: "20px 24px", transition: "box-shadow 0.15s", cursor: "pointer" }}
@@ -2162,10 +2184,51 @@ function VisitorExpertCard({ expert, rank, onClickProfile, onSignup, userTier = 
                   <span style={{ fontSize: 11, color: C.gray600, fontWeight: 500 }}>{expert.consultations} consultations on OnFrontiers</span>
                 )}
               </div>
-              <button onClick={e => { e.stopPropagation(); }} style={{
-                background: "white", border: `1.5px solid ${C.gray300}`, color: C.gray700,
-                borderRadius: 8, padding: "8px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer",
-              }}>Request Consultation</button>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                {canShortlist && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onToggleShortlist && onToggleShortlist(expert);
+                    }}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: 32,
+                      height: 32,
+                      borderRadius: 6,
+                      background: isShortlisted ? C.amber : "white",
+                      border: `1.5px solid ${isShortlisted ? C.amber : C.gray300}`,
+                      color: isShortlisted ? C.white : C.gray400,
+                      cursor: "pointer",
+                      transition: "all 0.15s",
+                    }}
+                    title={isShortlisted ? "Remove from shortlist" : "Add to shortlist"}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill={isShortlisted ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                    </svg>
+                  </button>
+                )}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                  style={{
+                    background: "white",
+                    border: `1.5px solid ${C.gray300}`,
+                    color: C.gray700,
+                    borderRadius: 8,
+                    padding: "8px 16px",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                  }}
+                >
+                  Request Consultation
+                </button>
+              </div>
             </div>
           ) : (
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 12 }}>
@@ -2173,10 +2236,50 @@ function VisitorExpertCard({ expert, rank, onClickProfile, onSignup, userTier = 
                 <LockFilled size={12} color={C.teal} />
                 Sign up to unlock
               </div>
-              <button onClick={e => { e.stopPropagation(); onSignup && onSignup(expert); }} style={{
-                background: "white", border: `1.5px solid ${C.teal}`, color: C.teal,
-                borderRadius: 8, padding: "8px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer",
-              }}>Sign Up to Connect</button>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSignup && onSignup(expert);
+                  }}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: 32,
+                    height: 32,
+                    borderRadius: 6,
+                    background: "white",
+                    border: `1.5px solid ${C.teal}30`,
+                    color: C.gray400,
+                    cursor: "pointer",
+                    transition: "all 0.15s",
+                  }}
+                  title="Sign up to save"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                  </svg>
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSignup && onSignup(expert);
+                  }}
+                  style={{
+                    background: "white",
+                    border: `1.5px solid ${C.teal}`,
+                    color: C.teal,
+                    borderRadius: 8,
+                    padding: "8px 16px",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                  }}
+                >
+                  Sign Up to Connect
+                </button>
+              </div>
             </div>
           )}
         </div>
@@ -2189,7 +2292,7 @@ function VisitorExpertCard({ expert, rank, onClickProfile, onSignup, userTier = 
 // HOMEPAGE
 // ═══════════════════════════════════════════════════════════
 
-function Homepage({ onSearch }) {
+function Homepage({ onSearch, onViewSharedShortlist }) {
   const [inputValue, setInputValue] = useState("");
   const [inputFocused, setInputFocused] = useState(false);
 
@@ -2268,6 +2371,28 @@ function Homepage({ onSearch }) {
             >{pill.label}</button>
           ))}
         </div>
+
+        {/* Demo link */}
+        <div style={{ marginTop: 16, position: "relative", zIndex: 3 }}>
+          <button
+            onClick={onViewSharedShortlist}
+            style={{
+              padding: "0",
+              border: "none",
+              background: "transparent",
+              color: C.tealLight,
+              fontSize: 12,
+              fontWeight: 500,
+              cursor: "pointer",
+              textDecoration: "underline",
+              transition: "opacity 0.15s",
+            }}
+            onMouseEnter={(e) => (e.target.style.opacity = "0.7")}
+            onMouseLeave={(e) => (e.target.style.opacity = "1")}
+          >
+            View shared shortlist demo →
+          </button>
+        </div>
       </div>
 
       {/* Trusted By + GovTribe + Stats + Testimonial + Footer */}
@@ -2337,7 +2462,7 @@ function Homepage({ onSearch }) {
 // RESULTS PAGE
 // ═══════════════════════════════════════════════════════════
 
-function ResultsPage({ query, isOpportunity, onBack, onViewProfile, onSignup, userTier = "anonymous" }) {
+function ResultsPage({ query, isOpportunity, onBack, onViewProfile, onSignup, userTier = "anonymous", shortlist = [], onToggleShortlist = null, isInShortlist = null, onToggleShortlistPanel = null, onOpenShareModal = null }) {
   const [showEnrichment, setShowEnrichment] = useState(true);
   const [unblurAnimating, setUnblurAnimating] = useState(false);
   const prevTierRef = useRef(userTier);
@@ -2381,6 +2506,47 @@ function ResultsPage({ query, isOpportunity, onBack, onViewProfile, onSignup, us
         </div>
         {isFreeAccount ? (
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <button
+              onClick={onToggleShortlistPanel}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 6,
+                padding: "8px 14px",
+                borderRadius: 6,
+                border: `1px solid ${C.gray200}`,
+                background: C.white,
+                color: C.gray700,
+                fontSize: 13,
+                fontWeight: 600,
+                cursor: "pointer",
+                position: "relative",
+              }}
+            >
+              <Icon name="bookmark" size={14} color={C.gray600} />
+              {shortlist.length > 0 && (
+                <span
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: 16,
+                    height: 16,
+                    borderRadius: "50%",
+                    background: C.teal,
+                    color: C.white,
+                    fontSize: 10,
+                    fontWeight: 700,
+                    position: "absolute",
+                    top: -4,
+                    right: -4,
+                  }}
+                >
+                  {shortlist.length}
+                </span>
+              )}
+            </button>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <div style={{ width: 32, height: 32, borderRadius: "50%", background: `${C.teal}15`, display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <Icon name="user" size={16} color={C.teal} />
@@ -2440,7 +2606,16 @@ function ResultsPage({ query, isOpportunity, onBack, onViewProfile, onSignup, us
             {/* Expert cards */}
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }} className={unblurAnimating ? "unblur-animate" : ""}>
               {EXPERTS.map((expert, i) => (
-                <VisitorExpertCard key={expert.id} expert={expert} rank={i + 1} onClickProfile={onViewProfile} onSignup={(exp) => onSignup(exp)} userTier={userTier} />
+                <VisitorExpertCard
+                  key={expert.id}
+                  expert={expert}
+                  rank={i + 1}
+                  onClickProfile={onViewProfile}
+                  onSignup={(exp) => onSignup(exp)}
+                  userTier={userTier}
+                  isShortlisted={isInShortlist && isInShortlist(expert.id)}
+                  onToggleShortlist={onToggleShortlist}
+                />
               ))}
             </div>
 
@@ -2478,6 +2653,377 @@ function ResultsPage({ query, isOpportunity, onBack, onViewProfile, onSignup, us
 }
 
 // ═══════════════════════════════════════════════════════════
+// SHORTLIST PANEL — Slide-out drawer
+// ═══════════════════════════════════════════════════════════
+
+function ShortlistPanel({ shortlist, isOpen, onClose, onRemove, onViewProfile, userTier = "anonymous", opportunityTitle = null, query = "", onOpenShareModal = null }) {
+  const contextLabel = opportunityTitle || (query.length > 50 ? query.substring(0, 50) + "..." : query);
+  const isEmailCaptured = userTier === "email-captured" || userTier === "free-account";
+  const isTier2Plus = userTier === "free-account";
+
+  return (
+    <>
+      {/* Backdrop */}
+      {isOpen && (
+        <div
+          onClick={onClose}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "rgba(0,0,0,0.3)",
+            zIndex: 998,
+          }}
+        />
+      )}
+
+      {/* Panel */}
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          right: 0,
+          bottom: 0,
+          width: 380,
+          background: C.white,
+          boxShadow: "0 20px 60px rgba(0,0,0,0.15)",
+          zIndex: 999,
+          transform: isOpen ? "translateX(0)" : "translateX(100%)",
+          transition: "transform 0.3s ease-out",
+          overflow: "hidden",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        {/* Header */}
+        <div style={{ borderBottom: `1px solid ${C.gray200}`, padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: C.gray900 }}>Shortlist ({shortlist.length})</h3>
+            {contextLabel && <p style={{ margin: "4px 0 0", fontSize: 12, color: C.gray500, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{contextLabel}</p>}
+          </div>
+          <button onClick={onClose} style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 28, height: 28, background: "none", border: "none", cursor: "pointer", color: C.gray500, padding: 0 }}>
+            <Icon name="x" size={18} color={C.gray500} />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div style={{ flex: 1, overflow: "auto", padding: "16px 20px", display: "flex", flexDirection: "column" }}>
+          {shortlist.length === 0 ? (
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", minHeight: 200 }}>
+              <Icon name="bookmark" size={40} color={C.gray200} style={{ marginBottom: 12 }} />
+              <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: C.gray900, marginBottom: 4 }}>Your shortlist is empty</p>
+              <p style={{ margin: 0, fontSize: 12, color: C.gray500, lineHeight: 1.4 }}>Save experts from the results to compare and share</p>
+            </div>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {shortlist.map((expert) => (
+                <div key={expert.id} style={{ display: "flex", gap: 10, padding: "12px", background: C.gray50, borderRadius: 8, alignItems: "flex-start" }}>
+                  <div
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: "50%",
+                      background: expert.anonymous ? C.gray100 : `linear-gradient(135deg, ${expert.color}, ${expert.color}CC)`,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexShrink: 0,
+                      color: C.white,
+                      fontSize: 13,
+                      fontWeight: 700,
+                      border: expert.anonymous ? `2px dashed ${C.gray300}` : "none",
+                    }}
+                  >
+                    {expert.anonymous ? <Icon name="user" size={18} color={C.gray400} /> : expert.initials}
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0, cursor: "pointer" }} onClick={() => onViewProfile(expert)}>
+                    <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8 }}>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: C.gray900, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{expert.name || expert.genericTitle}</p>
+                        <p style={{ margin: "2px 0 0", fontSize: 11, color: C.gray500, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{expert.genericTitle}</p>
+                      </div>
+                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
+                        <div style={{ width: 32, height: 32, borderRadius: "50%", border: `2px solid ${expert.alignment >= 85 ? C.green : C.tealLight}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, color: expert.alignment >= 85 ? C.green : C.tealLight }}>
+                          {expert.alignment}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => onRemove(expert.id)}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: 24,
+                      height: 24,
+                      background: C.gray100,
+                      border: "none",
+                      borderRadius: 4,
+                      cursor: "pointer",
+                      color: C.gray500,
+                      flexShrink: 0,
+                      transition: "all 0.15s",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = C.red;
+                      e.currentTarget.style.color = C.white;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = C.gray100;
+                      e.currentTarget.style.color = C.gray500;
+                    }}
+                  >
+                    <Icon name="x" size={14} color="currentColor" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div style={{ borderTop: `1px solid ${C.gray200}`, padding: "16px 20px", display: "flex", flexDirection: "column", gap: 12, flexShrink: 0 }}>
+          {!isEmailCaptured && (
+            <div style={{ background: `${C.amber}10`, border: `1px solid ${C.amber}30`, borderRadius: 8, padding: 12 }}>
+              <p style={{ margin: 0, fontSize: 12, fontWeight: 600, color: C.gray900, marginBottom: 8 }}>Create a free account to save your shortlist</p>
+              <p style={{ margin: 0, fontSize: 11, color: C.gray600, lineHeight: 1.4, marginBottom: 8 }}>Sign up to compare experts and share your shortlist with your team.</p>
+            </div>
+          )}
+          {shortlist.length >= 2 && (
+            <button style={{ padding: "10px 16px", borderRadius: 8, border: `1px solid ${C.gray200}`, background: C.white, color: C.gray700, fontSize: 13, fontWeight: 600, cursor: "pointer", transition: "all 0.15s" }} onMouseEnter={(e) => { e.currentTarget.style.background = C.gray50; }} onMouseLeave={(e) => { e.currentTarget.style.background = C.white; }}>
+              Compare Side-by-Side
+            </button>
+          )}
+          {isTier2Plus && shortlist.length > 0 && (
+            <button
+              onClick={onOpenShareModal}
+              style={{ padding: "10px 16px", borderRadius: 8, border: "none", background: C.teal, color: C.white, fontSize: 13, fontWeight: 600, cursor: "pointer" }}
+            >
+              Share Shortlist
+            </button>
+          )}
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+// SHARE SHORTLIST MODAL
+// ═══════════════════════════════════════════════════════════
+
+function ShareShortlistModal({ onClose, shortlist, opportunityTitle = null, query = "", userTier = "free-account" }) {
+  const [includeContext, setIncludeContext] = useState(true);
+  const [emailInvite, setEmailInvite] = useState("");
+  const [inviteRole, setInviteRole] = useState("Can view");
+  const contextLabel = opportunityTitle || (query.length > 50 ? query.substring(0, 50) + "..." : query);
+  const mockUrl = "https://app.onfrontiers.com/shortlist/abc123def456";
+
+  return (
+    <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
+      <div style={{ background: C.white, borderRadius: 12, boxShadow: "0 20px 60px rgba(0,0,0,0.3)", maxWidth: 480, width: "90%", maxHeight: "80vh", overflow: "auto" }}>
+        {/* Header */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "20px 24px", borderBottom: `1px solid ${C.gray200}` }}>
+          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: C.gray900 }}>Share Shortlist</h2>
+          <button onClick={onClose} style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 28, height: 28, background: "none", border: "none", cursor: "pointer", color: C.gray500, padding: 0 }}>
+            <Icon name="x" size={18} color={C.gray500} />
+          </button>
+        </div>
+
+        <div style={{ padding: "24px" }}>
+          {/* Context */}
+          {contextLabel && (
+            <div style={{ marginBottom: 24 }}>
+              <p style={{ margin: 0, fontSize: 12, fontWeight: 600, color: C.gray500, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 4 }}>Sharing</p>
+              <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: C.gray900 }}>{contextLabel}</p>
+              <p style={{ margin: "4px 0 0", fontSize: 12, color: C.gray600 }}>{shortlist.length} expert{shortlist.length !== 1 ? "s" : ""} selected</p>
+            </div>
+          )}
+
+          {/* View-only link section */}
+          <div style={{ marginBottom: 24, paddingBottom: 24, borderBottom: `1px solid ${C.gray200}` }}>
+            <h3 style={{ margin: "0 0 12px", fontSize: 14, fontWeight: 700, color: C.gray900 }}>Share a View-Only Link</h3>
+            <div style={{ background: C.gray50, borderRadius: 8, padding: "12px 14px", display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+              <input type="text" value={mockUrl} readOnly style={{ flex: 1, border: "none", background: "transparent", fontSize: 12, color: C.gray700, fontFamily: "monospace", outline: "none" }} />
+              <button style={{ padding: "6px 12px", borderRadius: 6, background: C.teal, color: C.white, border: "none", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+                Copy
+              </button>
+            </div>
+            <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", marginBottom: 8 }}>
+              <input type="checkbox" checked={includeContext} onChange={(e) => setIncludeContext(e.target.checked)} style={{ width: 16, height: 16, cursor: "pointer" }} />
+              <span style={{ fontSize: 13, color: C.gray700 }}>Include opportunity context</span>
+            </label>
+            <p style={{ margin: "8px 0 0", fontSize: 12, color: C.gray500, lineHeight: 1.4 }}>Recipients will need to create a free account to see full expert details</p>
+          </div>
+
+          {/* Collaborative section (Tier 3 - gated) */}
+          <div style={{ position: "relative", opacity: 0.6, pointerEvents: "none" }}>
+            <h3 style={{ margin: "0 0 12px", fontSize: 14, fontWeight: 700, color: C.gray900 }}>Invite Team Members to Collaborate</h3>
+            <div style={{ marginBottom: 12 }}>
+              <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: C.gray700, marginBottom: 6 }}>Email</label>
+              <input type="email" placeholder="colleague@company.com" value={emailInvite} onChange={(e) => setEmailInvite(e.target.value)} style={{ width: "100%", padding: "10px 12px", borderRadius: 6, border: `1px solid ${C.gray200}`, fontSize: 13, fontFamily: "inherit" }} />
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: C.gray700, marginBottom: 6 }}>Permission</label>
+              <select value={inviteRole} onChange={(e) => setInviteRole(e.target.value)} style={{ width: "100%", padding: "10px 12px", borderRadius: 6, border: `1px solid ${C.gray200}`, fontSize: 13, fontFamily: "inherit" }}>
+                <option>Can view</option>
+                <option>Can edit</option>
+              </select>
+            </div>
+            <p style={{ margin: 0, fontSize: 12, color: C.gray600, lineHeight: 1.4 }}>Collaborate with your capture team — add notes, vote on experts, and coordinate introductions</p>
+
+            {/* Upgrade overlay */}
+            <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, background: "linear-gradient(135deg, rgba(0,87,85,0.05), rgba(40,190,175,0.05))", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(2px)" }}>
+              <div style={{ textAlign: "center" }}>
+                <p style={{ margin: 0, fontSize: 12, fontWeight: 600, color: C.teal, background: C.white, padding: "6px 12px", borderRadius: 4, display: "inline-block" }}>Upgrade to Pro</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div style={{ padding: "16px 24px", borderTop: `1px solid ${C.gray200}`, display: "flex", gap: 8, justifyContent: "flex-end" }}>
+          <button onClick={onClose} style={{ padding: "10px 20px", borderRadius: 8, border: `1px solid ${C.gray200}`, background: C.white, color: C.gray700, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+// SHARED SHORTLIST PAGE — Recipient view
+// ═══════════════════════════════════════════════════════════
+
+function SharedShortlistPage({ shortlist, opportunityTitle = null, query = "", onBack, sharedByName = "Patricia", sharedByCompany = "Acme Corp" }) {
+  const contextLabel = opportunityTitle || (query.length > 50 ? query.substring(0, 50) + "..." : query);
+
+  return (
+    <div style={{ minHeight: "100vh", background: C.gray50, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
+      {/* Header */}
+      <nav style={{ display: "flex", alignItems: "center", padding: "12px 32px", background: C.white, borderBottom: `1px solid ${C.gray200}` }}>
+        <div onClick={onBack} style={{ cursor: "pointer" }}><OFLogo color={C.dark} /></div>
+      </nav>
+
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "24px 32px" }}>
+        {/* Shared info banner */}
+        <div style={{ marginBottom: 24, background: `${C.teal}08`, border: `1px solid ${C.teal}20`, borderRadius: 10, padding: 16 }}>
+          <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: C.gray900 }}>
+            {sharedByName} from {sharedByCompany} shared this expert shortlist with you
+          </p>
+        </div>
+
+        {/* Opportunity context */}
+        {contextLabel && (
+          <div style={{ marginBottom: 24, background: C.white, borderRadius: 10, border: `1px solid ${C.gray200}`, padding: 20 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+              <Icon name={opportunityTitle ? "building" : "search"} size={20} color={C.teal} />
+              <div>
+                <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: C.gray900 }}>{contextLabel}</h2>
+                <p style={{ margin: "4px 0 0", fontSize: 13, color: C.gray600 }}>Shared by {sharedByName} at {sharedByCompany}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Experts */}
+        <h3 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 700, color: C.gray900 }}>{shortlist.length} experts on shortlist</h3>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 24 }}>
+          {shortlist.map((expert) => (
+            <div key={expert.id} style={{ background: C.white, borderRadius: 12, border: `1px solid ${C.gray200}`, padding: "20px 24px", position: "relative" }}>
+              <div style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
+                <div
+                  style={{
+                    width: 52,
+                    height: 52,
+                    borderRadius: "50%",
+                    background: expert.anonymous ? C.gray100 : `linear-gradient(135deg, ${expert.color}, ${expert.color}CC)`,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                    color: C.white,
+                    fontSize: 18,
+                    fontWeight: 700,
+                    border: expert.anonymous ? `2px dashed ${C.gray300}` : "none",
+                  }}
+                >
+                  {expert.anonymous ? <Icon name="user" size={22} color={C.gray400} /> : expert.initials}
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
+                    <div style={{ flex: 1 }}>
+                      <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: C.gray900 }}>{expert.name || expert.genericTitle}</h3>
+                      <p style={{ margin: "2px 0", fontSize: 12, color: C.gray500, fontWeight: 500 }}>{expert.genericTitle}</p>
+                      <p style={{ margin: "4px 0 0", fontSize: 13, color: C.gray700, lineHeight: 1.4, fontWeight: 500 }}>{expert.matchHeadline}</p>
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
+                      <div style={{ width: 48, height: 48, borderRadius: "50%", border: `3px solid ${expert.alignment >= 85 ? C.green : expert.alignment >= 75 ? C.tealLight : C.amber}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, fontWeight: 800, color: expert.alignment >= 85 ? C.green : expert.alignment >= 75 ? C.tealLight : C.amber }}>
+                        {expert.alignment}
+                      </div>
+                      <span style={{ fontSize: 10, color: C.gray400, fontWeight: 500, marginTop: 2 }}>Match</span>
+                    </div>
+                  </div>
+
+                  {/* Tags */}
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginTop: 8 }}>
+                    {expert.tags.slice(0, 3).map((t) => (
+                      <span key={t} style={{ padding: "2px 8px", borderRadius: 4, fontSize: 11, fontWeight: 500, background: C.gray50, color: C.gray400, border: `1px solid ${C.gray200}` }}>
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* First match bullet */}
+                  <div style={{ marginTop: 12, fontSize: 13, color: C.gray700, lineHeight: 1.6, display: "flex", gap: 8 }}>
+                    <span style={{ color: C.teal, flexShrink: 0, fontWeight: 700 }}>•</span>
+                    <span>{expert.matchBullets[0]}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Blurred section */}
+              <div style={{ position: "relative", marginTop: 12, paddingTop: 12, borderTop: `1px solid ${C.gray100}` }}>
+                <div style={{ fontSize: 13, color: C.gray700, lineHeight: 1.6, opacity: 0.15, filter: "blur(4px)", userSelect: "none" }}>
+                  {expert.matchBullets.slice(1, 3).map((b, i) => (
+                    <div key={i} style={{ display: "flex", gap: 8, marginBottom: 3 }}>
+                      <span>•</span>
+                      <span>{b}</span>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 28, background: "linear-gradient(transparent, white)" }} />
+                <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", textAlign: "center", background: "white", padding: "8px 16px", borderRadius: 6, border: `1px solid ${C.gray200}` }}>
+                  <p style={{ margin: 0, fontSize: 12, fontWeight: 600, color: C.gray700 }}>Create a free account</p>
+                  <p style={{ margin: "2px 0 0", fontSize: 11, color: C.gray500 }}>to see full details</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* CTA */}
+        <div style={{ background: C.white, borderRadius: 12, border: `1px solid ${C.gray200}`, padding: "32px 28px", textAlign: "center" }}>
+          <h3 style={{ margin: "0 0 8px", fontSize: 18, fontWeight: 700, color: C.gray900 }}>Create Free Account to View Full Profiles</h3>
+          <p style={{ margin: "0 0 20px", fontSize: 14, color: C.gray600, lineHeight: 1.5 }}>Sign up to see complete expert profiles, request introductions, and start your next federal engagement</p>
+          <button style={{ padding: "12px 32px", borderRadius: 10, border: "none", background: C.teal, color: C.white, fontSize: 15, fontWeight: 700, cursor: "pointer" }}>
+            Create Free Account
+          </button>
+        </div>
+
+        <div style={{ textAlign: "center", padding: "32px 0", fontSize: 12, color: C.gray400 }}>
+          Powered by OnFrontiers · 17,000+ federal SMEs
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
 // APP ROOT — Screen Router
 // ═══════════════════════════════════════════════════════════
 
@@ -2494,6 +3040,11 @@ function App() {
   // userTier: "anonymous" → "email-captured" → "free-account"
   const [userTier, setUserTier] = useState("anonymous");
   const [userInfo, setUserInfo] = useState({ email: null, firstName: null, lastName: null, company: null });
+
+  // Shortlist state
+  const [shortlist, setShortlist] = useState([]);
+  const [showShortlistPanel, setShowShortlistPanel] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
 
   const detectOpportunity = (q) => {
     const lower = q.toLowerCase();
@@ -2541,6 +3092,22 @@ function App() {
     // In a real app, this would authenticate and unlock content
   };
 
+  const handleToggleShortlist = (expert) => {
+    setShortlist((prev) => {
+      const exists = prev.find((e) => e.id === expert.id);
+      if (exists) {
+        return prev.filter((e) => e.id !== expert.id);
+      }
+      return [...prev, expert];
+    });
+  };
+
+  const handleRemoveFromShortlist = (expertId) => {
+    setShortlist((prev) => prev.filter((e) => e.id !== expertId));
+  };
+
+  const isInShortlist = (expertId) => shortlist.some((e) => e.id === expertId);
+
   if (screen === "processing") {
     return (
       <QueryProcessingScreen
@@ -2550,6 +3117,19 @@ function App() {
         requiresEmail={isEmailGated}
         onEmailCaptured={handleEmailCaptured}
         searchCount={searchCount}
+      />
+    );
+  }
+
+  if (screen === "shared-shortlist") {
+    return (
+      <SharedShortlistPage
+        shortlist={shortlist}
+        opportunityTitle={isOpportunity ? "CAEI — NAVWAR" : null}
+        query={query}
+        onBack={() => setScreen("home")}
+        sharedByName="Patricia"
+        sharedByCompany="Acme Corp"
       />
     );
   }
@@ -2575,6 +3155,8 @@ function App() {
             setSelectedExpertRank(nextIdx + 1);
           }
         }}
+        isShortlisted={isInShortlist(selectedExpert.id)}
+        onToggleShortlist={handleToggleShortlist}
       />
     );
   }
@@ -2583,6 +3165,18 @@ function App() {
     return (
       <>
         {showSignupModal && <SignupModal onClose={() => { setShowSignupModal(false); setSignupExpertContext(null); }} onSignup={handleSignup} onCreateAccount={handleFreeAccountCreated} expertContext={signupExpertContext} userTier={userTier} userInfo={userInfo} />}
+        {showShareModal && <ShareShortlistModal onClose={() => setShowShareModal(false)} shortlist={shortlist} opportunityTitle={isOpportunity ? "CAEI — NAVWAR" : null} query={query} userTier={userTier} />}
+        <ShortlistPanel
+          shortlist={shortlist}
+          isOpen={showShortlistPanel}
+          onClose={() => setShowShortlistPanel(false)}
+          onRemove={handleRemoveFromShortlist}
+          onViewProfile={handleViewProfile}
+          userTier={userTier}
+          opportunityTitle={isOpportunity ? "CAEI — NAVWAR" : null}
+          query={query}
+          onOpenShareModal={() => setShowShareModal(true)}
+        />
         <ResultsPage
           query={query}
           isOpportunity={isOpportunity}
@@ -2590,12 +3184,17 @@ function App() {
           onViewProfile={handleViewProfile}
           onSignup={(expertOrNull) => { setSignupExpertContext(expertOrNull || null); setShowSignupModal(true); }}
           userTier={userTier}
+          shortlist={shortlist}
+          onToggleShortlist={handleToggleShortlist}
+          isInShortlist={isInShortlist}
+          onToggleShortlistPanel={() => setShowShortlistPanel(!showShortlistPanel)}
+          onOpenShareModal={() => setShowShareModal(true)}
         />
       </>
     );
   }
 
-  return <Homepage onSearch={handleSearch} />;
+  return <Homepage onSearch={handleSearch} onViewSharedShortlist={() => setScreen("shared-shortlist")} />;
 }
 
 
