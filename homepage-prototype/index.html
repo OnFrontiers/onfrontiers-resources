@@ -111,6 +111,7 @@ const OFLogo = ({ color = C.white, height = 22 }) => (
 const EXPERTS = [
   {
     id: 1, initials: "PM", color: "#7C3AED", anonymous: false,
+    name: "Patricia Morales", hourlyRate: "$350",
     genericTitle: "R&D Portfolio Management Expert",
     matchHeadline: "Former AFRL Division Chief who led S&T programs across air, space, and cyber domains",
     profileHeadline: "Former AFRL division chief with deep R&D portfolio management and S&T strategy experience.",
@@ -134,6 +135,7 @@ const EXPERTS = [
   },
   {
     id: 2, initials: "RK", color: "#2563EB", anonymous: true,
+    name: null, hourlyRate: "$300",
     genericTitle: "C4ISR Systems Integration Expert",
     matchHeadline: "NAVWAR systems engineer with hands-on C5ISR integration experience across Navy tactical networks",
     profileHeadline: "Systems engineer specializing in Navy C4ISR integration across shipboard and expeditionary platforms.",
@@ -156,6 +158,7 @@ const EXPERTS = [
   },
   {
     id: 3, initials: "JL", color: "#059669", anonymous: false,
+    name: "James Liu", hourlyRate: "$275",
     genericTitle: "Navy Acquisition & Contracting Specialist",
     matchHeadline: "Senior contracting officer with NAVWAR procurement authority and IDIQ administration experience",
     profileHeadline: "Former Navy contracting officer with unlimited warrant authority across complex contract types.",
@@ -178,6 +181,7 @@ const EXPERTS = [
   },
   {
     id: 4, initials: "DT", color: "#DC2626", anonymous: true,
+    name: null, hourlyRate: "$325",
     genericTitle: "Cybersecurity & Zero Trust Architecture Expert",
     matchHeadline: "Led DoD Zero Trust implementation across multiple Navy networks and tactical systems",
     profileHeadline: "Cybersecurity architect specializing in DoD Zero Trust and RMF across Navy networks.",
@@ -200,6 +204,7 @@ const EXPERTS = [
   },
   {
     id: 5, initials: "AS", color: "#B45309", anonymous: false,
+    name: "Alicia Santos", hourlyRate: "$250",
     genericTitle: "Proposal & Capture Management Professional",
     matchHeadline: "Won $2B+ in Navy IT and C4ISR contracts including multiple NAVWAR competitive recompetes",
     profileHeadline: "Capture manager with $2B+ in Navy IT/C4ISR wins and 65%+ competitive win rate.",
@@ -289,13 +294,32 @@ const STAGES = ["Long-range Forecast", "Pipeline / Tracking", "Capture / Pre-Pro
 // SIGNUP MODAL
 // ═══════════════════════════════════════════════════════════
 
-function SignupModal({ onClose, onSignup, expertContext }) {
-  const [mode, setMode] = useState("signup"); // signup | signin
+function SignupModal({ onClose, onSignup, onCreateAccount, expertContext, userTier, userInfo }) {
+  const [mode, setMode] = useState("signup");
+  const [firstName, setFirstName] = useState(userInfo?.firstName || "");
+  const [lastName, setLastName] = useState(userInfo?.lastName || "");
+  const [email, setEmail] = useState(userInfo?.email || "");
+  const [password, setPassword] = useState("");
+  const [agreed, setAgreed] = useState(false);
+  const [formError, setFormError] = useState("");
+
+  const hasEmail = userTier === "email-captured" && userInfo?.email;
+  const inferredCompany = userInfo?.company || "";
+
+  const handleCreateAccount = () => {
+    if (!firstName.trim() || !lastName.trim()) { setFormError("First and last name are required"); return; }
+    if (!hasEmail && !email.trim()) { setFormError("Email is required"); return; }
+    if (password.length < 6) { setFormError("Password must be at least 6 characters"); return; }
+    if (!agreed) { setFormError("Please agree to the terms to continue"); return; }
+    setFormError("");
+    onCreateAccount({ firstName: firstName.trim(), lastName: lastName.trim(), email: hasEmail ? userInfo.email : email.trim(), password });
+  };
+
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center" }}>
       <div onClick={onClose} style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)" }} />
       <div style={{ position: "relative", background: C.white, borderRadius: 16, width: 440, maxWidth: "90vw", overflow: "hidden", boxShadow: "0 20px 60px rgba(0,0,0,0.3)" }}>
-        {/* Expert context header (if coming from a profile/card) */}
+        {/* Expert context header */}
         {expertContext && (
           <div style={{ padding: "14px 24px", background: C.gray50, borderBottom: `1px solid ${C.gray200}`, display: "flex", alignItems: "center", gap: 12 }}>
             {expertContext.anonymous ? (
@@ -325,32 +349,80 @@ function SignupModal({ onClose, onSignup, expertContext }) {
               <h2 style={{ margin: "0 0 6px", fontSize: 22, fontWeight: 700, color: C.gray900 }}>
                 {expertContext ? "Unlock this expert's full profile" : "Create your free account"}
               </h2>
-              <p style={{ margin: "0 0 24px", fontSize: 14, color: C.gray500, lineHeight: 1.4 }}>
-                {expertContext
-                  ? "Get free access to background, consultation rates, and availability — plus thousands of vetted federal and industry professionals."
-                  : "Search experts, see full match details, and request consultations across 17,000+ federal SMEs."}
+              <p style={{ margin: "0 0 20px", fontSize: 14, color: C.gray500, lineHeight: 1.4 }}>
+                {hasEmail
+                  ? "Just your name and a password — that's it. Your search history carries over."
+                  : expertContext
+                    ? "Get free access to background, consultation rates, and availability — plus thousands of vetted federal and industry professionals."
+                    : "Search experts, see full match details, and request consultations across 17,000+ federal SMEs."}
               </p>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 12 }}>
-                <input placeholder="First Name" style={{ padding: "12px 14px", borderRadius: 8, border: `1px solid ${C.gray200}`, fontSize: 14, fontFamily: "inherit", outline: "none" }} />
-                <input placeholder="Last Name" style={{ padding: "12px 14px", borderRadius: 8, border: `1px solid ${C.gray200}`, fontSize: 14, fontFamily: "inherit", outline: "none" }} />
-              </div>
-              <input placeholder="Work Email" style={{ width: "100%", padding: "12px 14px", borderRadius: 8, border: `1px solid ${C.gray200}`, fontSize: 14, marginBottom: 12, fontFamily: "inherit", outline: "none", boxSizing: "border-box" }} />
-              <input type="password" placeholder="Password" style={{ width: "100%", padding: "12px 14px", borderRadius: 8, border: `1px solid ${C.gray200}`, fontSize: 14, marginBottom: 16, fontFamily: "inherit", outline: "none", boxSizing: "border-box" }} />
+              {/* Email — pre-filled and locked if already captured */}
+              {hasEmail ? (
+                <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 14px", background: C.gray50, borderRadius: 8, border: `1px solid ${C.gray200}`, marginBottom: 12 }}>
+                  <Icon name="mail" size={16} color={C.green} />
+                  <span style={{ fontSize: 14, color: C.gray700, flex: 1 }}>{userInfo.email}</span>
+                  <Icon name="check" size={14} color={C.green} />
+                </div>
+              ) : (
+                <input placeholder="Work Email" value={email} onChange={e => setEmail(e.target.value)}
+                  style={{ width: "100%", padding: "12px 14px", borderRadius: 8, border: `1px solid ${C.gray200}`, fontSize: 14, marginBottom: 12, fontFamily: "inherit", outline: "none", boxSizing: "border-box" }} />
+              )}
 
-              <label style={{ display: "flex", alignItems: "flex-start", gap: 8, fontSize: 12, color: C.gray500, marginBottom: 20, cursor: "pointer" }}>
-                <input type="checkbox" style={{ marginTop: 2 }} />
+              {/* Name fields */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 12 }}>
+                <input placeholder="First Name" value={firstName} onChange={e => setFirstName(e.target.value)} autoFocus={hasEmail}
+                  style={{ padding: "12px 14px", borderRadius: 8, border: `1px solid ${C.gray200}`, fontSize: 14, fontFamily: "inherit", outline: "none" }}
+                  onFocus={e => e.target.style.borderColor = C.teal} onBlur={e => e.target.style.borderColor = C.gray200} />
+                <input placeholder="Last Name" value={lastName} onChange={e => setLastName(e.target.value)}
+                  style={{ padding: "12px 14px", borderRadius: 8, border: `1px solid ${C.gray200}`, fontSize: 14, fontFamily: "inherit", outline: "none" }}
+                  onFocus={e => e.target.style.borderColor = C.teal} onBlur={e => e.target.style.borderColor = C.gray200} />
+              </div>
+
+              {/* Company — auto-inferred from domain, editable */}
+              {inferredCompany && (
+                <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 14px", background: `${C.teal}06`, borderRadius: 8, border: `1px solid ${C.teal}15`, marginBottom: 12 }}>
+                  <Icon name="building" size={14} color={C.teal} />
+                  <span style={{ fontSize: 13, color: C.gray600, flex: 1 }}>{inferredCompany}</span>
+                  <span style={{ fontSize: 10, color: C.gray400 }}>from your email domain</span>
+                </div>
+              )}
+
+              {/* Password */}
+              <input type="password" placeholder="Create a password (6+ characters)" value={password} onChange={e => setPassword(e.target.value)}
+                onKeyDown={e => e.key === "Enter" && handleCreateAccount()}
+                style={{ width: "100%", padding: "12px 14px", borderRadius: 8, border: `1px solid ${C.gray200}`, fontSize: 14, marginBottom: 16, fontFamily: "inherit", outline: "none", boxSizing: "border-box" }}
+                onFocus={e => e.target.style.borderColor = C.teal} onBlur={e => e.target.style.borderColor = C.gray200} />
+
+              <label style={{ display: "flex", alignItems: "flex-start", gap: 8, fontSize: 12, color: C.gray500, marginBottom: 16, cursor: "pointer" }}
+                onClick={() => setAgreed(!agreed)}>
+                <input type="checkbox" checked={agreed} onChange={() => {}} style={{ marginTop: 2 }} />
                 <span>I have read and agree to OnFrontiers <span style={{ color: C.teal, fontWeight: 500 }}>Privacy Policy</span> & <span style={{ color: C.teal, fontWeight: 500 }}>Terms of Use</span></span>
               </label>
 
-              <button onClick={onSignup} style={{ width: "100%", padding: "14px", background: C.teal, color: C.white, border: "none", borderRadius: 8, fontSize: 15, fontWeight: 700, cursor: "pointer", letterSpacing: 0.5, textTransform: "uppercase" }}>
+              {formError && <div style={{ fontSize: 12, color: C.red, marginBottom: 12 }}>{formError}</div>}
+
+              <button onClick={handleCreateAccount} style={{ width: "100%", padding: "14px", background: C.teal, color: C.white, border: "none", borderRadius: 8, fontSize: 15, fontWeight: 700, cursor: "pointer", letterSpacing: 0.5, textTransform: "uppercase" }}>
                 Get Free Access
               </button>
 
-              <p style={{ textAlign: "center", fontSize: 13, color: C.gray400, margin: "12px 0 0" }}>
-                Browse free. Book only when you need to.
-              </p>
-              <p style={{ textAlign: "center", fontSize: 13, color: C.gray700, margin: "8px 0 0", fontWeight: 500 }}>
+              {/* What happens next */}
+              <div style={{ marginTop: 16, padding: "12px 14px", background: C.gray50, borderRadius: 8 }}>
+                <div style={{ fontSize: 11, fontWeight: 600, color: C.gray500, marginBottom: 6 }}>What happens next:</div>
+                {[
+                  "Expert names and full match details are revealed",
+                  "You can view complete profiles and shortlist experts",
+                  "Your searches and opportunities are saved",
+                  "Connect with experts whenever you're ready (pay per use)",
+                ].map((text, i) => (
+                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 3 }}>
+                    <Icon name="check" size={12} color={C.green} />
+                    <span style={{ fontSize: 11, color: C.gray600 }}>{text}</span>
+                  </div>
+                ))}
+              </div>
+
+              <p style={{ textAlign: "center", fontSize: 13, color: C.gray700, margin: "12px 0 0", fontWeight: 500 }}>
                 Already have an account? <span onClick={() => setMode("signin")} style={{ color: C.teal, fontWeight: 600, cursor: "pointer" }}>Sign in</span>
               </p>
             </>
@@ -359,10 +431,12 @@ function SignupModal({ onClose, onSignup, expertContext }) {
               <h2 style={{ margin: "0 0 6px", fontSize: 22, fontWeight: 700, color: C.gray900 }}>Welcome back</h2>
               <p style={{ margin: "0 0 24px", fontSize: 14, color: C.gray500 }}>Sign in to your OnFrontiers account.</p>
 
-              <input placeholder="Email" style={{ width: "100%", padding: "12px 14px", borderRadius: 8, border: `1px solid ${C.gray200}`, fontSize: 14, marginBottom: 12, fontFamily: "inherit", outline: "none", boxSizing: "border-box" }} />
-              <input type="password" placeholder="Password" style={{ width: "100%", padding: "12px 14px", borderRadius: 8, border: `1px solid ${C.gray200}`, fontSize: 14, marginBottom: 20, fontFamily: "inherit", outline: "none", boxSizing: "border-box" }} />
+              <input placeholder="Email" value={email} onChange={e => setEmail(e.target.value)}
+                style={{ width: "100%", padding: "12px 14px", borderRadius: 8, border: `1px solid ${C.gray200}`, fontSize: 14, marginBottom: 12, fontFamily: "inherit", outline: "none", boxSizing: "border-box" }} />
+              <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)}
+                style={{ width: "100%", padding: "12px 14px", borderRadius: 8, border: `1px solid ${C.gray200}`, fontSize: 14, marginBottom: 20, fontFamily: "inherit", outline: "none", boxSizing: "border-box" }} />
 
-              <button onClick={onSignup} style={{ width: "100%", padding: "14px", background: C.teal, color: C.white, border: "none", borderRadius: 8, fontSize: 15, fontWeight: 700, cursor: "pointer" }}>
+              <button onClick={() => onCreateAccount({ firstName: "User", lastName: "", email, password })} style={{ width: "100%", padding: "14px", background: C.teal, color: C.white, border: "none", borderRadius: 8, fontSize: 15, fontWeight: 700, cursor: "pointer" }}>
                 Sign In
               </button>
               <p style={{ textAlign: "center", fontSize: 13, color: C.gray700, margin: "12px 0 0", fontWeight: 500 }}>
@@ -380,20 +454,30 @@ function SignupModal({ onClose, onSignup, expertContext }) {
 // EXPERT PROFILE PAGE (Visitor — blurred with signup gate)
 // ═══════════════════════════════════════════════════════════
 
-function ExpertProfilePage({ expert, onBack, onSignup, resultPosition, totalResults }) {
+function ExpertProfilePage({ expert, onBack, onSignup, onCreateAccount, resultPosition, totalResults, userTier = "anonymous", userInfo }) {
   const [showSignup, setShowSignup] = useState(false);
+  const isFreeAccount = userTier === "free-account";
 
   return (
     <div style={{ minHeight: "100vh", background: C.gray50, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
-      {showSignup && <SignupModal onClose={() => setShowSignup(false)} onSignup={onSignup} expertContext={expert} />}
+      {showSignup && <SignupModal onClose={() => setShowSignup(false)} onSignup={onSignup} onCreateAccount={(info) => { onCreateAccount(info); setShowSignup(false); }} expertContext={expert} userTier={userTier} userInfo={userInfo} />}
 
-      {/* Nav */}
+      {/* Nav — tier-aware */}
       <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 32px", background: C.white, borderBottom: `1px solid ${C.gray200}` }}>
         <OFLogo color={C.dark} />
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <button style={{ padding: "8px 16px", borderRadius: 6, border: `1px solid ${C.gray300}`, background: "transparent", color: C.gray700, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Log In</button>
-          <button onClick={() => setShowSignup(true)} style={{ padding: "8px 16px", borderRadius: 6, border: "none", background: C.teal, color: C.white, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Sign Up Free</button>
-        </div>
+        {isFreeAccount ? (
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{ width: 32, height: 32, borderRadius: "50%", background: `${C.teal}15`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Icon name="user" size={16} color={C.teal} />
+            </div>
+            <span style={{ fontSize: 13, fontWeight: 600, color: C.gray700 }}>Free Account</span>
+          </div>
+        ) : (
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <button style={{ padding: "8px 16px", borderRadius: 6, border: `1px solid ${C.gray300}`, background: "transparent", color: C.gray700, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Log In</button>
+            <button onClick={() => setShowSignup(true)} style={{ padding: "8px 16px", borderRadius: 6, border: "none", background: C.teal, color: C.white, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Sign Up Free</button>
+          </div>
+        )}
       </nav>
 
       {/* Context navigation bar */}
@@ -434,7 +518,14 @@ function ExpertProfilePage({ expert, onBack, onSignup, resultPosition, totalResu
               <div style={{ flex: 1 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                   <div>
-                    <h2 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: C.gray900 }}>{expert.genericTitle}</h2>
+                    {isFreeAccount && expert.name ? (
+                      <>
+                        <h2 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: C.gray900 }}>{expert.name}</h2>
+                        <p style={{ margin: "2px 0 0", fontSize: 14, color: C.gray500, fontWeight: 500 }}>{expert.genericTitle}</p>
+                      </>
+                    ) : (
+                      <h2 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: C.gray900 }}>{expert.genericTitle}</h2>
+                    )}
                     <p style={{ margin: "4px 0 0", fontSize: 14, color: C.gray700, fontWeight: 500, lineHeight: 1.4 }}>{expert.matchHeadline}</p>
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
@@ -445,7 +536,7 @@ function ExpertProfilePage({ expert, onBack, onSignup, resultPosition, totalResu
                   </div>
                 </div>
 
-                {/* Tags (dimmed) */}
+                {/* Tags */}
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginTop: 10 }}>
                   {expert.tags.map(t => (
                     <span key={t} style={{ padding: "2px 8px", borderRadius: 4, fontSize: 11, fontWeight: 500, background: C.gray50, color: C.gray400, border: `1px solid ${C.gray200}` }}>{t}</span>
@@ -461,14 +552,23 @@ function ExpertProfilePage({ expert, onBack, onSignup, resultPosition, totalResu
             </div>
           </div>
 
-          {/* Blurred content area */}
-          <div style={{ position: "relative" }}>
-            <div style={{ filter: "blur(6px)", opacity: 0.12, userSelect: "none", padding: "24px 28px" }}>
-              {/* Fake bio */}
-              <h3 style={{ fontSize: 16, fontWeight: 700, color: C.gray900, marginBottom: 8 }}>About</h3>
+          {/* Profile content — full for Tier 2, blurred+gated for others */}
+          {isFreeAccount ? (
+            <div style={{ padding: "24px 28px" }}>
+              {/* All match bullets visible */}
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: C.gray900, marginBottom: 8 }}>Match Analysis</h3>
+              {expert.matchBullets.map((b, i) => (
+                <div key={i} style={{ fontSize: 14, color: C.gray700, lineHeight: 1.6, display: "flex", gap: 8, marginBottom: 6 }}>
+                  <span style={{ color: C.teal, flexShrink: 0, fontWeight: 700 }}>•</span>
+                  <span>{b}</span>
+                </div>
+              ))}
+
+              {/* Bio */}
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: C.gray900, marginTop: 20, marginBottom: 8 }}>About</h3>
               <p style={{ fontSize: 14, color: C.gray600, lineHeight: 1.6 }}>{expert.bio}</p>
 
-              {/* Fake experience */}
+              {/* Experience */}
               <h3 style={{ fontSize: 16, fontWeight: 700, color: C.gray900, marginTop: 20, marginBottom: 8 }}>Experience</h3>
               {expert.experience.map((exp, i) => (
                 <div key={i} style={{ marginBottom: 12 }}>
@@ -478,37 +578,76 @@ function ExpertProfilePage({ expert, onBack, onSignup, resultPosition, totalResu
                 </div>
               ))}
 
-              {/* Fake ratings */}
+              {/* Ratings */}
               <h3 style={{ fontSize: 16, fontWeight: 700, color: C.gray900, marginTop: 20, marginBottom: 8 }}>Ratings & Reviews</h3>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
                 <span style={{ fontSize: 32, fontWeight: 800, color: C.gray900 }}>{expert.rating}</span>
                 <div>
                   <div style={{ display: "flex", gap: 2 }}>{[1,2,3,4,5].map(i => <FilledStar key={i} size={16} />)}</div>
                   <div style={{ fontSize: 12, color: C.gray500 }}>{expert.reviewCount} reviews</div>
                 </div>
               </div>
-            </div>
 
-            {/* Signup overlay */}
-            <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.95) 40%)" }}>
-              <div style={{ textAlign: "center", padding: "32px", maxWidth: 400 }}>
-                <div style={{ width: 52, height: 52, borderRadius: "50%", background: `${C.teal}10`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
-                  <LockFilled size={24} color={C.teal} />
+              {/* CTA for Tier 2 — request intro */}
+              <div style={{ borderTop: `1px solid ${C.gray100}`, paddingTop: 20, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <div>
+                  {expert.hourlyRate && <span style={{ fontSize: 14, fontWeight: 600, color: C.gray800 }}>{expert.hourlyRate}/hr</span>}
+                  <span style={{ fontSize: 13, color: C.gray500, marginLeft: 12 }}>Typically responds within 24 hours</span>
                 </div>
-                <h3 style={{ margin: "0 0 6px", fontSize: 18, fontWeight: 700, color: C.gray900 }}>Unlock this expert's full profile</h3>
-                <p style={{ margin: "0 0 6px", fontSize: 14, color: C.gray500, lineHeight: 1.5 }}>
-                  Get free access to background, consultation rates, and availability — plus thousands of vetted federal and industry professionals.
-                </p>
-                <p style={{ margin: "0 0 20px", fontSize: 13, color: C.gray400 }}>Browse free. Book only when you need to.</p>
-                <button onClick={() => setShowSignup(true)} style={{ padding: "14px 32px", background: C.teal, color: C.white, border: "none", borderRadius: 8, fontSize: 15, fontWeight: 700, cursor: "pointer", textTransform: "uppercase", letterSpacing: 0.5 }}>
-                  Get Free Access
+                <button style={{ padding: "12px 28px", background: C.teal, color: C.white, border: "none", borderRadius: 8, fontSize: 15, fontWeight: 700, cursor: "pointer" }}>
+                  Request Introduction
                 </button>
-                <p style={{ margin: "12px 0 0", fontSize: 13, color: C.gray700, fontWeight: 500 }}>
-                  Already have an account? <span onClick={() => setShowSignup(true)} style={{ color: C.teal, fontWeight: 600, cursor: "pointer" }}>Sign in</span>
-                </p>
               </div>
             </div>
-          </div>
+          ) : (
+            <div style={{ position: "relative" }}>
+              <div style={{ filter: "blur(6px)", opacity: 0.12, userSelect: "none", padding: "24px 28px" }}>
+                {/* Blurred bio */}
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: C.gray900, marginBottom: 8 }}>About</h3>
+                <p style={{ fontSize: 14, color: C.gray600, lineHeight: 1.6 }}>{expert.bio}</p>
+
+                {/* Blurred experience */}
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: C.gray900, marginTop: 20, marginBottom: 8 }}>Experience</h3>
+                {expert.experience.map((exp, i) => (
+                  <div key={i} style={{ marginBottom: 12 }}>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: C.gray800 }}>{exp.role}</div>
+                    <div style={{ fontSize: 13, color: C.gray500 }}>{exp.org} · {exp.years}</div>
+                    <div style={{ fontSize: 13, color: C.gray600, marginTop: 4 }}>{exp.desc}</div>
+                  </div>
+                ))}
+
+                {/* Blurred ratings */}
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: C.gray900, marginTop: 20, marginBottom: 8 }}>Ratings & Reviews</h3>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ fontSize: 32, fontWeight: 800, color: C.gray900 }}>{expert.rating}</span>
+                  <div>
+                    <div style={{ display: "flex", gap: 2 }}>{[1,2,3,4,5].map(i => <FilledStar key={i} size={16} />)}</div>
+                    <div style={{ fontSize: 12, color: C.gray500 }}>{expert.reviewCount} reviews</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Signup overlay */}
+              <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.95) 40%)" }}>
+                <div style={{ textAlign: "center", padding: "32px", maxWidth: 400 }}>
+                  <div style={{ width: 52, height: 52, borderRadius: "50%", background: `${C.teal}10`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
+                    <LockFilled size={24} color={C.teal} />
+                  </div>
+                  <h3 style={{ margin: "0 0 6px", fontSize: 18, fontWeight: 700, color: C.gray900 }}>Unlock this expert's full profile</h3>
+                  <p style={{ margin: "0 0 6px", fontSize: 14, color: C.gray500, lineHeight: 1.5 }}>
+                    Get free access to background, consultation rates, and availability — plus thousands of vetted federal and industry professionals.
+                  </p>
+                  <p style={{ margin: "0 0 20px", fontSize: 13, color: C.gray400 }}>Browse free. Book only when you need to.</p>
+                  <button onClick={() => setShowSignup(true)} style={{ padding: "14px 32px", background: C.teal, color: C.white, border: "none", borderRadius: 8, fontSize: 15, fontWeight: 700, cursor: "pointer", textTransform: "uppercase", letterSpacing: 0.5 }}>
+                    Get Free Access
+                  </button>
+                  <p style={{ margin: "12px 0 0", fontSize: 13, color: C.gray700, fontWeight: 500 }}>
+                    Already have an account? <span onClick={() => setShowSignup(true)} style={{ color: C.teal, fontWeight: 600, cursor: "pointer" }}>Sign in</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -1560,7 +1699,10 @@ function QueryProcessingScreen({ query, isOpportunity, onComplete, requiresEmail
 // EXPERT CARD (Visitor — anonymous per Display Explorer)
 // ═══════════════════════════════════════════════════════════
 
-function VisitorExpertCard({ expert, rank, onClickProfile, onSignup }) {
+function VisitorExpertCard({ expert, rank, onClickProfile, onSignup, userTier = "anonymous" }) {
+  const isFreeAccount = userTier === "free-account";
+  const isAnonymous = userTier === "anonymous";
+
   return (
     <div style={{ background: C.white, borderRadius: 12, border: `1px solid ${C.gray200}`, padding: "20px 24px", transition: "box-shadow 0.15s", cursor: "pointer" }}
       onClick={() => onClickProfile(expert)}
@@ -1583,8 +1725,15 @@ function VisitorExpertCard({ expert, rank, onClickProfile, onSignup }) {
             <div style={{ flex: 1 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 <span style={{ fontSize: 11, fontWeight: 700, color: C.teal, background: `${C.teal}10`, padding: "2px 8px", borderRadius: 4 }}>#{rank}</span>
-                <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: C.gray900 }}>{expert.genericTitle}</h3>
+                {isFreeAccount && expert.name ? (
+                  <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: C.gray900 }}>{expert.name}</h3>
+                ) : (
+                  <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: C.gray900 }}>{expert.genericTitle}</h3>
+                )}
               </div>
+              {isFreeAccount && expert.name && (
+                <p style={{ margin: "2px 0 0", fontSize: 12, color: C.gray500, fontWeight: 500 }}>{expert.genericTitle}</p>
+              )}
               <p style={{ margin: "4px 0 0", fontSize: 13, color: C.gray700, lineHeight: 1.4, fontWeight: 500 }}>{expert.matchHeadline}</p>
             </div>
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
@@ -1600,35 +1749,77 @@ function VisitorExpertCard({ expert, rank, onClickProfile, onSignup }) {
 
           <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginTop: 8 }}>
             {expert.tags.map(t => (
-              <span key={t} style={{ padding: "2px 8px", borderRadius: 4, fontSize: 11, fontWeight: 500, background: C.gray50, color: C.gray400, border: `1px solid ${C.gray200}` }}>{t}</span>
+              <span key={t} style={{ padding: "2px 8px", borderRadius: 4, fontSize: 11, fontWeight: 500, background: C.gray50, color: isFreeAccount ? C.gray600 : C.gray400, border: `1px solid ${C.gray200}` }}>{t}</span>
             ))}
           </div>
 
+          {/* Match bullets — Tier 2 sees all unblurred, others see 1 + blurred */}
           <div style={{ marginTop: 12 }}>
-            <div style={{ fontSize: 13, color: C.gray700, lineHeight: 1.6, display: "flex", gap: 8 }}>
-              <span style={{ color: C.teal, flexShrink: 0, fontWeight: 700 }}>•</span>
-              <span>{expert.matchBullets[0]}</span>
-            </div>
-            <div style={{ position: "relative", marginTop: 4 }}>
-              <div style={{ fontSize: 13, color: C.gray700, lineHeight: 1.6, opacity: 0.15, filter: "blur(4px)", userSelect: "none" }}>
-                {expert.matchBullets.slice(1).map((b, i) => (
-                  <div key={i} style={{ display: "flex", gap: 8, marginBottom: 3 }}><span>•</span><span>{b}</span></div>
-                ))}
-              </div>
-              <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 28, background: "linear-gradient(transparent, white)" }} />
-            </div>
+            {isFreeAccount ? (
+              /* Free account: all bullets visible */
+              expert.matchBullets.map((b, i) => (
+                <div key={i} style={{ fontSize: 13, color: C.gray700, lineHeight: 1.6, display: "flex", gap: 8, marginBottom: 3 }}>
+                  <span style={{ color: C.teal, flexShrink: 0, fontWeight: 700 }}>•</span>
+                  <span>{b}</span>
+                </div>
+              ))
+            ) : (
+              /* Anonymous / email-captured: 1 visible + blurred rest */
+              <>
+                <div style={{ fontSize: 13, color: C.gray700, lineHeight: 1.6, display: "flex", gap: 8 }}>
+                  <span style={{ color: C.teal, flexShrink: 0, fontWeight: 700 }}>•</span>
+                  <span>{expert.matchBullets[0]}</span>
+                </div>
+                <div style={{ position: "relative", marginTop: 4 }}>
+                  <div style={{ fontSize: 13, color: C.gray700, lineHeight: 1.6, opacity: 0.15, filter: "blur(4px)", userSelect: "none" }}>
+                    {expert.matchBullets.slice(1).map((b, i) => (
+                      <div key={i} style={{ display: "flex", gap: 8, marginBottom: 3 }}><span>•</span><span>{b}</span></div>
+                    ))}
+                  </div>
+                  <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 28, background: "linear-gradient(transparent, white)" }} />
+                </div>
+              </>
+            )}
           </div>
 
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 12 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: C.teal, fontWeight: 500 }}>
-              <LockFilled size={12} color={C.teal} />
-              Create a free account to see full match details
+          {/* Footer CTA — different per tier */}
+          {isFreeAccount ? (
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 12 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                {expert.rating && (
+                  <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                    <FilledStar size={13} />
+                    <span style={{ fontSize: 12, fontWeight: 600, color: C.gray700 }}>{expert.rating}</span>
+                    <span style={{ fontSize: 11, color: C.gray400 }}>({expert.reviewCount})</span>
+                  </div>
+                )}
+                {expert.hourlyRate && (
+                  <span style={{ fontSize: 12, color: C.gray500, fontWeight: 500 }}>{expert.hourlyRate}/hr</span>
+                )}
+              </div>
+              <div style={{ display: "flex", gap: 8 }}>
+                <button onClick={e => { e.stopPropagation(); onClickProfile(expert); }} style={{
+                  background: "white", border: `1.5px solid ${C.gray300}`, color: C.gray700,
+                  borderRadius: 8, padding: "8px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer",
+                }}>View Profile</button>
+                <button onClick={e => { e.stopPropagation(); }} style={{
+                  background: C.teal, border: "none", color: C.white,
+                  borderRadius: 8, padding: "8px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer",
+                }}>Request Introduction</button>
+              </div>
             </div>
-            <button onClick={e => { e.stopPropagation(); onSignup && onSignup(expert); }} style={{
-              background: "white", border: `1.5px solid ${C.teal}`, color: C.teal,
-              borderRadius: 8, padding: "8px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer",
-            }}>Sign Up to Connect</button>
-          </div>
+          ) : (
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 12 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: C.teal, fontWeight: 500 }}>
+                <LockFilled size={12} color={C.teal} />
+                Create a free account to see full match details
+              </div>
+              <button onClick={e => { e.stopPropagation(); onSignup && onSignup(expert); }} style={{
+                background: "white", border: `1.5px solid ${C.teal}`, color: C.teal,
+                borderRadius: 8, padding: "8px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer",
+              }}>Sign Up to Connect</button>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -1787,13 +1978,40 @@ function Homepage({ onSearch }) {
 // RESULTS PAGE
 // ═══════════════════════════════════════════════════════════
 
-function ResultsPage({ query, isOpportunity, onBack, onViewProfile, onSignup }) {
+function ResultsPage({ query, isOpportunity, onBack, onViewProfile, onSignup, userTier = "anonymous" }) {
   const [showEnrichment, setShowEnrichment] = useState(true);
+  const [unblurAnimating, setUnblurAnimating] = useState(false);
+  const prevTierRef = useRef(userTier);
   const opp = ENRICHED_OPP;
+  const isFreeAccount = userTier === "free-account";
+
+  // Trigger unblur animation when tier upgrades to free-account
+  useEffect(() => {
+    if (userTier === "free-account" && prevTierRef.current !== "free-account") {
+      setUnblurAnimating(true);
+      const timer = setTimeout(() => setUnblurAnimating(false), 1200);
+      return () => clearTimeout(timer);
+    }
+    prevTierRef.current = userTier;
+  }, [userTier]);
 
   return (
     <div style={{ minHeight: "100vh", background: C.gray50, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
-      {/* Nav */}
+      {/* Unblur animation keyframes */}
+      {unblurAnimating && (
+        <style>{`
+          @keyframes unblurReveal {
+            0% { filter: blur(4px); opacity: 0.5; }
+            60% { filter: blur(1px); opacity: 0.85; }
+            100% { filter: blur(0px); opacity: 1; }
+          }
+          .unblur-animate {
+            animation: unblurReveal 0.8s ease-out forwards;
+          }
+        `}</style>
+      )}
+
+      {/* Nav — tier-aware */}
       <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 32px", background: C.white, borderBottom: `1px solid ${C.gray200}` }}>
         <div onClick={onBack} style={{ cursor: "pointer" }}><OFLogo color={C.dark} /></div>
         <div style={{ flex: 1, maxWidth: 480, margin: "0 24px" }}>
@@ -1802,10 +2020,21 @@ function ResultsPage({ query, isOpportunity, onBack, onViewProfile, onSignup }) 
             <input type="text" defaultValue={query} style={{ flex: 1, border: "none", outline: "none", fontSize: 13, color: C.gray700, padding: "10px 8px", background: "transparent", fontFamily: "inherit" }} />
           </div>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <button style={{ padding: "8px 16px", borderRadius: 6, border: `1px solid ${C.gray300}`, background: "transparent", color: C.gray700, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Log In</button>
-          <button onClick={onSignup} style={{ padding: "8px 16px", borderRadius: 6, border: "none", background: C.teal, color: C.white, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Sign Up Free</button>
-        </div>
+        {isFreeAccount ? (
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <div style={{ width: 32, height: 32, borderRadius: "50%", background: `${C.teal}15`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <Icon name="user" size={16} color={C.teal} />
+              </div>
+              <span style={{ fontSize: 13, fontWeight: 600, color: C.gray700 }}>Free Account</span>
+            </div>
+          </div>
+        ) : (
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <button style={{ padding: "8px 16px", borderRadius: 6, border: `1px solid ${C.gray300}`, background: "transparent", color: C.gray700, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Log In</button>
+            <button onClick={onSignup} style={{ padding: "8px 16px", borderRadius: 6, border: "none", background: C.teal, color: C.white, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Sign Up Free</button>
+          </div>
+        )}
       </nav>
 
       <div style={{ maxWidth: 900, margin: "0 auto", padding: "24px 32px" }}>
@@ -1850,21 +2079,34 @@ function ResultsPage({ query, isOpportunity, onBack, onViewProfile, onSignup }) 
             </div>
 
             {/* Expert cards */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }} className={unblurAnimating ? "unblur-animate" : ""}>
               {EXPERTS.map((expert, i) => (
-                <VisitorExpertCard key={expert.id} expert={expert} rank={i + 1} onClickProfile={onViewProfile} onSignup={(exp) => onSignup(exp)} />
+                <VisitorExpertCard key={expert.id} expert={expert} rank={i + 1} onClickProfile={onViewProfile} onSignup={(exp) => onSignup(exp)} userTier={userTier} />
               ))}
             </div>
 
-            {/* Gate: more results */}
-            <div style={{ marginTop: 16, padding: "24px 32px", background: C.white, borderRadius: 12, border: `2px dashed ${C.teal}30`, textAlign: "center" }}>
-              <LockFilled size={28} color={C.teal} />
-              <h3 style={{ margin: "8px 0 4px", fontSize: 16, fontWeight: 700, color: C.gray900 }}>12 additional experts matched this {isOpportunity ? "opportunity" : "search"}</h3>
-              <p style={{ margin: "0 0 16px", fontSize: 13, color: C.gray500 }}>Create a free account to see all results, full match details, and request introductions.</p>
-              <button onClick={onSignup} style={{ padding: "12px 32px", background: C.teal, color: C.white, border: "none", borderRadius: 10, fontSize: 15, fontWeight: 700, cursor: "pointer" }}>
-                Sign Up Free — See All Experts
-              </button>
-            </div>
+            {/* Gate: more results — different per tier */}
+            {isFreeAccount ? (
+              <div style={{ marginTop: 16, padding: "24px 32px", background: C.white, borderRadius: 12, border: `1px solid ${C.gray200}`, textAlign: "center" }}>
+                <div style={{ width: 44, height: 44, borderRadius: "50%", background: `${C.teal}10`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px" }}>
+                  <Icon name="search" size={20} color={C.teal} />
+                </div>
+                <h3 style={{ margin: "0 0 4px", fontSize: 16, fontWeight: 700, color: C.gray900 }}>12 additional experts matched this {isOpportunity ? "opportunity" : "search"}</h3>
+                <p style={{ margin: "0 0 16px", fontSize: 13, color: C.gray500 }}>Upgrade to a paid plan to browse all results and request unlimited introductions.</p>
+                <button style={{ padding: "12px 32px", background: C.teal, color: C.white, border: "none", borderRadius: 10, fontSize: 15, fontWeight: 700, cursor: "pointer" }}>
+                  See Plans & Pricing
+                </button>
+              </div>
+            ) : (
+              <div style={{ marginTop: 16, padding: "24px 32px", background: C.white, borderRadius: 12, border: `2px dashed ${C.teal}30`, textAlign: "center" }}>
+                <LockFilled size={28} color={C.teal} />
+                <h3 style={{ margin: "8px 0 4px", fontSize: 16, fontWeight: 700, color: C.gray900 }}>12 additional experts matched this {isOpportunity ? "opportunity" : "search"}</h3>
+                <p style={{ margin: "0 0 16px", fontSize: 13, color: C.gray500 }}>Create a free account to see all results, full match details, and request introductions.</p>
+                <button onClick={onSignup} style={{ padding: "12px 32px", background: C.teal, color: C.white, border: "none", borderRadius: 10, fontSize: 15, fontWeight: 700, cursor: "pointer" }}>
+                  Sign Up Free — See All Experts
+                </button>
+              </div>
+            )}
 
             <div style={{ textAlign: "center", padding: "32px 0", fontSize: 12, color: C.gray400 }}>
               Powered by OnFrontiers · 17,000+ federal SMEs · Integrated with GovTribe
@@ -1890,6 +2132,9 @@ function App() {
   const [signupExpertContext, setSignupExpertContext] = useState(null);
   const [searchCount, setSearchCount] = useState(0);
   const [capturedEmail, setCapturedEmail] = useState(null);
+  // userTier: "anonymous" → "email-captured" → "free-account"
+  const [userTier, setUserTier] = useState("anonymous");
+  const [userInfo, setUserInfo] = useState({ email: null, firstName: null, lastName: null, company: null });
 
   const detectOpportunity = (q) => {
     const lower = q.toLowerCase();
@@ -1908,6 +2153,18 @@ function App() {
 
   const handleEmailCaptured = (email) => {
     setCapturedEmail(email);
+    setUserTier("email-captured");
+    // Infer company from domain
+    const domain = email.split("@")[1] || "";
+    const isPersonal = ["gmail.com","yahoo.com","hotmail.com","outlook.com","aol.com","icloud.com"].includes(domain.toLowerCase());
+    const company = isPersonal ? "" : domain.split(".")[0].charAt(0).toUpperCase() + domain.split(".")[0].slice(1);
+    setUserInfo(prev => ({ ...prev, email, company }));
+  };
+
+  const handleFreeAccountCreated = (info) => {
+    setUserTier("free-account");
+    setUserInfo(prev => ({ ...prev, ...info }));
+    setShowSignupModal(false);
   };
 
   const handleProcessingComplete = () => {
@@ -1944,8 +2201,11 @@ function App() {
         expert={selectedExpert}
         onBack={() => setScreen("results")}
         onSignup={handleSignup}
+        onCreateAccount={handleFreeAccountCreated}
         resultPosition={selectedExpertRank}
         totalResults={EXPERTS.length}
+        userTier={userTier}
+        userInfo={userInfo}
       />
     );
   }
@@ -1953,13 +2213,14 @@ function App() {
   if (screen === "results") {
     return (
       <>
-        {showSignupModal && <SignupModal onClose={() => { setShowSignupModal(false); setSignupExpertContext(null); }} onSignup={handleSignup} expertContext={signupExpertContext} />}
+        {showSignupModal && <SignupModal onClose={() => { setShowSignupModal(false); setSignupExpertContext(null); }} onSignup={handleSignup} onCreateAccount={handleFreeAccountCreated} expertContext={signupExpertContext} userTier={userTier} userInfo={userInfo} />}
         <ResultsPage
           query={query}
           isOpportunity={isOpportunity}
           onBack={() => setScreen("home")}
           onViewProfile={handleViewProfile}
           onSignup={(expertOrNull) => { setSignupExpertContext(expertOrNull || null); setShowSignupModal(true); }}
+          userTier={userTier}
         />
       </>
     );
@@ -1969,7 +2230,8 @@ function App() {
 }
 
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(React.createElement(App));
   </script>
 </body>
 </html>
