@@ -653,12 +653,19 @@ function SignupModal({ onClose, onSignup, onCreateAccount, expertContext, userTi
 // EXPERT PROFILE PAGE (Visitor — blurred with signup gate)
 // ═══════════════════════════════════════════════════════════
 
-function ExpertProfilePage({ expert, onBack, onSignup, onCreateAccount, resultPosition, totalResults, userTier = "anonymous", userInfo }) {
+function ExpertProfilePage({ expert, onBack, onSignup, onCreateAccount, resultPosition, totalResults, userTier = "anonymous", userInfo, query = "", isOpportunity = false, onNavigateExpert }) {
   const [showSignup, setShowSignup] = useState(false);
   const isFreeAccount = userTier === "free-account";
   const meetsRatingThreshold = expert.reviewCount >= 3;
   const meetsConsultationThreshold = expert.consultations >= 5;
   const hasTestimonials = expert.testimonials && expert.testimonials.length > 0;
+
+  const opp = ENRICHED_OPP;
+  const searchLabel = isOpportunity
+    ? `${opp.title} results`
+    : `"${query.length > 40 ? query.substring(0, 40) + "…" : query}" results`;
+  const canGoPrev = resultPosition > 1;
+  const canGoNext = resultPosition < totalResults;
 
   return (
     <div style={{ minHeight: "100vh", background: C.gray50, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
@@ -682,22 +689,35 @@ function ExpertProfilePage({ expert, onBack, onSignup, onCreateAccount, resultPo
         )}
       </nav>
 
-      {/* Context navigation bar */}
-      <div style={{ background: C.white, borderBottom: `1px solid ${C.gray200}`, padding: "8px 32px", display: "flex", alignItems: "center", justifyContent: "space-between", maxWidth: 1200, margin: "0 auto" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <button onClick={onBack} style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", cursor: "pointer", padding: "4px 0", fontSize: 12, fontWeight: 600, color: C.teal }}>
-            <Icon name="arrowLeft" size={14} color={C.teal} /> Back to results
+      {/* Context navigation bar — named search + working prev/next */}
+      <div style={{ background: C.white, borderBottom: `1px solid ${C.gray200}`, padding: "10px 32px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, flex: 1, minWidth: 0 }}>
+          <button onClick={onBack} style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", cursor: "pointer", padding: "4px 0", fontSize: 12, fontWeight: 600, color: C.teal, whiteSpace: "nowrap", flexShrink: 0 }}>
+            <Icon name="arrowLeft" size={14} color={C.teal} /> {searchLabel}
           </button>
-          <div style={{ width: 1, height: 16, background: C.gray200 }} />
-          <span style={{ fontSize: 11, color: C.gray400, fontWeight: 500 }}>Expert {resultPosition} of {totalResults}</span>
+          <div style={{ width: 1, height: 16, background: C.gray200, flexShrink: 0 }} />
+          <span style={{ fontSize: 11, color: C.gray400, fontWeight: 500, whiteSpace: "nowrap" }}>Expert {resultPosition} of {totalResults}</span>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-          <button style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 28, height: 28, borderRadius: 6, background: C.gray50, border: `1px solid ${C.gray200}`, cursor: "pointer" }}>
-            <Icon name="chevLeft" size={14} color={C.gray500} />
-          </button>
-          <button style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 28, height: 28, borderRadius: 6, background: C.gray50, border: `1px solid ${C.gray200}`, cursor: "pointer" }}>
-            <Icon name="chevRight" size={14} color={C.gray500} />
-          </button>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+          {isFreeAccount && (
+            <button style={{ display: "flex", alignItems: "center", gap: 5, padding: "6px 12px", borderRadius: 6, border: `1px solid ${C.gray200}`, background: C.white, color: C.gray600, fontSize: 12, fontWeight: 500, cursor: "pointer", whiteSpace: "nowrap" }}>
+              <Icon name="star" size={13} color={C.gray400} /> Save to shortlist
+            </button>
+          )}
+          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+            <button
+              onClick={() => canGoPrev && onNavigateExpert && onNavigateExpert("prev")}
+              style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 28, height: 28, borderRadius: 6, background: canGoPrev ? C.gray50 : C.gray50, border: `1px solid ${C.gray200}`, cursor: canGoPrev ? "pointer" : "default", opacity: canGoPrev ? 1 : 0.4, transition: "opacity 0.15s" }}
+            >
+              <Icon name="chevLeft" size={14} color={C.gray500} />
+            </button>
+            <button
+              onClick={() => canGoNext && onNavigateExpert && onNavigateExpert("next")}
+              style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 28, height: 28, borderRadius: 6, background: canGoNext ? C.gray50 : C.gray50, border: `1px solid ${C.gray200}`, cursor: canGoNext ? "pointer" : "default", opacity: canGoNext ? 1 : 0.4, transition: "opacity 0.15s" }}
+            >
+              <Icon name="chevRight" size={14} color={C.gray500} />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -2545,6 +2565,16 @@ function App() {
         totalResults={EXPERTS.length}
         userTier={userTier}
         userInfo={userInfo}
+        query={query}
+        isOpportunity={isOpportunity}
+        onNavigateExpert={(direction) => {
+          const currentIdx = EXPERTS.findIndex(e => e.id === selectedExpert.id);
+          const nextIdx = direction === "next" ? currentIdx + 1 : currentIdx - 1;
+          if (nextIdx >= 0 && nextIdx < EXPERTS.length) {
+            setSelectedExpert(EXPERTS[nextIdx]);
+            setSelectedExpertRank(nextIdx + 1);
+          }
+        }}
       />
     );
   }
