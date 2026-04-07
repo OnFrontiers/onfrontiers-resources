@@ -243,10 +243,9 @@ a:hover { color: var(--teal-700); }
    ZONE 1: TOP ROW
    ======================================== */
 .top-grid {
-  display: grid; grid-template-columns: 1fr 1fr;
+  display: grid; grid-template-columns: 1fr;
   gap: var(--sp-20); margin-bottom: var(--sp-24);
 }
-@media (max-width: 768px) { .top-grid { grid-template-columns: 1fr; } }
 
 /* Account Overview */
 .credit-display { display: flex; align-items: baseline; gap: var(--sp-4); margin-bottom: var(--sp-12); }
@@ -332,9 +331,11 @@ a:hover { color: var(--teal-700); }
 .project-stat svg { width: 1.3rem; height: 1.3rem; opacity: 0.6; }
 .project-stat strong { color: var(--gray-800); font-weight: 600; }
 
+/* Credit-per-project/expert display — hidden to avoid rationing mindset (Derek feedback) */
 .project-credits {
   font-size: 1.3rem; font-weight: 600; color: var(--teal-900);
   white-space: nowrap; min-width: 9rem; text-align: right;
+  display: none;
 }
 
 /* Action needed dot */
@@ -685,6 +686,83 @@ body.future-view .future-only { display: block !important; }
 body.future-view .future-only-flex { display: flex !important; }
 body.future-view .current-only { display: none !important; }
 
+/* ========================================
+   WHAT'S NEW BANNER
+   ======================================== */
+.whats-new-banner {
+  display: flex; align-items: center; gap: var(--sp-12);
+  padding: var(--sp-12) var(--sp-20);
+  background: linear-gradient(135deg, var(--teal-50), #dbeafe);
+  border: 1px solid var(--teal-200); border-radius: var(--radius-md);
+  margin-bottom: var(--sp-16);
+  box-shadow: var(--shadow-card);
+}
+.whats-new-banner svg.whats-new-icon {
+  width: 2.0rem; height: 2.0rem; color: var(--teal-700); flex-shrink: 0;
+}
+.whats-new-content { flex: 1; }
+.whats-new-title { font-size: 1.2rem; font-weight: 600; color: var(--teal-900); margin-bottom: var(--sp-2); }
+.whats-new-items { display: flex; gap: var(--sp-16); flex-wrap: wrap; }
+.whats-new-item {
+  display: flex; align-items: center; gap: var(--sp-6);
+  font-size: 1.2rem; color: var(--gray-600);
+}
+.whats-new-item svg { width: 1.4rem; height: 1.4rem; color: var(--teal-700); }
+.whats-new-item strong { color: var(--teal-900); }
+.whats-new-dismiss {
+  width: 2.4rem; height: 2.4rem; border-radius: 50%; border: none;
+  background: transparent; cursor: pointer; display: flex;
+  align-items: center; justify-content: center; flex-shrink: 0;
+  color: var(--gray-400); transition: all 0.15s;
+}
+.whats-new-dismiss:hover { background: rgba(0,0,0,0.06); color: var(--gray-600); }
+.whats-new-dismiss svg { width: 1.4rem; height: 1.4rem; }
+
+/* ========================================
+   REVIEW NUDGE BANNER (full-width, dismissible)
+   ======================================== */
+.review-banner {
+  display: flex; align-items: center; gap: var(--sp-12);
+  padding: var(--sp-12) var(--sp-20);
+  background: var(--warning-amber-light);
+  border: 1px solid #fcd34d; border-left: 4px solid var(--warning-amber);
+  border-radius: var(--radius-md); margin-bottom: var(--sp-16);
+  box-shadow: var(--shadow-card);
+}
+.review-banner svg.review-banner-icon {
+  width: 2.0rem; height: 2.0rem; color: #d97706; flex-shrink: 0;
+}
+.review-banner-text { flex: 1; font-size: 1.3rem; color: #92400e; }
+.review-banner-text strong { color: #78350f; }
+.review-banner .btn-nudge {
+  padding: var(--sp-6) var(--sp-14); background: var(--warning-amber); color: white;
+  border: none; border-radius: var(--radius-sm); font-family: inherit;
+  font-size: 1.2rem; font-weight: 600; cursor: pointer; white-space: nowrap;
+  transition: background 0.15s;
+}
+.review-banner .btn-nudge:hover { background: #d97706; }
+.review-banner-dismiss {
+  width: 2.4rem; height: 2.4rem; border-radius: 50%; border: none;
+  background: transparent; cursor: pointer; display: flex;
+  align-items: center; justify-content: center; flex-shrink: 0;
+  color: #92400e; transition: all 0.15s;
+}
+.review-banner-dismiss:hover { background: rgba(0,0,0,0.06); }
+.review-banner-dismiss svg { width: 1.4rem; height: 1.4rem; }
+
+/* ========================================
+   SECTION SEARCH BAR (future-only)
+   ======================================== */
+.section-search {
+  display: flex; align-items: center; gap: var(--sp-8);
+  padding: var(--sp-6) var(--sp-12);
+  border: 1px solid var(--border-light); border-radius: var(--radius-sm);
+  background: var(--gray-50); color: var(--gray-300);
+  font-size: 1.2rem; cursor: text; transition: border-color 0.15s;
+}
+.section-search:hover { border-color: var(--teal-200); }
+.section-search svg { width: 1.4rem; height: 1.4rem; flex-shrink: 0; }
+
 /* Future feature label */
 .future-label {
   display: inline-flex; align-items: center; gap: var(--sp-4);
@@ -1010,6 +1088,41 @@ body.future-view .current-only { display: none !important; }
 
   <!-- Sample data: Serco account (Jeanne Paton) -->
 
+  <!-- WHAT'S NEW BANNER -->
+  <div class="whats-new-banner" id="whats-new-banner">
+    <svg class="whats-new-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    <div class="whats-new-content">
+      <div class="whats-new-title">What's new since your last visit</div>
+      <div class="whats-new-items">
+        <span class="whats-new-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <strong>3</strong> experts added to your network
+        </span>
+        <span class="whats-new-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <strong>1</strong> consultation completed
+        </span>
+        <span class="whats-new-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <strong>1</strong> review pending
+        </span>
+      </div>
+    </div>
+    <button class="whats-new-dismiss" onclick="this.closest('.whats-new-banner').style.display='none'" title="Dismiss">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
+  <!-- REVIEW NUDGE BANNER (full-width, dismissible) -->
+  <div class="review-banner" id="review-banner">
+    <svg class="review-banner-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <div class="review-banner-text"><strong>3 consultations</strong> awaiting your review. Reviews unlock value insights and help us match better experts for you.</div>
+    <button class="btn-nudge" onclick="event.stopPropagation();">Review now</button>
+    <button class="review-banner-dismiss" onclick="this.closest('.review-banner').style.display='none'" title="Dismiss">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
   <!-- =====================================================
        ZONE 1: ACCOUNT HEALTH + UPCOMING CALLS
        ===================================================== -->
@@ -1019,7 +1132,13 @@ body.future-view .current-only { display: none !important; }
     <div class="card animate d1 admin-only">
       <div class="card-header">
         <span class="card-title">Account Overview</span>
-        <a class="card-link" href="#">Manage Billing <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
+        <div style="display: flex; align-items: center; gap: var(--sp-10);">
+          <button class="btn-primary" style="padding: var(--sp-4) var(--sp-12); font-size: 1.1rem; display: flex; align-items: center; gap: var(--sp-4);">
+            <svg style="width:1.3rem;height:1.3rem;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            New Request
+          </button>
+          <a class="card-link" href="#">Manage Billing <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
+        </div>
       </div>
       <div class="credit-display">
         <span class="credit-number">37</span>
@@ -1064,20 +1183,15 @@ body.future-view .current-only { display: none !important; }
         </div>
       </div>
 
+      <!-- YoY comparison: shown only when this year's usage >= last year (positive momentum) -->
+      <!-- When usage is flat or down, this row is hidden and only the plan row shows -->
       <div class="account-row" style="color: var(--teal-800);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-        13 credits used this year &middot; up from 8 at this point last year
+        13 credits used this year &middot; <span style="color: var(--success); font-weight: 600;">&uarr; up from 8</span> at this point last year
       </div>
       <div class="account-row muted">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         Scale Plan &middot; Renews Oct 15, 2026
-      </div>
-
-      <!-- Review nudge -->
-      <div class="review-nudge">
-        <svg style="width: 1.6rem; height: 1.6rem; flex-shrink: 0; color: #d97706;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        <div class="review-nudge-text"><strong>1 consultation</strong> awaiting your review. Reviews unlock value insights below and help us match better experts for you.</div>
-        <button class="btn-nudge">Review now</button>
       </div>
 
       <!-- Value Delivered Summary -->
@@ -1107,6 +1221,18 @@ body.future-view .current-only { display: none !important; }
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             New Opportunities <span class="value-tag-count">&times;1</span>
           </span>
+        </div>
+        <!-- Network growth sparkline -->
+        <div style="display: flex; align-items: center; gap: var(--sp-10); margin-top: var(--sp-12); padding-top: var(--sp-10); border-top: 1px solid var(--border-light);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 1.4rem; height: 1.4rem; color: var(--teal-700); flex-shrink: 0;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span style="font-size: 1.2rem; color: var(--gray-500);">Expert network:</span>
+          <span style="font-size: 1.3rem; font-weight: 600; color: var(--teal-900);">12 experts</span>
+          <span style="font-size: 1.1rem; color: var(--success); font-weight: 600;">+3 this quarter</span>
+          <!-- Mini sparkline showing growth -->
+          <svg viewBox="0 0 80 24" style="width: 6rem; height: 2rem; flex-shrink: 0;" fill="none">
+            <polyline points="2,20 12,18 22,17 32,15 42,14 52,10 62,8 72,5 78,3" stroke="var(--teal-700)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <circle cx="78" cy="3" r="2.5" fill="var(--teal-700)"/>
+          </svg>
         </div>
       </div>
     </div>
@@ -1146,13 +1272,6 @@ body.future-view .current-only { display: none !important; }
           </div>
           <div class="account-stat-label">Reviewed</div>
         </div>
-      </div>
-
-      <!-- Review nudge (same as admin) -->
-      <div class="review-nudge">
-        <svg style="width: 1.6rem; height: 1.6rem; flex-shrink: 0; color: #d97706;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        <div class="review-nudge-text"><strong>1 consultation</strong> awaiting your review. Reviews help us match better experts for you.</div>
-        <button class="btn-nudge">Review now</button>
       </div>
 
       <!-- Member value delivered (scoped to their consultations) -->
@@ -1246,7 +1365,13 @@ body.future-view .current-only { display: none !important; }
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
       </span>
-      <a class="card-link" href="#">View full network <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
+      <div style="display: flex; align-items: center; gap: var(--sp-10);">
+        <div class="section-search future-only-flex" style="display: none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Search experts...
+        </div>
+        <a class="card-link" href="#">View full network <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
+      </div>
     </div>
 
     <!-- EXPERT 1: Casey Walterscheid — expanded -->
@@ -1468,7 +1593,13 @@ body.future-view .current-only { display: none !important; }
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
       </span>
-      <a class="card-link" href="#">View all projects <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
+      <div style="display: flex; align-items: center; gap: var(--sp-10);">
+        <div class="section-search future-only-flex" style="display: none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Search projects...
+        </div>
+        <a class="card-link" href="#">View all projects <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
+      </div>
     </div>
 
     <!-- PROJECT 1: COSMOS — expanded -->
@@ -2335,7 +2466,7 @@ function toggleZone(btn) {
 
 // Scroll spy — highlight active side nav item
 function updateScrollSpy() {
-  const zones = ['zone-account', 'zone-experts', 'zone-projects', 'zone-team', 'zone-network'];
+  const zones = ['zone-account', 'zone-experts', 'zone-projects', 'zone-team', 'zone-network', 'zone-recommendations'];
   const navItems = document.querySelectorAll('.side-nav-item');
   let activeId = zones[0];
 
