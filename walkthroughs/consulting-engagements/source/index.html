@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>OnFrontiers walkthroughs</title>
+<link rel="stylesheet" href="walkthrough.css" />
+</head>
+<body>
+<main class="doc">
+
+  <header class="doc-header">
+    <div class="crumb">OnFrontiers · Stakeholder walkthroughs</div>
+    <div class="stakeholder"><span class="dot"></span> Index</div>
+    <nav class="nav-links">
+      <a href="Walkthrough - Customer.html">Customer</a>
+      <a href="Walkthrough - Expert.html">Expert</a>
+      <a href="Walkthrough - Internal.html">Internal</a>
+    </nav>
+  </header>
+
+  <div class="doc-eyebrow">Read me first</div>
+  <h1 class="doc-title">Three views of the same product.</h1>
+  <p class="doc-lede">OnFrontiers has three audiences: the customer who hires experts, the expert who does the work, and OnFrontiers fulfillment who runs the relationship. Each walkthrough below is scoped to one audience — share the right link with the right person.</p>
+
+  <div class="index-grid">
+    <a class="index-card" href="Walkthrough - Customer.html">
+      <div class="audience">For Cherokee · Customer</div>
+      <h2 class="title">How Cherokee uses OnFrontiers.</h2>
+      <p class="desc">Bill's day‑to‑day, Andy's governance review, the org‑wide rollup. Walks through every screen Cherokee will touch, in the order they'll touch it.</p>
+      <div class="ok"><strong>✓ Safe to share with Cherokee.</strong> Customer surfaces only.</div>
+    </a>
+
+    <a class="index-card" href="Walkthrough - Expert.html">
+      <div class="audience">For experts · Joe</div>
+      <h2 class="title">How experts use OnFrontiers.</h2>
+      <p class="desc">From the empty dashboard on day one, through accepting an offer, logging hours, and closing out. Calibrated for prospective experts and partner introductions.</p>
+      <div class="ok"><strong>✓ Safe to share with experts.</strong> Expert surfaces only.</div>
+    </a>
+
+    <a class="index-card" href="Walkthrough - Internal.html">
+      <div class="audience">For OnFrontiers · Internal</div>
+      <h2 class="title">OnFrontiers, top to bottom.</h2>
+      <p class="desc">The operating model, the fulfillment feed, customer ↔ expert symmetry, governance from both sides, project pages, and the full engagement lifecycle.</p>
+      <div class="ok nope"><strong>✗ Internal only.</strong> Includes fulfillment + governance views.</div>
+    </a>
+  </div>
+
+  <div class="divider">How these were built</div>
+
+  <div class="prose">
+    <p>All three documents share one stylesheet (<code>walkthrough.css</code>) and pull screenshots from the same <code>screenshots/</code> folder, so updates to a screen propagate everywhere it appears. The wording is tuned per audience — the customer doc never references OnFrontiers' internal queue, the expert doc never references governance.</p>
+    <p>If you spot a screen that needs updating, swap the file in <code>screenshots/</code> and every walkthrough that references it will reflect the change.</p>
+  </div>
+
+  <footer class="doc-footer">
+    <div class="meta">OnFrontiers walkthroughs · v0.1</div>
+    <nav class="nav">
+      <a href="Walkthrough - Customer.html">Customer →</a>
+      <a href="Walkthrough - Expert.html">Expert →</a>
+      <a href="Walkthrough - Internal.html">Internal →</a>
+    </nav>
+  </footer>
+
+</main>
+</body>
+</html>

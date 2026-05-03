@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Walkthrough — OnFrontiers, internal view</title>
+<link rel="stylesheet" href="walkthrough.css" />
+</head>
+<body>
+<main class="doc">
+
+  <header class="doc-header">
+    <div class="crumb">OnFrontiers · Stakeholder walkthrough</div>
+    <div class="stakeholder"><span class="dot"></span> Internal · OnFrontiers</div>
+    <nav class="nav-links">
+      <a href="index.html">All walkthroughs</a>
+      <a href="Walkthrough - Customer.html">Customer</a>
+      <a href="Walkthrough - Expert.html">Expert</a>
+    </nav>
+  </header>
+
+  <div class="doc-eyebrow">Stakeholder narrative · 03</div>
+  <h1 class="doc-title">OnFrontiers, top to bottom.</h1>
+  <p class="doc-lede">The internal walkthrough — the operating model behind the product, the OnFrontiers fulfillment surface, and the multi‑engagement project page that ties everything together. For the team and for design reviews.</p>
+
+  <section class="cast">
+    <div class="cast-card">
+      <div class="avatar pr">PR</div>
+      <div>
+        <div class="who">Pat Reynolds</div>
+        <div class="role">OnFrontiers fulfillment</div>
+      </div>
+    </div>
+    <div class="cast-card">
+      <div class="avatar bl">BL</div>
+      <div>
+        <div class="who">Bill / Maria</div>
+        <div class="role">Cherokee work approvers</div>
+      </div>
+    </div>
+    <div class="cast-card">
+      <div class="avatar ad">AD</div>
+      <div>
+        <div class="who">Andy DeFranco</div>
+        <div class="role">Cherokee governance</div>
+      </div>
+    </div>
+    <div class="cast-card">
+      <div class="avatar ja">JA</div>
+      <div>
+        <div class="who">Joe Ackermann</div>
+        <div class="role">Expert</div>
+      </div>
+    </div>
+  </section>
+
+  <nav class="toc" aria-label="Contents">
+    <a href="#ch-1"><div class="num">01</div><div class="label">The operating model</div><div class="sub">Three roles, one engagement record.</div></a>
+    <a href="#ch-2"><div class="num">02</div><div class="label">The fulfillment feed</div><div class="sub">Pat's day at OnFrontiers.</div></a>
+    <a href="#ch-3"><div class="num">03</div><div class="label">Customer ↔ Expert symmetry</div><div class="sub">The same engagement, two viewpoints.</div></a>
+    <a href="#ch-4"><div class="num">04</div><div class="label">Governance — both sides</div><div class="sub">The customer's inbox, the engagement page.</div></a>
+    <a href="#ch-5"><div class="num">05</div><div class="label">Project pages</div><div class="sub">Multi‑expert programs as a single workspace.</div></a>
+    <a href="#ch-6"><div class="num">06</div><div class="label">Lifecycle in one frame</div><div class="sub">Pending → active → closing → closed.</div></a>
+  </nav>
+
+  <!-- ============================== CHAPTER 1 ============================== -->
+  <section id="ch-1" class="chapter">
+    <div class="chapter-head">
+      <span class="chapter-num">Chapter 01</span>
+      <h2 class="chapter-title">The operating model.</h2>
+    </div>
+
+    <div class="prose">
+      <p>OnFrontiers sits between three parties: the <strong>customer</strong> (who needs an expert), the <strong>expert</strong> (who does the work), and <strong>OnFrontiers fulfillment</strong> (who runs the relationship). Every interaction in the product traces back to a single object: the <em>engagement</em>.</p>
+      <p>One engagement, three views. The customer view shows budget, governance flags, work‑approver actions. The expert view shows scope, rate, hours. The OnFrontiers view shows everything, plus the operating queue. None of these are separate records — they're the same record, scoped.</p>
+    </div>
+
+    <div class="callout">
+      <strong>The principle —</strong> we don't ask the same question twice. If Bill says "this is the scope" in the hire drawer, that scope is the scope. If Joe says "I worked these hours," that's the canonical record. If Andy says "approved," that's the contract. No CRM duplication, no spreadsheet shadow ledger.
+    </div>
+  </section>
+
+  <!-- ============================== CHAPTER 2 ============================== -->
+  <section id="ch-2" class="chapter">
+    <div class="chapter-head">
+      <span class="chapter-num">Chapter 02</span>
+      <h2 class="chapter-title">The fulfillment feed.</h2>
+    </div>
+    <p class="chapter-sub">Pat at OnFrontiers runs the operations side. Her landing page is a feed of every engagement that needs human attention from us — across every customer.</p>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">02.1</span>
+        <h3 class="beat-title">Default — actionable‑first.</h3>
+      </div>
+      <div class="prose">
+        <p>The feed defaults to "things that need OnFrontiers to act" — pending offers we haven't matched, hours that have stalled in review, customer‑introduced engagements awaiting paperwork. Anything humming along without our intervention falls below the fold.</p>
+      </div>
+      <figure class="shot">
+        <img src="screenshots/fulfillment-feed-default.png" alt="OnFrontiers fulfillment feed, default view" />
+        <figcaption class="shot-caption">
+          <span class="label">Fulfillment feed · Default</span>
+          <span class="ref">fulfillment-feed-default</span>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">02.2</span>
+        <h3 class="beat-title">Pending — what's waiting on us.</h3>
+      </div>
+      <div class="prose">
+        <p>Filtered to "pending OnFrontiers." This is Pat's worklist. Each row is one decision or action we owe a customer or an expert.</p>
+      </div>
+      <figure class="shot">
+        <img src="screenshots/fulfillment-feed-pending.png" alt="Fulfillment feed filtered to pending" />
+        <figcaption class="shot-caption">
+          <span class="label">Fulfillment feed · Pending</span>
+          <span class="ref">fulfillment-feed-pending</span>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">02.3</span>
+        <h3 class="beat-title">Active with red flags.</h3>
+      </div>
+      <div class="prose">
+        <p>Engagements that are technically running but have an issue we should know about — overdue hours, paused budgets, a customer who hasn't responded for a week. The flag is the signal; the row tells Pat what's wrong without her opening the engagement.</p>
+      </div>
+      <figure class="shot">
+        <img src="screenshots/fulfillment-feed-active-redflags.png" alt="Fulfillment feed showing active engagements with red flags" />
+        <figcaption class="shot-caption">
+          <span class="label">Fulfillment feed · Active w/ red flags</span>
+          <span class="ref">fulfillment-feed-active-redflags</span>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">02.4</span>
+        <h3 class="beat-title">Sorted by oldest unresolved.</h3>
+      </div>
+      <div class="prose">
+        <p>Sort flips the feed to "what's been in flight the longest." The product opinion: the older a row gets without resolution, the more painful it is for the customer or expert at the end of it. This is our SLA view.</p>
+      </div>
+      <figure class="shot">
+        <img src="screenshots/fulfillment-feed-sorted-oldest.png" alt="Fulfillment feed sorted by oldest first" />
+        <figcaption class="shot-caption">
+          <span class="label">Fulfillment feed · Sorted by oldest</span>
+          <span class="ref">fulfillment-feed-sorted-oldest</span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============================== CHAPTER 3 ============================== -->
+  <section id="ch-3" class="chapter">
+    <div class="chapter-head">
+      <span class="chapter-num">Chapter 03</span>
+      <h2 class="chapter-title">Customer ↔ Expert symmetry.</h2>
+    </div>
+    <p class="chapter-sub">The customer page and the expert page are intentionally the same shape. Same tabs, same layout, scoped data. This is what makes "let's look at the engagement together" actually work.</p>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">03.1</span>
+        <h3 class="beat-title">Overview — both sides.</h3>
+      </div>
+      <div class="shots-pair">
+        <figure class="shot">
+          <img src="screenshots/workapprover-overview.png" alt="Overview from the customer's view" />
+          <figcaption class="shot-caption">
+            <span class="label">Customer · Overview</span>
+            <span class="ref">workapprover-overview</span>
+          </figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="screenshots/expert-overview.png" alt="Overview from the expert's view" />
+          <figcaption class="shot-caption">
+            <span class="label">Expert · Overview</span>
+            <span class="ref">expert-overview</span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">03.2</span>
+        <h3 class="beat-title">Hours — submitted vs reviewed.</h3>
+      </div>
+      <div class="prose">
+        <p>The same record, two roles. The expert submits; the work approver reviews. Same row, two affordances — Joe sees an "edit" while a row is pending; Bill sees an "approve / reject" pair.</p>
+      </div>
+      <div class="shots-pair">
+        <figure class="shot">
+          <img src="screenshots/workapprover-hours.png" alt="Hours tab from the customer's view" />
+          <figcaption class="shot-caption">
+            <span class="label">Customer · Hours</span>
+            <span class="ref">workapprover-hours</span>
+          </figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="screenshots/expert-hours.png" alt="Hours tab from the expert's view" />
+          <figcaption class="shot-caption">
+            <span class="label">Expert · Hours</span>
+            <span class="ref">expert-hours</span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">03.3</span>
+        <h3 class="beat-title">Messages — one thread.</h3>
+      </div>
+      <div class="shots-pair">
+        <figure class="shot">
+          <img src="screenshots/workapprover-messages.png" alt="Messages from the customer's view" />
+          <figcaption class="shot-caption">
+            <span class="label">Customer · Messages</span>
+            <span class="ref">workapprover-messages</span>
+          </figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="screenshots/expert-messages.png" alt="Messages from the expert's view" />
+          <figcaption class="shot-caption">
+            <span class="label">Expert · Messages</span>
+            <span class="ref">expert-messages</span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">03.4</span>
+        <h3 class="beat-title">Settings — different scopes.</h3>
+      </div>
+      <div class="shots-pair">
+        <figure class="shot">
+          <img src="screenshots/workapprover-settings.png" alt="Settings from the customer's view" />
+          <figcaption class="shot-caption">
+            <span class="label">Customer · Settings</span>
+            <span class="ref">workapprover-settings</span>
+          </figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="screenshots/expert-settings.png" alt="Settings from the expert's view" />
+          <figcaption class="shot-caption">
+            <span class="label">Expert · Settings</span>
+            <span class="ref">expert-settings</span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== CHAPTER 4 ============================== -->
+  <section id="ch-4" class="chapter">
+    <div class="chapter-head">
+      <span class="chapter-num">Chapter 04</span>
+      <h2 class="chapter-title">Governance — both sides.</h2>
+    </div>
+    <p class="chapter-sub">Governance is the most opinionated part of the product. Every state has a customer view, an inbox row, and an event‑log entry. We treat them as one feature with three surfaces.</p>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">04.1</span>
+        <h3 class="beat-title">Andy's governance inbox — empty, single, full.</h3>
+      </div>
+      <div class="shots-pair">
+        <figure class="shot">
+          <img src="screenshots/governance-inbox-empty.png" alt="Empty governance inbox" />
+          <figcaption class="shot-caption">
+            <span class="label">Inbox · Empty</span>
+            <span class="ref">governance-inbox-empty</span>
+          </figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="screenshots/governance-inbox-single.png" alt="Inbox with a single item" />
+          <figcaption class="shot-caption">
+            <span class="label">Inbox · Single item</span>
+            <span class="ref">governance-inbox-single</span>
+          </figcaption>
+        </figure>
+      </div>
+      <figure class="shot">
+        <img src="screenshots/governance-inbox-default.png" alt="Inbox with the default mix" />
+        <figcaption class="shot-caption">
+          <span class="label">Inbox · Default</span>
+          <span class="ref">governance-inbox-default</span>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">04.2</span>
+        <h3 class="beat-title">Adjustment vs rejection — paired.</h3>
+      </div>
+      <div class="prose">
+        <p>The two non‑approve actions are the most consequential. Adjustment proposes a change to the customer; rejection ends the engagement. We expanded both inline so Andy doesn't context‑switch — but the consequence is dramatic, so we hide them behind a row click rather than putting them on the row itself.</p>
+      </div>
+      <div class="shots-pair">
+        <figure class="shot">
+          <img src="screenshots/governance-inbox-adjustment-expanded.png" alt="Adjustment expanded" />
+          <figcaption class="shot-caption">
+            <span class="label">Andy · Adjustment</span>
+            <span class="ref">governance-inbox-adjustment-expanded</span>
+          </figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="screenshots/governance-inbox-reject-expanded.png" alt="Rejection expanded" />
+          <figcaption class="shot-caption">
+            <span class="label">Andy · Rejection</span>
+            <span class="ref">governance-inbox-reject-expanded</span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">04.3</span>
+        <h3 class="beat-title">Bill's view of the same decisions.</h3>
+      </div>
+      <div class="shots-pair">
+        <figure class="shot">
+          <img src="screenshots/hub-governance-adjustment-customer.png" alt="Engagement page showing an adjustment" />
+          <figcaption class="shot-caption">
+            <span class="label">Engagement · Adjustment</span>
+            <span class="ref">hub-governance-adjustment-customer</span>
+          </figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="screenshots/hub-governance-rejection-customer.png" alt="Engagement page showing a rejection" />
+          <figcaption class="shot-caption">
+            <span class="label">Engagement · Rejection</span>
+            <span class="ref">hub-governance-rejection-customer</span>
+          </figcaption>
+        </figure>
+      </div>
+      <div class="shots-pair">
+        <figure class="shot">
+          <img src="screenshots/inbox-adjustment-submitted.png" alt="Bill's inbox showing an adjustment was submitted" />
+          <figcaption class="shot-caption">
+            <span class="label">Bill's inbox · Adjustment</span>
+            <span class="ref">inbox-adjustment-submitted</span>
+          </figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="screenshots/inbox-rejection-submitted.png" alt="Bill's inbox showing a rejection" />
+          <figcaption class="shot-caption">
+            <span class="label">Bill's inbox · Rejection</span>
+            <span class="ref">inbox-rejection-submitted</span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">04.4</span>
+        <h3 class="beat-title">Awaiting governance — both views.</h3>
+      </div>
+      <div class="shots-pair">
+        <figure class="shot">
+          <img src="screenshots/awaiting-customer-customer.png" alt="Awaiting governance from the customer's view" />
+          <figcaption class="shot-caption">
+            <span class="label">Bill's view · Awaiting</span>
+            <span class="ref">awaiting-customer-customer</span>
+          </figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="screenshots/awaiting-governance-governance.png" alt="Awaiting governance from Andy's view" />
+          <figcaption class="shot-caption">
+            <span class="label">Andy's view · Awaiting</span>
+            <span class="ref">awaiting-governance-governance</span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== CHAPTER 5 ============================== -->
+  <section id="ch-5" class="chapter">
+    <div class="chapter-head">
+      <span class="chapter-num">Chapter 05</span>
+      <h2 class="chapter-title">Project pages.</h2>
+    </div>
+    <p class="chapter-sub">When a customer is staffing more than one expert against the same outcome, an engagement isn't enough — they need a workspace.</p>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">05.1</span>
+        <h3 class="beat-title">Empty project — a brief looking for experts.</h3>
+      </div>
+      <div class="prose">
+        <p>A new project starts as a brief: outcome, deliverables, budget pool. No experts attached yet. OnFrontiers uses this state to source candidates; the customer can watch the page populate as offers come in.</p>
+      </div>
+      <figure class="shot">
+        <img src="screenshots/project-page-empty.png" alt="Empty project page" />
+        <figcaption class="shot-caption">
+          <span class="label">Project · Empty (brief only)</span>
+          <span class="ref">project-page-empty</span>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">05.2</span>
+        <h3 class="beat-title">Multi‑expert — engagements as rows.</h3>
+      </div>
+      <div class="prose">
+        <p>Once experts are matched, each one is a row in the project page — each row is itself a full engagement, opening to the same overview / hours / messages / settings tabs we've already seen. The project page is a roll‑up; the engagement is the unit.</p>
+      </div>
+      <figure class="shot">
+        <img src="screenshots/project-page-multi.png" alt="Project page with multiple experts" />
+        <figcaption class="shot-caption">
+          <span class="label">Project · Multiple experts</span>
+          <span class="ref">project-page-multi</span>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">05.3</span>
+        <h3 class="beat-title">Lifecycle — project as a story.</h3>
+      </div>
+      <div class="prose">
+        <p>Across a project's life, engagements come and go — some close out, some get extended, new experts join. The project page tells that story chronologically, with the active set up top and the closed set archived below.</p>
+      </div>
+      <figure class="shot">
+        <img src="screenshots/project-page-lifecycle.png" alt="Project page showing full lifecycle" />
+        <figcaption class="shot-caption">
+          <span class="label">Project · Full lifecycle</span>
+          <span class="ref">project-page-lifecycle</span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============================== CHAPTER 6 ============================== -->
+  <section id="ch-6" class="chapter">
+    <div class="chapter-head">
+      <span class="chapter-num">Chapter 06</span>
+      <h2 class="chapter-title">Lifecycle, in one frame.</h2>
+    </div>
+    <p class="chapter-sub">A single engagement, walked from offer through close, in the order Joe lives it.</p>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">06.1</span>
+        <h3 class="beat-title">Pending offer.</h3>
+      </div>
+      <figure class="shot">
+        <img src="screenshots/pending-offer-expert.png" alt="Pending offer" />
+        <figcaption class="shot-caption">
+          <span class="label">State · Pending offer</span>
+          <span class="ref">pending-offer-expert</span>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">06.2</span>
+        <h3 class="beat-title">Awaiting customer.</h3>
+      </div>
+      <figure class="shot">
+        <img src="screenshots/awaiting-customer-customer.png" alt="Awaiting customer" />
+        <figcaption class="shot-caption">
+          <span class="label">State · Awaiting customer</span>
+          <span class="ref">awaiting-customer-customer</span>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">06.3</span>
+        <h3 class="beat-title">Closing.</h3>
+      </div>
+      <figure class="shot">
+        <img src="screenshots/closing-expert.png" alt="Closing" />
+        <figcaption class="shot-caption">
+          <span class="label">State · Closing</span>
+          <span class="ref">closing-expert</span>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">06.4</span>
+        <h3 class="beat-title">Closed.</h3>
+      </div>
+      <figure class="shot">
+        <img src="screenshots/closed-expert.png" alt="Closed" />
+        <figcaption class="shot-caption">
+          <span class="label">State · Closed</span>
+          <span class="ref">closed-expert</span>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">06.5</span>
+        <h3 class="beat-title">Canceled.</h3>
+      </div>
+      <div class="prose">
+        <p>The shadow path. Engagements can be cancelled before they ever go active — by the customer (changed their mind), by governance (rejected), by OnFrontiers (couldn't fulfil). All three resolve to the same terminal state, with the cancellation reason recorded.</p>
+      </div>
+      <figure class="shot">
+        <img src="screenshots/canceled-customer.png" alt="Canceled" />
+        <figcaption class="shot-caption">
+          <span class="label">State · Canceled</span>
+          <span class="ref">canceled-customer</span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <footer class="doc-footer">
+    <div class="meta">Walkthrough · Internal · v0.1</div>
+    <nav class="nav">
+      <a href="Walkthrough - Customer.html">Customer</a>
+      <a href="Walkthrough - Expert.html">Expert</a>
+      <a href="index.html">All walkthroughs</a>
+    </nav>
+  </footer>
+
+</main>
+</body>
+</html>

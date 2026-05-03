@@ -1,0 +1,297 @@
+/* OnFrontiers â€” Colors & Type
+   Source of truth (in webapp repo):
+     â€¢ webapp/src/theme/colors.ts             (palette)
+     â€¢ webapp/tailwind.config.ts              (semantic tokens, spacing, shadows, radii)
+     â€¢ webapp/src/componentsv2/Text/styles.ts (Atoms/Text â€” canonical type scale)
+     â€¢ webapp/src/tailwind/{heading,subtitle,body,util}.ts (display-scale plugins)
+   Live published references (preferred for AI lookups â€” no drift from code):
+     â€¢ https://storybook.qa.onfrontiers.com           (published Storybook, public)
+     â€¢ https://storybook.qa.onfrontiers.com/index.json (machine-readable story manifest)
+   Updated against the live codebase â€” every value here is a direct port. */
+
+/* ---------- Fonts ---------- */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  src: local('IBM Plex Sans'), url('https://fonts.gstatic.com/s/ibmplexsans/v19/zYXgKVElMYYaJe8bpLHnCwDKjQ76AIRSjYM.woff2') format('woff2');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Campton';
+  src: url('fonts/campton-book.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Campton';
+  src: url('fonts/campton-medium.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Campton';
+  src: url('fonts/campton-semibold.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('fonts/inter-regular-400.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('fonts/inter-medium-500.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('fonts/inter-bold-700.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+}
+
+/* ---------- Tokens ---------- */
+:root {
+  /* Brand teal â€” primary brand color of OnFrontiers */
+  --teal-50:  #ecfffd;
+  --teal-100: #bdfffd;
+  --teal-200: #7bfffc;
+  --teal-300: #31fffc;
+  --teal-400: #00fff2;
+  --teal-500: #00edda;
+  --teal-600: #00bfb5;
+  --teal-700: #009791;
+  --teal-800: #007774;
+  --teal-900: #005755;  /* primary brand */
+  --teal-950: #003c3d;  /* primary dark */
+
+  /* Brand semantic */
+  --brand-primary:   var(--teal-900);
+  --brand-secondary: var(--teal-950);
+  --brand-tertiary:  var(--teal-800);
+  --brand-light:     var(--teal-50);
+
+  /* Cool gray scale (greenish-gray, used for text + neutrals) */
+  --gray-50:  #f6f7f7;
+  --gray-100: #e5ebe9;
+  --gray-200: #c0cfca;
+  --gray-300: #99afa8;
+  --gray-400: #748d87;
+  --gray-500: #59736d;
+  --gray-600: #465b56;
+  --gray-700: #3b4a47;
+  --gray-800: #323d3c;
+  --gray-900: #2c3533;
+  --gray-950: #161d1c;
+
+  /* Legacy "grey" (Access product, more neutral cool) */
+  --grey-50:  #FCFCFC;
+  --grey-100: #F7F9FA;
+  --grey-200: #F2F4F4;
+  --grey-300: #E1EDF1;
+  --grey-400: #C8D4DA;
+  --grey-500: #879499;
+  --grey-600: #545D63;
+  --grey-700: #343E45;
+  --grey-800: #2E404A;
+  --grey-900: #151616;
+
+  /* Status / semantic */
+  --success: #1DC068;
+  --success-light: #edf8e9;
+  --warning: #ED6C02;
+  --warning-light: #f7eace;
+  --error:   #E94F74;
+  --error-light: #fde3e3;
+  --info:    #2389C1;
+
+  --status-success: #22C55E;
+  --status-warning: #F59E0B;
+  --status-info:    #3B82F6;
+  --status-error:   #EF4444;
+
+  --ai-primary:   #761fd1;
+  --ai-secondary: #f2e8ff;
+
+  /* Light surface (default) â€” exposed in the codebase as camelCase CSS vars
+     (e.g. var(--surfaceBase)). We expose both kebab- and camelCase aliases so
+     either spelling drops in. */
+  --surface-base:      #ffffff;
+  --surface-card:      #ffffff;
+  --surface-elevated:  #f9fafb;
+  --surface-secondary: #f3f4f6;
+  --surface-muted:     #e5e7eb;
+  --surface-border:    rgba(0, 0, 0, 0.15);
+  --surface-border-subtle: rgba(0, 0, 0, 0.08);
+  --surface-hover-overlay: rgba(0, 0, 0, 0.06);
+
+  --on-surface:           #111827;
+  --on-surface-secondary: #374151;
+  --on-surface-muted:     #6b7280;
+  --on-surface-subtle:    #9ca3af;
+
+  /* camelCase aliases (match webapp's CSS variable spelling) */
+  --surfaceBase: var(--surface-base);
+  --surfaceCard: var(--surface-card);
+  --surfaceElevated: var(--surface-elevated);
+  --surfaceSecondary: var(--surface-secondary);
+  --surfaceMuted: var(--surface-muted);
+  --surfaceBorder: var(--surface-border);
+  --onSurface: var(--on-surface);
+  --onSurfaceSecondary: var(--on-surface-secondary);
+  --onSurfaceMuted: var(--on-surface-muted);
+  --onSurfaceSubtle: var(--on-surface-subtle);
+
+  /* Foreground / text aliases */
+  --fg1: var(--on-surface);
+  --fg2: var(--on-surface-secondary);
+  --fg3: var(--on-surface-muted);
+  --fg4: var(--on-surface-subtle);
+
+  /* Text on dark hero (used for dashboard banner) */
+  --hero-bg: var(--gray-700);
+
+  /* Radii (Tailwind values, in px) */
+  --radius-sm:    4px;
+  --radius-base:  6px;
+  --radius-md:    8px;
+  --radius-lg:    12px;
+  --radius-xl:    16px;
+  --radius-full:  9999px;
+
+  /* Border widths */
+  --border-1: 1px;
+  --border-2: 2px;
+  --border-3: 3px;
+
+  /* Shadows */
+  --shadow-soft-1: 0 24px 28px 2px rgba(0, 0, 0, 0.03);
+  --shadow-soft-2: 0 24px 28px 2px rgba(0, 0, 0, 0.05);
+  --shadow-1: 0px 1px 1px 0px rgba(0,0,0,0.10), 0px 2px 2px 0px rgba(0,0,0,0.09), 0px 5px 3px 0px rgba(0,0,0,0.05);
+  --shadow-2: 0px 1px 2px 0px rgba(0,0,0,0.10), 0px 4px 4px 0px rgba(0,0,0,0.09), 0px 10px 6px 0px rgba(0,0,0,0.05);
+  --shadow-3: 0px 2px 4px 0px rgba(0,0,0,0.10), 0px 6px 6px 0px rgba(0,0,0,0.09), 0px 14px 9px 0px rgba(0,0,0,0.05);
+  --shadow-4: 0px 2px 5px 0px rgba(0,0,0,0.10), 0px 9px 9px 0px rgba(0,0,0,0.09), 0px 19px 11px 0px rgba(0,0,0,0.05);
+  --shadow-5: 0px 1px 1px 0px rgba(0,0,0,0.10);
+
+  /* Spacing scale (rem-based; 1rem = 10px because html font-size: 62.5%) */
+  --space-1: 0.1rem;
+  --space-2: 0.2rem;
+  --space-4: 0.4rem;
+  --space-6: 0.6rem;
+  --space-8: 0.8rem;
+  --space-12: 1.2rem;
+  --space-16: 1.6rem;
+  --space-20: 2.0rem;
+  --space-24: 2.4rem;
+  --space-32: 3.2rem;
+  --space-48: 4.8rem;
+  --space-64: 6.4rem;
+
+  /* Type families */
+  --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, Roboto, sans-serif;
+  --font-display: 'Campton', 'IBM Plex Sans', sans-serif;
+  --font-ui: 'Inter', 'IBM Plex Sans', sans-serif;
+
+  color-scheme: light;
+}
+
+/* ---------- Dark theme (.dark on root) ---------- */
+.dark {
+  --surface-base:      #111111;
+  --surface-card:      #1a1a1a;
+  --surface-elevated:  #242424;
+  --surface-secondary: #2e2e2e;
+  --surface-muted:     #383838;
+  --surface-border:    rgba(255, 255, 255, 0.12);
+  --surface-border-subtle: rgba(255, 255, 255, 0.08);
+  --surface-hover-overlay: rgba(255, 255, 255, 0.08);
+
+  --on-surface:           #ffffff;
+  --on-surface-secondary: #b0b8c1;
+  --on-surface-muted:     #9ca3af;
+  --on-surface-subtle:    #6b7280;
+
+  --brand-primary:   var(--teal-800);
+  --brand-secondary: var(--teal-900);
+  --brand-tertiary:  var(--teal-700);
+
+  color-scheme: dark;
+}
+
+/* ---------- Base type ---------- */
+html { font-size: 62.5%; }       /* 1rem = 10px */
+body {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  color: var(--on-surface);
+  background-color: var(--surface-base);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- Type roles ---------- */
+/*
+   The codebase has TWO type systems running side-by-side:
+
+   (A) Atoms/Text â€” used in v2 components, cards, forms, body copy.
+       Defined in webapp/src/componentsv2/Text/styles.ts.
+       Class names: .text-h1 .text-h2 .text-h3 .text-h4
+                    .text-pRegular .text-pMedium .text-pBold
+                    .text-button .text-inputLabel .text-inputPlaceholder .text-inputHelpText
+
+   (B) Display heading plugin â€” used for hero / marketing / dashboard banners.
+       Defined in webapp/src/tailwind/{heading,subtitle,body,util}.ts.
+       Class names: .heading-1..6, .subtitle-1, .subtitle-2, .body-1, .body-2,
+                    .caption, .overline. Bigger sizes, lighter weight.
+
+   Use (A) for product UI, (B) for marketing display. Don't mix in the same screen.
+*/
+
+/* (A) Atoms/Text â€” canonical product type */
+.text-h1 { font-size: 40px; line-height: 47px; font-weight: 600; letter-spacing: -0.03em; }
+.text-h2 { font-size: 30px; line-height: 35px; font-weight: 600; letter-spacing: -0.03em; }
+.text-h3 { font-size: 24px; line-height: 28px; font-weight: 600; letter-spacing: -0.01em; }
+.text-h4 { font-size: 20px; line-height: 23px; font-weight: 600; letter-spacing: -0.01em; }
+.text-pRegular  { font-size: 16px; line-height: 22px; font-weight: 400; letter-spacing: 0; }
+.text-pMedium   { font-size: 16px; line-height: 22px; font-weight: 500; letter-spacing: 0; }
+.text-pBold     { font-size: 16px; line-height: 22px; font-weight: 700; letter-spacing: 0; }
+.text-button    { font-size: 14px; line-height: 16px; font-weight: 600; letter-spacing: 0; }
+.text-inputLabel       { font-size: 12px; line-height: 14px; font-weight: 500; letter-spacing: 0; }
+.text-inputPlaceholder { font-size: 16px; line-height: 24px; font-weight: 400; letter-spacing: 0; }
+.text-inputHelpText    { font-size: 12px; line-height: 20px; font-weight: 400; letter-spacing: 0; }
+
+/* (B) Display headings â€” Tailwind plugin scale */
+.heading-1 { font-size: 64px;  line-height: 83.4px; font-weight: 500; }
+.heading-2 { font-size: 42px;  line-height: 0.98;   font-weight: 500; letter-spacing: 0.02em; }
+.heading-3 { font-size: 36px;  line-height: 1.10;   font-weight: 500; }
+.heading-4 { font-size: 24px;  line-height: 1.10;   font-weight: 600; }
+.heading-5 { font-size: 20px;  line-height: 1.10;   font-weight: 500; }
+.heading-6 { font-size: 18px;  line-height: 1.32;   font-weight: 500; letter-spacing: 0.01em; }
+
+.subtitle-1 { font-size: 14px; line-height: 1.44; font-weight: 500; }
+.subtitle-2 { font-size: 12px; line-height: 1.48; font-weight: 500; }
+.body-1     { font-size: 14px; line-height: 1.44; font-weight: 400; letter-spacing: 0.015em; }
+.body-2     { font-size: 12px; line-height: 1.48; font-weight: 400; }
+
+.caption    { font-size: 10px; line-height: 1.12; letter-spacing: 0.02em; }
+.overline   { font-size: 12px; line-height: 2.66; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+/* Plain HTML headings â€” fall back to display scale (matches the marketing pages) */
+h1 { font-size: 64px; line-height: 83.4px; font-weight: 500; }
+h2 { font-size: 42px; line-height: 0.98;   font-weight: 500; letter-spacing: 0.02em; }
+h3 { font-size: 36px; line-height: 1.10;   font-weight: 500; }
+h4 { font-size: 24px; line-height: 1.10;   font-weight: 600; }
+h5 { font-size: 20px; line-height: 1.10;   font-weight: 500; }
+h6 { font-size: 18px; line-height: 1.32;   font-weight: 500; letter-spacing: 0.01em; }
+
+small { font-size: 14px; }
+
+a {
+  text-decoration: none;
+  color: var(--brand-tertiary);
+}
+a:hover { text-decoration: underline; }
