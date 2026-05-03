@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Walkthrough — How Cherokee uses OnFrontiers</title>
+<link rel="stylesheet" href="walkthrough.css" />
+</head>
+<body>
+<main class="doc">
+
+  <header class="doc-header">
+    <div class="crumb">OnFrontiers · Stakeholder walkthrough</div>
+    <div class="stakeholder"><span class="dot"></span> Customer view</div>
+    <nav class="nav-links">
+      <a href="index.html">All walkthroughs</a>
+      <a href="Walkthrough - Expert.html">Expert</a>
+      <a href="Walkthrough - Internal.html">Internal</a>
+    </nav>
+  </header>
+
+  <div class="doc-eyebrow">Stakeholder narrative · 01</div>
+  <h1 class="doc-title">How Cherokee uses&nbsp;OnFrontiers.</h1>
+  <p class="doc-lede">A walkthrough of the customer experience — what Bill (the work approver who books experts) sees day‑to‑day, and what Andy (the governance lead who controls how Cherokee spends) sees when policy gets in the way. Designed for sharing with Cherokee directly.</p>
+
+  <section class="cast">
+    <div class="cast-card">
+      <div class="avatar bl">BL</div>
+      <div>
+        <div class="who">Bill Lippman</div>
+        <div class="role">Work approver · Cherokee</div>
+      </div>
+    </div>
+    <div class="cast-card">
+      <div class="avatar ad">AD</div>
+      <div>
+        <div class="who">Andy DeFranco</div>
+        <div class="role">Governance · Cherokee</div>
+      </div>
+    </div>
+    <div class="cast-card">
+      <div class="avatar mt">MT</div>
+      <div>
+        <div class="who">Maria Trujillo</div>
+        <div class="role">Work approver · Cherokee</div>
+      </div>
+    </div>
+    <div class="cast-card">
+      <div class="avatar pr">PR</div>
+      <div>
+        <div class="who">Pat Reynolds</div>
+        <div class="role">OnFrontiers fulfillment</div>
+      </div>
+    </div>
+  </section>
+
+  <nav class="toc" aria-label="Contents">
+    <a href="#ch-1"><div class="num">01</div><div class="label">Bill's home base</div><div class="sub">The dashboard that surfaces what needs attention.</div></a>
+    <a href="#ch-2"><div class="num">02</div><div class="label">Hiring an expert</div><div class="sub">Four ways an engagement starts.</div></a>
+    <a href="#ch-3"><div class="num">03</div><div class="label">The engagement page</div><div class="sub">A single live record per expert relationship.</div></a>
+    <a href="#ch-4"><div class="num">04</div><div class="label">When governance steps in</div><div class="sub">Andy's review queue and what Bill sees.</div></a>
+    <a href="#ch-5"><div class="num">05</div><div class="label">The org‑wide rollup</div><div class="sub">Andy's view of every engagement at Cherokee.</div></a>
+    <a href="#ch-6"><div class="num">06</div><div class="label">Status pills, end‑to‑end</div><div class="sub">How an engagement reads at every stage.</div></a>
+  </nav>
+
+  <!-- ============================== CHAPTER 1 ============================== -->
+  <section id="ch-1" class="chapter">
+    <div class="chapter-head">
+      <span class="chapter-num">Chapter 01</span>
+      <h2 class="chapter-title">Bill's home base.</h2>
+    </div>
+
+    <div class="prose">
+      <p>Bill signs in and lands here every morning. The dashboard is built around one question: <em>what needs my attention right now?</em></p>
+      <p>Three things on this screen — the <strong>"Hire an expert"</strong> CTA at top, an <strong>action‑sorted list</strong> of his engagements, and a quiet right rail with messages and counts. Everything else is one click away.</p>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">01.1</span>
+        <h3 class="beat-title">A list sorted by what needs doing.</h3>
+      </div>
+      <div class="prose">
+        <p>The engagement list isn't sorted by recency or alphabet — it's sorted by <strong>action required</strong>. Engagements where Bill needs to do something (review an offer, approve hours, sign off on a deliverable) float to the top with a <span class="pill attention"><span class="dot"></span>Action needed</span> pill. Active work sits below. Closed engagements collapse to the bottom.</p>
+      </div>
+      <figure class="shot">
+        <img src="screenshots/customer-dashboard-counter.png" alt="Bill's customer dashboard with action counter" />
+        <figcaption class="shot-caption">
+          <span class="label">Customer dashboard · Default view</span>
+          <span class="ref">customer-dashboard-counter</span>
+        </figcaption>
+      </figure>
+      <div class="prose">
+        <p>The number next to "My experts" in the right rail is a count of engagements with unread activity — <strong>not</strong> a count of unread messages. We made this deliberate: counting messages turns the dashboard into an inbox to clear, which competes with the list itself for attention.</p>
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">01.2</span>
+        <h3 class="beat-title">"Hire an expert" is always one click.</h3>
+      </div>
+      <div class="prose">
+        <p>Whether Bill knows exactly who he wants, has been emailed a candidate's bio, or just has a problem he needs to staff — the entry point is the same button. The flow branches once we know what kind of starting material he has.</p>
+      </div>
+      <figure class="shot">
+        <img src="screenshots/customer-dashboard-hire-expert.png" alt="Hire an expert call to action on the dashboard" />
+        <figcaption class="shot-caption">
+          <span class="label">Customer dashboard · Hire CTA</span>
+          <span class="ref">customer-dashboard-hire-expert</span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============================== CHAPTER 2 ============================== -->
+  <section id="ch-2" class="chapter">
+    <div class="chapter-head">
+      <span class="chapter-num">Chapter 02</span>
+      <h2 class="chapter-title">Four ways an engagement starts.</h2>
+    </div>
+    <p class="chapter-sub">"Hire an expert" opens a side drawer. The drawer adapts to whichever of four starting points Bill arrives with — there's no wizard branching, just one form that asks for the relevant pieces.</p>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">02.A</span>
+        <h3 class="beat-title">Path A — A consultation booking.</h3>
+      </div>
+      <div class="prose">
+        <p>Bill needs an hour with someone who knows the FAA's Part 23 certification process. He doesn't have a name in mind. He picks a <strong>topic</strong> and a <strong>duration</strong>, and OnFrontiers takes it from there.</p>
+      </div>
+      <figure class="shot">
+        <img src="screenshots/drawer-path-a-consultation.png" alt="Drawer for booking a one-off consultation" />
+        <figcaption class="shot-caption">
+          <span class="label">Hire drawer · Path A — Consultation</span>
+          <span class="ref">drawer-path-a-consultation</span>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">02.B</span>
+        <h3 class="beat-title">Path B — Ongoing advisory with a candidate in mind.</h3>
+      </div>
+      <div class="prose">
+        <p>This is the most common path for repeat customers. Bill has a name (often surfaced from his own network or via prior projects) and wants ongoing advisory. He pastes a bio or links to a profile, defines the scope of work, and submits.</p>
+      </div>
+      <figure class="shot">
+        <img src="screenshots/drawer-path-b-candidate.png" alt="Drawer for ongoing engagement with a known candidate" />
+        <figcaption class="shot-caption">
+          <span class="label">Hire drawer · Path B — Candidate in mind</span>
+          <span class="ref">drawer-path-b-candidate</span>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">02.C</span>
+        <h3 class="beat-title">Path C — "I already introduced myself."</h3>
+      </div>
+      <div class="prose">
+        <p>Often Cherokee has already had an intro call directly with the expert before OnFrontiers gets involved. Bill flags <em>"customer‑introduced"</em>, which tells OnFrontiers to skip outreach and move straight to paperwork.</p>
+      </div>
+      <figure class="shot">
+        <img src="screenshots/drawer-path-c-customer-introduced.png" alt="Drawer for customer-introduced engagement" />
+        <figcaption class="shot-caption">
+          <span class="label">Hire drawer · Path C — Customer‑introduced</span>
+          <span class="ref">drawer-path-c-customer-introduced</span>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">02.D</span>
+        <h3 class="beat-title">Path D — Hiring from an existing profile.</h3>
+      </div>
+      <div class="prose">
+        <p>If Bill is browsing a profile and clicks "Hire," the drawer opens with the expert <strong>locked in</strong> — name, rate, and prior‑engagement context pre‑populated. Bill only fills in what's new: the scope and budget for this piece of work.</p>
+      </div>
+      <figure class="shot">
+        <img src="screenshots/drawer-path-d-profile.png" alt="Drawer launched from an expert profile" />
+        <figcaption class="shot-caption">
+          <span class="label">Hire drawer · Path D — From profile</span>
+          <span class="ref">drawer-path-d-profile</span>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">02.✓</span>
+        <h3 class="beat-title">Validation, before submission.</h3>
+      </div>
+      <div class="prose">
+        <p>One drawer, four shapes — but the validation is the same: budget caps, missing scope, unsupported regions. The drawer can't be submitted with errors, and field‑level help text explains exactly why.</p>
+      </div>
+      <figure class="shot">
+        <img src="screenshots/drawer-validation.png" alt="Validation state on the hire drawer" />
+        <figcaption class="shot-caption">
+          <span class="label">Hire drawer · Validation</span>
+          <span class="ref">drawer-validation</span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============================== CHAPTER 3 ============================== -->
+  <section id="ch-3" class="chapter">
+    <div class="chapter-head">
+      <span class="chapter-num">Chapter 03</span>
+      <h2 class="chapter-title">The engagement page.</h2>
+    </div>
+    <p class="chapter-sub">Once an engagement exists, it has a permanent home — one URL, four tabs, one record of truth.</p>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">03.1</span>
+        <h3 class="beat-title">Overview — the spine.</h3>
+      </div>
+      <div class="prose">
+        <p>The Overview tab is the authoritative read on an engagement: who, what, status, scope, budget, the running event log. Both Bill and the expert see the same shape — though Bill can see budget and rate; the expert sees their own rate and a redacted budget.</p>
+      </div>
+      <figure class="shot">
+        <img src="screenshots/workapprover-overview.png" alt="Engagement overview page from the work approver's view" />
+        <figcaption class="shot-caption">
+          <span class="label">Engagement · Overview tab</span>
+          <span class="ref">workapprover-overview</span>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">03.2</span>
+        <h3 class="beat-title">Hours — submitted, approved, paid.</h3>
+      </div>
+      <div class="prose">
+        <p>The expert submits hours from their side. Bill reviews them here. Each row carries a status — <span class="pill attention"><span class="dot"></span>Pending review</span> until Bill clicks approve, <span class="pill active"><span class="dot"></span>Approved</span> after, and a paid stamp once OnFrontiers has run payroll.</p>
+      </div>
+      <figure class="shot">
+        <img src="screenshots/workapprover-hours.png" alt="Hours tab from the work approver's view" />
+        <figcaption class="shot-caption">
+          <span class="label">Engagement · Hours tab</span>
+          <span class="ref">workapprover-hours</span>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">03.3</span>
+        <h3 class="beat-title">Messages — single conversation.</h3>
+      </div>
+      <div class="prose">
+        <p>One thread per engagement, scoped to that engagement. No DMs across engagements. No expert‑wide inbox. We learned the hard way that surfacing every message in one place leads to wires getting crossed — Bill needs to know "is this about <em>this</em> piece of work."</p>
+      </div>
+      <figure class="shot">
+        <img src="screenshots/workapprover-messages.png" alt="Messages tab from the work approver's view" />
+        <figcaption class="shot-caption">
+          <span class="label">Engagement · Messages tab</span>
+          <span class="ref">workapprover-messages</span>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">03.4</span>
+        <h3 class="beat-title">Settings — stop, change, close.</h3>
+      </div>
+      <div class="prose">
+        <p>Settings is where Bill can pause an engagement, raise the budget cap, change the scope, or close it out. Anything that affects the contract or governance posture gets logged to the engagement's event log so Andy has a paper trail.</p>
+      </div>
+      <figure class="shot">
+        <img src="screenshots/workapprover-settings.png" alt="Settings tab from the work approver's view" />
+        <figcaption class="shot-caption">
+          <span class="label">Engagement · Settings tab</span>
+          <span class="ref">workapprover-settings</span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============================== CHAPTER 4 ============================== -->
+  <section id="ch-4" class="chapter">
+    <div class="chapter-head">
+      <span class="chapter-num">Chapter 04</span>
+      <h2 class="chapter-title">When governance steps in.</h2>
+    </div>
+    <p class="chapter-sub">Cherokee has put governance rules in place. Some of Bill's submissions exceed thresholds and need Andy's sign‑off before they go live.</p>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">04.1</span>
+        <h3 class="beat-title">Bill submits, then waits.</h3>
+      </div>
+      <div class="prose">
+        <p>When a submission triggers governance, the engagement enters a <span class="pill attention"><span class="dot"></span>Awaiting governance</span> hold. Bill sees the hold on the engagement page itself — there's no separate "pending approvals" screen for him to chase.</p>
+      </div>
+      <figure class="shot">
+        <img src="screenshots/awaiting-customer-customer.png" alt="Engagement showing awaiting governance from Bill's view" />
+        <figcaption class="shot-caption">
+          <span class="label">Engagement · Awaiting governance (Bill's view)</span>
+          <span class="ref">awaiting-customer-customer</span>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">04.2</span>
+        <h3 class="beat-title">Andy's governance inbox.</h3>
+      </div>
+      <div class="prose">
+        <p>Andy's day looks different from Bill's. He doesn't run engagements — he reviews them. His landing page is a single inbox of submissions awaiting his decision: approve, request changes, or reject.</p>
+      </div>
+      <figure class="shot">
+        <img src="screenshots/governance-inbox-default.png" alt="Andy's governance inbox" />
+        <figcaption class="shot-caption">
+          <span class="label">Governance · Inbox (default)</span>
+          <span class="ref">governance-inbox-default</span>
+        </figcaption>
+      </figure>
+      <div class="prose">
+        <p>Each row is a single decision. Andy can see the requester, the engagement summary, the governance flag(s) that triggered the review, and the budget at stake — without leaving the inbox. He only opens the engagement page if he wants the long context.</p>
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">04.3</span>
+        <h3 class="beat-title">Approve, adjust, reject.</h3>
+      </div>
+      <div class="prose">
+        <p>Andy expands a row to act. The most common action is <strong>approve</strong>, but two other paths matter:</p>
+        <ul>
+          <li><strong>Adjustment.</strong> The submission is fine in spirit but the budget is too high, or the scope needs trimming. Andy proposes the adjustment; Bill confirms.</li>
+          <li><strong>Rejection.</strong> The submission shouldn't proceed — wrong vendor, wrong region, duplicate of another active engagement. Andy provides a reason; Bill is notified.</li>
+        </ul>
+      </div>
+
+      <div class="shots-pair">
+        <figure class="shot">
+          <img src="screenshots/governance-inbox-adjustment-expanded.png" alt="Inbox row expanded to propose an adjustment" />
+          <figcaption class="shot-caption">
+            <span class="label">Inbox · Adjustment expanded</span>
+            <span class="ref">governance-inbox-adjustment-expanded</span>
+          </figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="screenshots/governance-inbox-reject-expanded.png" alt="Inbox row expanded to reject" />
+          <figcaption class="shot-caption">
+            <span class="label">Inbox · Rejection expanded</span>
+            <span class="ref">governance-inbox-reject-expanded</span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">04.4</span>
+        <h3 class="beat-title">What Bill sees after governance acts.</h3>
+      </div>
+      <div class="prose">
+        <p>The engagement page tells the story. If Andy proposes an adjustment, Bill sees the proposal inline with accept / counter controls. If Andy rejects, the engagement is sealed in the rejected state with the reason visible.</p>
+      </div>
+
+      <div class="shots-pair">
+        <figure class="shot">
+          <img src="screenshots/hub-governance-adjustment-customer.png" alt="Engagement page showing a governance adjustment from Bill's view" />
+          <figcaption class="shot-caption">
+            <span class="label">Engagement · Adjustment proposed</span>
+            <span class="ref">hub-governance-adjustment-customer</span>
+          </figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="screenshots/hub-governance-rejection-customer.png" alt="Engagement page showing a rejection from Bill's view" />
+          <figcaption class="shot-caption">
+            <span class="label">Engagement · Rejected</span>
+            <span class="ref">hub-governance-rejection-customer</span>
+          </figcaption>
+        </figure>
+      </div>
+
+      <div class="callout">
+        <strong>Design note —</strong> Bill never has to learn governance rules. He just submits; the system tells him what happened, and lets him counter or move on. Andy never has to chase Bill — his queue is a real queue with a defined end.
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">04.5</span>
+        <h3 class="beat-title">Bill's inbox after a governance decision.</h3>
+      </div>
+      <div class="prose">
+        <p>From Bill's side, a governance decision shows up as a top‑of‑list item on his dashboard with the appropriate <span class="pill attention"><span class="dot"></span>Action needed</span> pill. He clicks through and lands on the engagement page in the right tab.</p>
+      </div>
+
+      <div class="shots-pair">
+        <figure class="shot">
+          <img src="screenshots/inbox-adjustment-submitted.png" alt="Bill's inbox showing an adjustment was submitted" />
+          <figcaption class="shot-caption">
+            <span class="label">Bill's inbox · Adjustment to review</span>
+            <span class="ref">inbox-adjustment-submitted</span>
+          </figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="screenshots/inbox-rejection-submitted.png" alt="Bill's inbox showing a rejection was submitted" />
+          <figcaption class="shot-caption">
+            <span class="label">Bill's inbox · Rejection notice</span>
+            <span class="ref">inbox-rejection-submitted</span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== CHAPTER 5 ============================== -->
+  <section id="ch-5" class="chapter">
+    <div class="chapter-head">
+      <span class="chapter-num">Chapter 05</span>
+      <h2 class="chapter-title">The org‑wide rollup.</h2>
+    </div>
+    <p class="chapter-sub">Andy doesn't just want to know what's in his queue today — he needs to see what Cherokee is doing across <em>all</em> engagements, all approvers, all programs.</p>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">05.1</span>
+        <h3 class="beat-title">Every engagement, all of Cherokee.</h3>
+      </div>
+      <div class="prose">
+        <p>The rollup is a single table: every active, pending, and recently‑closed engagement at Cherokee, with the work approver in the byline. Andy can sort by any column; the default sort is by what's actively progressing.</p>
+      </div>
+      <figure class="shot">
+        <img src="screenshots/customer-rollup-default.png" alt="Cherokee org-wide rollup, default view" />
+        <figcaption class="shot-caption">
+          <span class="label">Org rollup · All engagements</span>
+          <span class="ref">customer-rollup-default</span>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="beat">
+      <div class="beat-head">
+        <span class="beat-num">05.2</span>
+        <h3 class="beat-title">Filtered to "needs review."</h3>
+      </div>
+      <div class="prose">
+        <p>The same table filtered to just the engagements waiting on a governance decision. This is what Andy uses on Monday mornings to triage where the bottlenecks are — and to see whether one work approver is repeatedly tripping the same threshold.</p>
+      </div>
+      <figure class="shot">
+        <img src="screenshots/customer-rollup-pending.png" alt="Cherokee rollup filtered to pending governance" />
+        <figcaption class="shot-caption">
+          <span class="label">Org rollup · Pending governance</span>
+          <span class="ref">customer-rollup-pending</span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============================== CHAPTER 6 ============================== -->
+  <section id="ch-6" class="chapter">
+    <div class="chapter-head">
+      <span class="chapter-num">Chapter 06</span>
+      <h2 class="chapter-title">Status pills, end‑to‑end.</h2>
+    </div>
+    <p class="chapter-sub">A small but important detail. The customer side of an engagement always carries a single status pill that tells Bill what's happening — at a glance, anywhere in the product.</p>
+
+    <div class="prose">
+      <p>The pills aren't decorative. They're the <strong>contract</strong> between the system and the user about what state an engagement is in. They appear in the dashboard list, on the engagement page, in notifications, and in the rollup — always with the same colour, the same wording.</p>
+    </div>
+
+    <div class="shots-pair">
+      <figure class="shot">
+        <img src="screenshots/awaiting-customer-customer.png" alt="Awaiting governance state" />
+        <figcaption class="shot-caption">
+          <span class="label">Awaiting governance</span>
+          <span class="ref">awaiting-customer-customer</span>
+        </figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="screenshots/canceled-customer.png" alt="Canceled state" />
+        <figcaption class="shot-caption">
+          <span class="label">Canceled</span>
+          <span class="ref">canceled-customer</span>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="callout warn">
+      <strong>One language —</strong> when Bill sees "awaiting governance" on his dashboard, that's the same wording Andy sees in his inbox, and the same wording the engagement page carries. We resisted the urge to localise the language per surface; it makes a 1:1 conversation possible between Bill and Andy without translation.
+    </div>
+  </section>
+
+  <footer class="doc-footer">
+    <div class="meta">Walkthrough · Customer (Cherokee) · v0.1</div>
+    <nav class="nav">
+      <a href="index.html">All walkthroughs</a>
+      <a href="Walkthrough - Expert.html">Next: Expert →</a>
+    </nav>
+  </footer>
+
+</main>
+</body>
+</html>
